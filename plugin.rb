@@ -3,12 +3,14 @@
 # name: discourse-coin
 # about: A comprehensive coin/points management plugin for Discourse with invoice request system
 # meta_topic_id: TODO
-# version: 0.0.1
+# version: 0.0.2
 # authors: pandacc
 # url: https://github.com/werta666/coin
 # required_version: 2.7.0
 
 enabled_site_setting :coin_enabled
+enabled_site_setting :coin_name, default: "硬币"
+enabled_site_setting :coin_invoice_enabled, default: false
 
 register_asset "stylesheets/coin.scss"
 
