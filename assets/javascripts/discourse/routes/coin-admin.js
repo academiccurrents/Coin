@@ -17,11 +17,13 @@ export default class CoinAdminRoute extends Route {
       };
     } catch (error) {
       console.error("加载管理员数据失败:", error);
+      console.error("错误详情:", error.jqXHR?.responseText || error.message);
       return {
         statistics: {},
         recentTransactions: [],
         pendingInvoices: [],
-        error: true
+        error: true,
+        errorMessage: error.jqXHR?.responseJSON?.errors?.[0] || error.message
       };
     }
   }

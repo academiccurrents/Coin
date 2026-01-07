@@ -226,7 +226,7 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  z-index: 1050 !important;
+  z-index: 9999 !important;
 }
 
 .coin-modal {
@@ -234,8 +234,11 @@
   border-radius: 20px !important;
   max-width: 480px !important;
   width: 90% !important;
+  margin: 0 auto !important;
+  position: relative !important;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
   animation: modalSlideIn 0.3s ease !important;
+  z-index: 10000 !important;
 }
 
 @keyframes modalSlideIn {
