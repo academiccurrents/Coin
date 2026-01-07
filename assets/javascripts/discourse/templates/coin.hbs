@@ -1,0 +1,161 @@
+<div class="coin-page">
+  <div class="coin-container">
+    <div class="coin-header">
+      <h1 class="coin-title">我的{{model.coinName}}</h1>
+      <div class="coin-balance-card">
+        <div class="balance-label">当前余额</div>
+        <div class="balance-amount">{{this.formattedBalance}}</div>
+        <div class="balance-unit">{{model.coinName}}</div>
+      </div>
+    </div>
+
+    <div class="coin-actions">
+      <button class="coin-button coin-button-primary" {{on "click" this.openInvoiceModal}}>
+        <span class="button-icon"><i class="fa-solid fa-file-invoice"></i></span>
+        <span class="button-text">申请发票</span>
+      </button>
+      <button class="coin-button coin-button-secondary" {{on "click" this.goToInvoicePage}}>
+        <span class="button-icon"><i class="fa-solid fa-clipboard-list"></i></span>
+        <span class="button-text">发票记录</span>
+      </button>
+      <button class="coin-button coin-button-tertiary" {{on "click" this.refreshData}}>
+        <span class="button-icon"><i class="fa-solid fa-rotate"></i></span>
+        <span class="button-text">刷新</span>
+      </button>
+    </div>
+
+    <div class="coin-section">
+      <h2 class="section-title">积分记录</h2>
+      <div class="transactions-list">
+        {{#if model.transactions}}
+          {{#each model.transactions as |transaction|}}
+            <div class="transaction-item">
+              <div class="transaction-icon">
+                {{#if (eq transaction.transaction_type "recharge")}}
+                  <span class="icon-recharge"><i class="fa-solid fa-coins"></i></span>
+                {{else if (eq transaction.transaction_type "admin_adjust")}}
+                  <span class="icon-admin"><i class="fa-solid fa-gear"></i></span>
+                {{else}}
+                  <span class="icon-consumption"><i class="fa-solid fa-arrow-trend-down"></i></span>
+                {{/if}}
+              </div>
+              <div class="transaction-info">
+                <div class="transaction-reason">{{transaction.reason}}</div>
+                <div class="transaction-type">{{this.transactionTypeLabels.[transaction.transaction_type].label}}</div>
+                {{#if (eq transaction.transaction_type "admin_adjust")}}
+                  <div class="transaction-admin-reason">调整原因: {{transaction.reason}}</div>
+                {{/if}}
+              </div>
+              <div class="transaction-amount {{if (gt transaction.amount 0) "amount-positive" "amount-negative"}}">
+                {{#if (gt transaction.amount 0)}}+{{/if}}{{transaction.amount}}
+              </div>
+              <div class="transaction-date">{{format-date transaction.created_at}}</div>
+              {{#if (and this.coinInvoiceEnabled (eq transaction.transaction_type "recharge"))}}
+                <button class="apply-invoice-btn" {{on "click" (fn this.openInvoiceFromTransactionModal transaction)}}>
+                  <i class="fa-solid fa-file-invoice"></i> 申请开发票
+                </button>
+              {{/if}}
+            </div>
+          {{/each}}
+        {{else}}
+          <div class="empty-state">
+            <div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div>
+            <div class="empty-text">暂无积分记录</div>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  {{#if this.showInvoiceModal}}
+    <div class="coin-modal-backdrop" {{on "click" this.closeInvoiceModal}}></div>
+    <div class="coin-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">申请发票</h3>
+        <button class="modal-close" {{on "click" this.closeInvoiceModal}}><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">申请金额</label>
+          <input
+            type="number"
+            class="form-input"
+            placeholder="请输入申请金额"
+            value={{this.invoiceAmount}}
+            {{on "input" this.updateInvoiceAmount}}
+          />
+          <div class="form-hint">当前可用余额: {{this.formattedBalance}} {{model.coinName}}</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">申请原因</label>
+          <textarea
+            class="form-textarea"
+            placeholder="请输入申请原因（可选）"
+            rows="3"
+            value={{this.invoiceReason}}
+            {{on "input" this.updateInvoiceReason}}
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button modal-button-cancel" {{on "click" this.closeInvoiceModal}}>
+          取消
+        </button>
+        <button class="modal-button modal-button-confirm" {{on "click" this.submitInvoiceRequest}} disabled={{this.isLoading}}>
+          {{#if this.isLoading}}提交中...{{else}}提交申请{{/if}}
+        </button>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if this.showInvoiceFromTransactionModal}}
+    <div class="coin-modal-backdrop" {{on "click" this.closeInvoiceFromTransactionModal}}></div>
+    <div class="coin-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">从充值记录申请发票</h3>
+        <button class="modal-close" {{on "click" this.closeInvoiceFromTransactionModal}}><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">申请金额</label>
+          <input
+            type="number"
+            class="form-input"
+            placeholder="请输入申请金额"
+            value={{this.invoiceAmount}}
+            {{on "input" this.updateInvoiceAmount}}
+          />
+          <div class="form-hint">充值金额: {{this.selectedTransactionAmount}} {{model.coinName}}</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">申请原因</label>
+          <textarea
+            class="form-textarea"
+            placeholder="请输入申请原因（可选）"
+            rows="3"
+            value={{this.invoiceReason}}
+            {{on "input" this.updateInvoiceReason}}
+          ></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button modal-button-cancel" {{on "click" this.closeInvoiceFromTransactionModal}}>
+          取消
+        </button>
+        <button class="modal-button modal-button-confirm" {{on "click" this.submitInvoiceFromTransaction}} disabled={{this.isLoading}}>
+          {{#if this.isLoading}}提交中...{{else}}提交申请{{/if}}
+        </button>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if this.showSuccessMessage}}
+    <div class="coin-success-popup">
+      <div class="success-content">
+        <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="success-message">{{this.successMessage}}</div>
+        <button class="success-close" {{on "click" this.hideSuccessMessage}}>确定</button>
+      </div>
+    </div>
+  {{/if}}
+</div>

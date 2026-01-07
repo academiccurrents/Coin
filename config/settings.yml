@@ -1,0 +1,13 @@
+coin:
+  coin_enabled:
+    default: true
+    client: true
+  coin_name:
+    default: "硬币"
+    client: true
+    type: string
+    description: "积分代币名称，默认为'硬币'"
+  coin_invoice_enabled:
+    default: true
+    client: true
+    description: "是否启用发票申请功能"

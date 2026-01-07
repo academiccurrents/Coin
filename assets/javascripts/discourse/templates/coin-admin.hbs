@@ -1,0 +1,248 @@
+<div class="coin-page">
+  <div class="coin-container">
+    <div class="coin-header">
+      <h1 class="coin-title">管理员面板</h1>
+      <div class="coin-actions-header">
+        <button class="coin-button coin-button-tertiary" {{on "click" this.goToCoinPage}}>
+          <span class="button-icon"><i class="fa-solid fa-arrow-left"></i></span>
+          <span class="button-text">返回</span>
+        </button>
+        <button class="coin-button coin-button-tertiary" {{on "click" this.refreshData}}>
+          <span class="button-icon"><i class="fa-solid fa-rotate"></i></span>
+          <span class="button-text">刷新</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="coin-section">
+      <h2 class="section-title">积分统计</h2>
+      <div class="statistics-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-info">
+            <div class="stat-value">{{this.statistics.total_users}}</div>
+            <div class="stat-label">总用户数</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
+          <div class="stat-info">
+            <div class="stat-value">{{this.statistics.total_balance}}</div>
+            <div class="stat-label">总积分</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <div class="stat-info">
+            <div class="stat-value">{{this.statistics.average_balance}}</div>
+            <div class="stat-label">平均积分</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="coin-section">
+      <h2 class="section-title">查询用户</h2>
+      <div class="query-form">
+        <div class="form-group">
+          <label class="form-label">用户名</label>
+          <input
+            type="text"
+            class="form-input"
+            placeholder="请输入要查询的用户名"
+            value={{this.queryUsername}}
+            {{on "input" this.updateQueryUsername}}
+          />
+        </div>
+        <div class="query-actions">
+          <button class="coin-button coin-button-primary" {{on "click" this.queryUserBalance}} disabled={{this.isLoading}}>
+            {{#if this.isLoading}}查询中...{{else}}查询{{/if}}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {{#if this.showQueryResult}}
+      <div class="coin-section query-result-section">
+        <div class="query-result-header">
+          <h3 class="query-result-title">查询结果</h3>
+          <button class="query-close-btn" {{on "click" this.closeQueryResult}}>
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="query-result-content">
+          <div class="query-balance-card">
+            <div class="query-balance-label">用户</div>
+            <div class="query-balance-username">{{this.queryResult.username}}</div>
+            <div class="query-balance-label">当前余额</div>
+            <div class="query-balance-amount">{{this.queryResult.balance}}</div>
+          </div>
+          <h4 class="query-transactions-title">最近积分记录</h4>
+          <div class="transactions-list">
+            {{#if this.queryResult.transactions}}
+              {{#each this.queryResult.transactions as |transaction|}}
+                <div class="transaction-item">
+                  <div class="transaction-icon">
+                    {{#if (eq transaction.transaction_type "recharge")}}
+                      <span class="icon-recharge"><i class="fa-solid fa-coins"></i></span>
+                    {{else if (eq transaction.transaction_type "admin_adjust")}}
+                      <span class="icon-admin"><i class="fa-solid fa-gear"></i></span>
+                    {{else}}
+                      <span class="icon-consumption"><i class="fa-solid fa-arrow-trend-down"></i></span>
+                    {{/if}}
+                  </div>
+                  <div class="transaction-info">
+                    <div class="transaction-reason">{{transaction.reason}}</div>
+                    <div class="transaction-type">{{this.transactionTypeLabels.[transaction.transaction_type].label}}</div>
+                  </div>
+                  <div class="transaction-amount {{if (gt transaction.amount 0) "amount-positive" "amount-negative"}}">
+                    {{#if (gt transaction.amount 0)}}+{{/if}}{{transaction.amount}}
+                  </div>
+                  <div class="transaction-date">{{format-date transaction.created_at}}</div>
+                </div>
+              {{/each}}
+            {{else}}
+              <div class="empty-state">
+                <div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div>
+                <div class="empty-text">暂无积分记录</div>
+              </div>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    {{/if}}
+
+    <div class="coin-section">
+      <h2 class="section-title">调整用户积分</h2>
+      <div class="adjust-form">
+        <div class="form-group">
+          <label class="form-label">用户名</label>
+          <input
+            type="text"
+            class="form-input"
+            placeholder="请输入用户名"
+            value={{this.adjustUsername}}
+            {{on "input" this.updateAdjustUsername}}
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">调整数量</label>
+          <input
+            type="number"
+            class="form-input"
+            placeholder="正数增加，负数扣除"
+            value={{this.adjustAmount}}
+            {{on "input" this.updateAdjustAmount}}
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label">调整原因</label>
+          <textarea
+            class="form-textarea"
+            placeholder="请输入调整原因（可选）"
+            rows="2"
+            value={{this.adjustReason}}
+            {{on "input" this.updateAdjustReason}}
+          ></textarea>
+        </div>
+        <button class="coin-button coin-button-primary" {{on "click" this.adjustPoints}} disabled={{this.isLoading}}>
+          {{#if this.isLoading}}处理中...{{else}}调整积分{{/if}}
+        </button>
+      </div>
+    </div>
+
+    <div class="coin-section">
+      <h2 class="section-title">最近充值记录</h2>
+      <div class="transactions-list">
+        {{#if this.recentTransactions}}
+          {{#each this.recentTransactions as |transaction|}}
+            <div class="transaction-item">
+              <div class="transaction-icon">
+                <span class="icon-recharge"><i class="fa-solid fa-coins"></i></span>
+              </div>
+              <div class="transaction-info">
+                <div class="transaction-user">{{transaction.username}}</div>
+                <div class="transaction-reason">{{transaction.reason}}</div>
+                <div class="transaction-amount amount-positive">+{{transaction.amount}}</div>
+              </div>
+              <div class="transaction-date">{{format-date transaction.created_at}}</div>
+            </div>
+          {{/each}}
+        {{else}}
+          <div class="empty-state">
+            <div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div>
+            <div class="empty-text">暂无充值记录</div>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="coin-section">
+      <h2 class="section-title">待处理发票</h2>
+      <div class="invoice-list">
+        {{#if this.pendingInvoices}}
+          {{#each this.pendingInvoices as |invoice|}}
+            <div class="invoice-item invoice-pending">
+              <div class="invoice-icon"><i class="fa-solid fa-clock"></i></div>
+              <div class="invoice-info">
+                <div class="invoice-user">{{invoice.username}}</div>
+                <div class="invoice-amount">{{invoice.amount}} 硬币</div>
+                <div class="invoice-reason">{{invoice.reason}}</div>
+                <div class="invoice-date">{{format-date invoice.created_at}}</div>
+              </div>
+              <button class="process-invoice-btn" {{on "click" (fn this.openProcessInvoiceModal invoice)}}>
+                <i class="fa-solid fa-file-invoice"></i> 处理
+              </button>
+            </div>
+          {{/each}}
+        {{else}}
+          <div class="empty-state">
+            <div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div>
+            <div class="empty-text">暂无待处理发票</div>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  {{#if this.showProcessInvoiceModal}}
+    <div class="coin-modal-backdrop" {{on "click" this.closeProcessInvoiceModal}}></div>
+    <div class="coin-modal">
+      <div class="modal-header">
+        <h3 class="modal-title">处理发票申请</h3>
+        <button class="modal-close" {{on "click" this.closeProcessInvoiceModal}}><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">发票URL</label>
+          <input
+            type="url"
+            class="form-input"
+            placeholder="请输入发票图片URL"
+            value={{this.invoiceUrl}}
+            {{on "input" this.updateInvoiceUrl}}
+          />
+          <div class="form-hint">请上传发票图片到图床，然后粘贴图片URL</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-button modal-button-cancel" {{on "click" this.closeProcessInvoiceModal}}>
+          取消
+        </button>
+        <button class="modal-button modal-button-confirm" {{on "click" this.processInvoice}} disabled={{this.isLoading}}>
+          {{#if this.isLoading}}处理中...{{else}}提交{{/if}}
+        </button>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if this.showSuccessMessage}}
+    <div class="coin-success-popup">
+      <div class="success-content">
+        <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="success-message">{{this.successMessage}}</div>
+        <button class="success-close" {{on "click" this.hideSuccessMessage}}>确定</button>
+      </div>
+    </div>
+  {{/if}}
+</div>
