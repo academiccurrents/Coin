@@ -143,9 +143,9 @@ module ::MyPluginModule
       params
     end
 
-    # 计算MD5签名
+    # 计算MD5签名 (易支付标准格式)
     def calculate_sign(params)
-      # 按键名排序
+      # 按键名ASCII码排序
       sorted_params = params.sort.to_h
       
       # 过滤空值和签名字段，拼接字符串
@@ -154,9 +154,9 @@ module ::MyPluginModule
         .map { |k, v| "#{k}=#{v}" }
         .join('&')
       
-      # 拼接密钥并MD5
-      sign_str += @key
-      Digest::MD5.hexdigest(sign_str)
+      # 拼接 &key=密钥 并计算MD5
+      sign_str += "&key=#{@key}"
+      Digest::MD5.hexdigest(sign_str).downcase
     end
 
     def http_get(url, timeout: 10)

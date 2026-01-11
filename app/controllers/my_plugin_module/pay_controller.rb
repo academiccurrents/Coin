@@ -163,12 +163,26 @@ module ::MyPluginModule
 
         # 验证签名
         if epay.verify_callback(callback_params) && params[:trade_status] == 'TRADE_SUCCESS'
+          # 同步回调也处理支付成功（防止异步回调延迟或失败）
+          result = PaymentService.process_payment_success(
+            params[:out_trade_no],
+            params[:trade_no],
+            params[:money]
+          )
+          
+          if result[:success]
+            Rails.logger.info "[支付] 同步回调处理成功: #{params[:out_trade_no]}"
+          else
+            Rails.logger.warn "[支付] 同步回调处理结果: #{result[:error]}"
+          end
+          
           redirect_to "/coin?payment=success"
         else
+          Rails.logger.warn "[支付] 同步回调验签失败或状态非成功"
           redirect_to "/coin?payment=failed"
         end
       rescue => e
-        Rails.logger.error "[支付] 同步回调异常: #{e.message}"
+        Rails.logger.error "[支付] 同步回调异常: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
         redirect_to "/coin?payment=error"
       end
     end
