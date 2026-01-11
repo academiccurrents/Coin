@@ -3,3 +3,7 @@ zh_CN:
     coin_enabled: "启用积分插件"
     coin_name: "积分名称（默认：硬币）"
     coin_invoice_enabled: "启用发票申请功能"
+    coin_epay_enabled: "启用易支付充值"
+    coin_epay_api_url: "易支付API地址（如：https://pay.example.com/）"
+    coin_epay_pid: "易支付商户ID"
+    coin_epay_key: "易支付商户密钥"

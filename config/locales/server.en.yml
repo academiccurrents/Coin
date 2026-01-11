@@ -3,3 +3,7 @@ en:
     coin_enabled: "Enable Coin Plugin"
     coin_name: "Coin name (default: Coin)"
     coin_invoice_enabled: "Enable invoice request feature"
+    coin_epay_enabled: "Enable Epay payment"
+    coin_epay_api_url: "Epay API URL (e.g., https://pay.example.com/)"
+    coin_epay_pid: "Epay Merchant ID"
+    coin_epay_key: "Epay Merchant Key"

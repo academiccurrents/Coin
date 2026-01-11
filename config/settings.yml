@@ -9,3 +9,16 @@ plugins:
   coin_invoice_enabled:
     default: true
     client: true
+  coin_epay_enabled:
+    default: false
+    client: true
+  coin_epay_api_url:
+    default: ""
+    type: string
+  coin_epay_pid:
+    default: ""
+    type: string
+  coin_epay_key:
+    default: ""
+    type: string
+    secret: true

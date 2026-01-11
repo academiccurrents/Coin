@@ -22,4 +22,14 @@ MyPluginModule::Engine.routes.draw do
   post "/admin/process_invoice" => "admin#process_invoice"
   get "/admin/completed_invoices" => "admin#completed_invoices"
   post "/admin/update_invoice_url" => "admin#update_invoice_url"
+
+  # 充值支付相关路由
+  get "/pay" => "pay#index"
+  get "/pay/packages" => "pay#packages"
+  get "/pay/channels" => "pay#payment_channels"
+  post "/pay/create_order" => "pay#create_order"
+  post "/pay/notify" => "pay#notify_callback"
+  get "/pay/return" => "pay#return_callback"
+  get "/pay/order_status" => "pay#order_status"
+  get "/pay/orders" => "pay#orders"
 end

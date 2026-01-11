@@ -1777,3 +1777,394 @@
   font-weight: 600;
   color: var(--coin-text);
 }
+
+// ==========================================
+// 充值页面样式 - Pay Page Styles
+// ==========================================
+
+.coin-pay-page {
+  // 余额和折扣信息卡片
+  .pay-balance-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--coin-bg);
+    border-radius: var(--coin-radius);
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--coin-shadow);
+  }
+
+  .pay-balance-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .pay-balance-label {
+    font-size: 14px;
+    color: var(--coin-text-secondary);
+  }
+
+  .pay-balance-amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--coin-text);
+  }
+
+  .pay-discount-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+    border-radius: 20px;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+
+    .svg-icon {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  // 套餐网格
+  .package-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .package-card {
+    position: relative;
+    background: var(--coin-bg-secondary);
+    border-radius: var(--coin-radius);
+    padding: 20px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+
+    &:hover {
+      background: var(--coin-border);
+    }
+
+    &.selected {
+      border-color: var(--coin-primary);
+      background: rgba(0, 122, 255, 0.05);
+    }
+
+    &.recommended {
+      border-color: #FF9500;
+      background: rgba(255, 149, 0, 0.05);
+
+      &.selected {
+        border-color: var(--coin-primary);
+        background: rgba(0, 122, 255, 0.05);
+      }
+    }
+  }
+
+  .package-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #FF9500 0%, #FF6B00 100%);
+    border-radius: 12px;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .package-coins {
+    margin-bottom: 8px;
+  }
+
+  .package-coins-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--coin-text);
+  }
+
+  .package-coins-unit {
+    font-size: 14px;
+    color: var(--coin-text-secondary);
+    margin-left: 4px;
+  }
+
+  .package-price {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .package-original-price {
+    font-size: 13px;
+    color: var(--coin-text-secondary);
+    text-decoration: line-through;
+  }
+
+  .package-actual-price {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--coin-primary);
+  }
+
+  // 支付方式
+  .payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .payment-method {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--coin-bg-secondary);
+    border-radius: var(--coin-radius);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+
+    &:hover {
+      background: var(--coin-border);
+    }
+
+    &.selected {
+      border-color: var(--coin-primary);
+      background: rgba(0, 122, 255, 0.05);
+    }
+  }
+
+  .payment-method-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .svg-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    &.alipay {
+      background: rgba(0, 166, 226, 0.1);
+      color: #00A6E2;
+    }
+
+    &.wxpay {
+      background: rgba(7, 193, 96, 0.1);
+      color: #07C160;
+    }
+
+    &.qqpay {
+      background: rgba(18, 183, 245, 0.1);
+      color: #12B7F5;
+    }
+  }
+
+  .payment-method-name {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--coin-text);
+  }
+
+  .payment-method-check {
+    width: 24px;
+    height: 24px;
+    color: var(--coin-primary);
+
+    .svg-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  // 支付底部
+  .pay-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--coin-bg);
+    border-top: 1px solid var(--coin-border);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .pay-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .pay-label {
+    font-size: 13px;
+    color: var(--coin-text-secondary);
+  }
+
+  .pay-amount {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--coin-primary);
+  }
+
+  .pay-btn {
+    height: 48px;
+    padding: 0 40px;
+    border-radius: 24px;
+    border: none;
+    background: linear-gradient(135deg, var(--coin-primary) 0%, var(--coin-primary-hover) 100%);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  // 为底部固定栏留出空间
+  .coin-container {
+    padding-bottom: 100px;
+  }
+
+  // 二维码模态框
+  .qrcode-modal {
+    max-width: 360px;
+  }
+
+  .qrcode-body {
+    text-align: center;
+    padding: 24px 20px;
+  }
+
+  .qrcode-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border: 1px solid var(--coin-border);
+  }
+
+  .qrcode-hint {
+    font-size: 15px;
+    color: var(--coin-text);
+    margin: 0 0 8px 0;
+  }
+
+  .qrcode-amount {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--coin-primary);
+    margin: 0 0 12px 0;
+  }
+
+  .qrcode-status {
+    font-size: 13px;
+    color: var(--coin-text-secondary);
+    margin: 0;
+  }
+}
+
+// 充值页面响应式
+@media (max-width: 600px) {
+  .coin-pay-page {
+    .pay-balance-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+    }
+
+    .pay-balance-info {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .package-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .package-card {
+      padding: 16px 12px;
+    }
+
+    .package-coins-num {
+      font-size: 24px;
+    }
+
+    .package-actual-price {
+      font-size: 16px;
+    }
+
+    .pay-footer {
+      padding: 12px 16px;
+    }
+
+    .pay-amount {
+      font-size: 20px;
+    }
+
+    .pay-btn {
+      height: 44px;
+      padding: 0 28px;
+      font-size: 15px;
+    }
+
+    .coin-container {
+      padding-bottom: 90px;
+    }
+
+    .qrcode-image {
+      width: 180px;
+      height: 180px;
+    }
+  }
+}
+
+@media (max-width: 380px) {
+  .coin-pay-page {
+    .package-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .package-card {
+      padding: 14px 10px;
+    }
+
+    .package-coins-num {
+      font-size: 20px;
+    }
+
+    .package-actual-price {
+      font-size: 14px;
+    }
+
+    .pay-btn {
+      padding: 0 20px;
+    }
+  }
+}
