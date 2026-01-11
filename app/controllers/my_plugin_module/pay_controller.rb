@@ -50,8 +50,8 @@ module ::MyPluginModule
       pay_params = {
         type: payment_type,
         out_trade_no: order.out_trade_no,
-        notify_url: "#{Discourse.base_url}/coin/pay/notify",
-        return_url: "#{Discourse.base_url}/coin/pay/return",
+        notify_url: "#{Discourse.base_url}/coin/epay_notify",
+        return_url: "#{Discourse.base_url}/coin/epay_return",
         name: "充值 #{order.coin_amount} #{coin_name}",
         money: order.actual_price.to_s
       }
@@ -84,7 +84,7 @@ module ::MyPluginModule
       end
     end
 
-    # POST/GET /coin/pay/notify - 异步回调处理
+    # POST/GET /coin/epay_notify - 异步回调处理
     def notify_callback
       epay = EpayService.new
       callback_params = params.to_unsafe_h.except(:controller, :action)
@@ -111,7 +111,7 @@ module ::MyPluginModule
       render plain: result[:success] ? 'success' : 'fail'
     end
 
-    # GET /coin/pay/return - 同步回调处理（易支付支付完成后跳转回来）
+    # GET /coin/epay_return - 同步回调处理（易支付支付完成后跳转回来）
     def return_callback
       epay = EpayService.new
       callback_params = params.to_unsafe_h.except(:controller, :action)
@@ -181,8 +181,8 @@ module ::MyPluginModule
       pay_params = {
         type: payment_type,
         out_trade_no: order.out_trade_no,
-        notify_url: "#{Discourse.base_url}/coin/pay/notify",
-        return_url: "#{Discourse.base_url}/coin/pay/return",
+        notify_url: "#{Discourse.base_url}/coin/epay_notify",
+        return_url: "#{Discourse.base_url}/coin/epay_return",
         name: "充值 #{order.coin_amount} #{coin_name}",
         money: order.actual_price.to_s
       }

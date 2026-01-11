@@ -30,10 +30,10 @@ MyPluginModule::Engine.routes.draw do
   post "/pay/create_order" => "pay#create_order"
   post "/pay/create_custom_order" => "pay#create_custom_order"
   
-  # 易支付回调 - 同时支持GET和POST
-  get "/pay/notify" => "pay#notify_callback"
-  post "/pay/notify" => "pay#notify_callback"
-  get "/pay/return" => "pay#return_callback"
+  # 易支付回调 - 放在根目录避免被 Ember 路由拦截
+  get "/epay_notify" => "pay#notify_callback"
+  post "/epay_notify" => "pay#notify_callback"
+  get "/epay_return" => "pay#return_callback"
   
   get "/pay/order_status" => "pay#order_status"
   get "/pay/pending_order" => "pay#pending_order"
