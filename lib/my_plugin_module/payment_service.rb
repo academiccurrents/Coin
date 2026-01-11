@@ -48,6 +48,11 @@ module ::MyPluginModule
 
     # 处理支付成功回调
     def self.process_payment_success(out_trade_no, trade_no, amount)
+      Rails.logger.info "[支付] ========== 开始处理支付成功 =========="
+      Rails.logger.info "[支付] out_trade_no: #{out_trade_no}"
+      Rails.logger.info "[支付] trade_no: #{trade_no}"
+      Rails.logger.info "[支付] amount: #{amount}"
+      
       ActiveRecord::Base.transaction do
         order = CoinPaymentOrder.find_by(out_trade_no: out_trade_no)
 
@@ -55,6 +60,8 @@ module ::MyPluginModule
           Rails.logger.error "[支付] 订单不存在: #{out_trade_no}"
           return { success: false, error: 'order_not_found' }
         end
+        
+        Rails.logger.info "[支付] 找到订单: ID=#{order.id}, 状态=#{order.status}, 用户ID=#{order.user_id}"
 
         # 已处理的订单直接返回成功（幂等处理）
         if order.paid?
@@ -70,29 +77,36 @@ module ::MyPluginModule
 
         # 验证金额（允许0.01的误差）
         amount_diff = (order.actual_price.to_f - amount.to_f).abs
+        Rails.logger.info "[支付] 金额验证 - 订单金额: #{order.actual_price}, 回调金额: #{amount}, 差值: #{amount_diff}"
+        
         if amount_diff > 0.01
           Rails.logger.error "[支付] 金额不匹配: #{out_trade_no}, 订单: #{order.actual_price}, 回调: #{amount}"
           return { success: false, error: 'amount_mismatch' }
         end
 
         # 更新订单状态
+        Rails.logger.info "[支付] 更新订单状态为已支付..."
         order.mark_as_paid!(trade_no)
+        Rails.logger.info "[支付] 订单状态更新成功"
 
         # 增加用户余额
         coin_name = SiteSetting.coin_name || "硬币"
+        Rails.logger.info "[支付] 开始增加用户余额: 用户ID=#{order.user_id}, 金额=#{order.coin_amount}"
+        
         CoinService.record_transaction(
           order.user_id,
           order.coin_amount,
           "充值 #{order.coin_amount} #{coin_name}",
           'recharge'
         )
-
-        Rails.logger.info "[支付] 订单处理成功: #{out_trade_no}, 用户ID: #{order.user_id}, 硬币: #{order.coin_amount}"
+        
+        Rails.logger.info "[支付] 用户余额增加成功"
+        Rails.logger.info "[支付] 订单处理完成: #{out_trade_no}, 用户ID: #{order.user_id}, 硬币: #{order.coin_amount}"
 
         { success: true, order: order }
       end
     rescue => e
-      Rails.logger.error "[支付] 处理回调异常: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+      Rails.logger.error "[支付] 处理回调异常: #{e.message}\n#{e.backtrace.first(10).join("\n")}"
       { success: false, error: e.message }
     end
 

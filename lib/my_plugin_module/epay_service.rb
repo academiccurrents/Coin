@@ -10,44 +10,104 @@ module ::MyPluginModule
     SIGN_TYPE = 'MD5'
 
     def initialize
-      @pid = SiteSetting.coin_epay_pid
-      @key = SiteSetting.coin_epay_key
+      @pid = SiteSetting.coin_epay_pid.to_s
+      @key = SiteSetting.coin_epay_key.to_s
       @api_url = SiteSetting.coin_epay_api_url.to_s.chomp('/')
       @submit_url = "#{@api_url}/submit.php"
       @mapi_url = "#{@api_url}/mapi.php"
       @api_endpoint = "#{@api_url}/api.php"
     end
 
-    # 获取可用支付渠道
+    # 获取可用支付渠道（从易支付API动态获取）
     def get_payment_channels
       begin
+        # 易支付标准API: api.php?act=type 获取支持的支付类型
         url = "#{@api_endpoint}?act=type&pid=#{@pid}"
+        Rails.logger.info "[易支付] 获取支付渠道: #{url}"
+        
         response = http_get(url)
+        Rails.logger.info "[易支付] 渠道响应: #{response}"
+        
         result = JSON.parse(response)
         
-        if result.is_a?(Array)
-          result.map do |channel|
+        if result.is_a?(Array) && result.any?
+          # API返回数组格式的渠道列表
+          channels = result.map do |channel|
+            type_code = channel['type'] || channel['id'] || channel['code']
             {
-              type: channel['type'] || channel['id'],
-              name: channel['name'],
-              icon: channel['icon']
+              type: type_code,
+              name: channel['name'] || get_channel_name(type_code),
+              icon: get_channel_icon(type_code)
             }
           end
+          Rails.logger.info "[易支付] 获取到 #{channels.length} 个支付渠道"
+          channels
+        elsif result.is_a?(Hash) && result['data'].is_a?(Array)
+          # 有些易支付返回 {code: 1, data: [...]} 格式
+          channels = result['data'].map do |channel|
+            type_code = channel['type'] || channel['id'] || channel['code']
+            {
+              type: type_code,
+              name: channel['name'] || get_channel_name(type_code),
+              icon: get_channel_icon(type_code)
+            }
+          end
+          Rails.logger.info "[易支付] 获取到 #{channels.length} 个支付渠道"
+          channels
         else
-          # 如果API不支持获取渠道，返回默认渠道
+          Rails.logger.warn "[易支付] API返回格式不支持，使用默认渠道"
           default_channels
         end
+      rescue JSON::ParserError => e
+        Rails.logger.error "[易支付] 解析渠道响应失败: #{e.message}"
+        default_channels
       rescue => e
         Rails.logger.error "[易支付] 获取支付渠道失败: #{e.message}"
         default_channels
       end
     end
 
-    # 默认支付渠道
+    # 根据渠道类型获取显示名称
+    def get_channel_name(type)
+      names = {
+        'alipay' => '支付宝',
+        'wxpay' => '微信支付',
+        'wechat' => '微信支付',
+        'qqpay' => 'QQ钱包',
+        'paypal' => 'PayPal',
+        'bank' => '银行卡',
+        'unionpay' => '银联支付',
+        'jdpay' => '京东支付',
+        'usdt' => 'USDT',
+        'trc20' => 'USDT-TRC20',
+        'erc20' => 'USDT-ERC20'
+      }
+      names[type.to_s.downcase] || type.to_s.upcase
+    end
+
+    # 根据渠道类型获取图标标识
+    def get_channel_icon(type)
+      icons = {
+        'alipay' => 'alipay',
+        'wxpay' => 'wxpay',
+        'wechat' => 'wxpay',
+        'qqpay' => 'qqpay',
+        'paypal' => 'paypal',
+        'bank' => 'bank',
+        'unionpay' => 'unionpay',
+        'jdpay' => 'jdpay',
+        'usdt' => 'usdt',
+        'trc20' => 'usdt',
+        'erc20' => 'usdt'
+      }
+      icons[type.to_s.downcase] || 'default'
+    end
+
+    # 默认支付渠道（当API不可用时使用）
     def default_channels
       [
         { type: 'alipay', name: '支付宝', icon: 'alipay' },
-        { type: 'wxpay', name: '微信支付', icon: 'wechat' },
+        { type: 'wxpay', name: '微信支付', icon: 'wxpay' },
         { type: 'paypal', name: 'PayPal', icon: 'paypal' }
       ]
     end
@@ -98,7 +158,7 @@ module ::MyPluginModule
       params_to_sign = params.except('sign', 'sign_type')
       calculated_sign = calculate_sign(params_to_sign)
       
-      result = received_sign == calculated_sign
+      result = received_sign.downcase == calculated_sign.downcase
       
       unless result
         Rails.logger.warn "[易支付] 签名验证失败 - 收到: #{received_sign}, 计算: #{calculated_sign}"
@@ -145,18 +205,22 @@ module ::MyPluginModule
 
     # 计算MD5签名 (易支付标准格式)
     def calculate_sign(params)
-      # 按键名ASCII码排序
+      # 按键名ASCII码从小到大排序 (a-z)
       sorted_params = params.sort.to_h
       
-      # 过滤空值和签名字段，拼接字符串
+      # 过滤空值和签名字段，拼接成URL键值对格式
       sign_str = sorted_params
         .reject { |k, v| k == 'sign' || k == 'sign_type' || v.to_s.empty? }
         .map { |k, v| "#{k}=#{v}" }
         .join('&')
       
-      # 拼接 &key=密钥 并计算MD5
-      sign_str += "&key=#{@key}"
-      Digest::MD5.hexdigest(sign_str).downcase
+      # 拼接密钥并计算MD5 (易支付标准: 参数串 + 密钥，不带&key=)
+      sign_str_with_key = sign_str + @key
+      sign = Digest::MD5.hexdigest(sign_str_with_key).downcase
+      
+      Rails.logger.debug "[易支付] 签名: #{sign_str} => #{sign}"
+      
+      sign
     end
 
     def http_get(url, timeout: 10)

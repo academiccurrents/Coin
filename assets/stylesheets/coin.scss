@@ -1978,6 +1978,31 @@
       background: rgba(0, 48, 135, 0.1);
       color: #003087;
     }
+
+    &.qqpay {
+      background: rgba(18, 183, 245, 0.1);
+      color: #12B7F5;
+    }
+
+    &.unionpay, &.bank {
+      background: rgba(0, 82, 165, 0.1);
+      color: #0052A5;
+    }
+
+    &.jdpay {
+      background: rgba(226, 35, 26, 0.1);
+      color: #E2231A;
+    }
+
+    &.usdt {
+      background: rgba(38, 161, 123, 0.1);
+      color: #26A17B;
+    }
+
+    &.default {
+      background: rgba(128, 128, 128, 0.1);
+      color: #808080;
+    }
   }
 
   .payment-method-name {

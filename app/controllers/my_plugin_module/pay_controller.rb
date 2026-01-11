@@ -3,8 +3,8 @@
 module ::MyPluginModule
   class PayController < ::ApplicationController
     requires_plugin PLUGIN_NAME
-    before_action :ensure_logged_in, except: [:notify_callback]
-    skip_before_action :verify_authenticity_token, only: [:notify_callback]
+    before_action :ensure_logged_in, except: [:notify_callback, :return_callback]
+    skip_before_action :verify_authenticity_token, only: [:notify_callback, :return_callback]
 
     # GET /coin/pay - 充值页面
     def index
@@ -156,13 +156,23 @@ module ::MyPluginModule
     # GET /coin/pay/return - 同步回调处理
     def return_callback
       begin
-        Rails.logger.info "[支付] 收到同步回调: #{params.to_unsafe_h}"
+        Rails.logger.info "[支付] ========== 同步回调开始 =========="
+        Rails.logger.info "[支付] 原始参数: #{params.to_unsafe_h}"
         
         epay = EpayService.new
         callback_params = params.to_unsafe_h.except(:controller, :action)
+        
+        Rails.logger.info "[支付] 过滤后参数: #{callback_params}"
+        Rails.logger.info "[支付] trade_status: #{params[:trade_status]}"
+        Rails.logger.info "[支付] out_trade_no: #{params[:out_trade_no]}"
 
         # 验证签名
-        if epay.verify_callback(callback_params) && params[:trade_status] == 'TRADE_SUCCESS'
+        sign_valid = epay.verify_callback(callback_params)
+        Rails.logger.info "[支付] 签名验证结果: #{sign_valid}"
+        
+        if sign_valid && params[:trade_status] == 'TRADE_SUCCESS'
+          Rails.logger.info "[支付] 开始处理支付成功..."
+          
           # 同步回调也处理支付成功（防止异步回调延迟或失败）
           result = PaymentService.process_payment_success(
             params[:out_trade_no],
@@ -170,19 +180,21 @@ module ::MyPluginModule
             params[:money]
           )
           
+          Rails.logger.info "[支付] PaymentService处理结果: #{result.inspect}"
+          
           if result[:success]
             Rails.logger.info "[支付] 同步回调处理成功: #{params[:out_trade_no]}"
           else
-            Rails.logger.warn "[支付] 同步回调处理结果: #{result[:error]}"
+            Rails.logger.warn "[支付] 同步回调处理失败: #{result[:error]}"
           end
           
           redirect_to "/coin?payment=success"
         else
-          Rails.logger.warn "[支付] 同步回调验签失败或状态非成功"
+          Rails.logger.warn "[支付] 同步回调验签失败或状态非成功 - sign_valid: #{sign_valid}, trade_status: #{params[:trade_status]}"
           redirect_to "/coin?payment=failed"
         end
       rescue => e
-        Rails.logger.error "[支付] 同步回调异常: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+        Rails.logger.error "[支付] 同步回调异常: #{e.message}\n#{e.backtrace.first(10).join("\n")}"
         redirect_to "/coin?payment=error"
       end
     end

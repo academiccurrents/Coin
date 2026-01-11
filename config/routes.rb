@@ -29,8 +29,12 @@ MyPluginModule::Engine.routes.draw do
   get "/pay/channels" => "pay#payment_channels"
   post "/pay/create_order" => "pay#create_order"
   post "/pay/create_custom_order" => "pay#create_custom_order"
+  
+  # 易支付回调 - 同时支持GET和POST
+  get "/pay/notify" => "pay#notify_callback"
   post "/pay/notify" => "pay#notify_callback"
   get "/pay/return" => "pay#return_callback"
+  
   get "/pay/order_status" => "pay#order_status"
   get "/pay/orders" => "pay#orders"
 
