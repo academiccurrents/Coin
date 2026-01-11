@@ -1894,6 +1894,16 @@
     margin-left: 4px;
   }
 
+  .package-desc {
+    font-size: 12px;
+    color: var(--coin-text-secondary);
+    margin-bottom: 8px;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .package-price {
     display: flex;
     flex-direction: column;
@@ -1964,9 +1974,9 @@
       color: #07C160;
     }
 
-    &.qqpay {
-      background: rgba(18, 183, 245, 0.1);
-      color: #12B7F5;
+    &.paypal {
+      background: rgba(0, 48, 135, 0.1);
+      color: #003087;
     }
   }
 
@@ -1988,19 +1998,18 @@
     }
   }
 
-  // 支付底部 - 仅在充值页面内显示
+  // 支付底部 - 使用 sticky 定位，仅在充值页面内显示
   .pay-footer {
-    position: fixed;
+    position: sticky;
     bottom: 0;
-    left: 0;
-    right: 0;
     background: var(--coin-bg);
     border-top: 1px solid var(--coin-border);
     padding: 16px 20px;
+    margin: 16px -16px -16px -16px; // 抵消 container 的 padding
     display: flex;
     align-items: center;
     justify-content: space-between;
-    z-index: 1000;
+    z-index: 100;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
   }
 
@@ -2019,6 +2028,11 @@
     font-size: 24px;
     font-weight: 700;
     color: var(--coin-primary);
+  }
+
+  .pay-coins {
+    font-size: 12px;
+    color: var(--coin-text-secondary);
   }
 
   .pay-btn {
@@ -2042,11 +2056,6 @@
       opacity: 0.6;
       cursor: not-allowed;
     }
-  }
-
-  // 为底部固定栏留出空间
-  .coin-container {
-    padding-bottom: 100px;
   }
 
   // 二维码模态框
@@ -2121,6 +2130,7 @@
 
     .pay-footer {
       padding: 12px 16px;
+      margin: 16px -12px -12px -12px;
     }
 
     .pay-amount {
@@ -2131,10 +2141,6 @@
       height: 44px;
       padding: 0 28px;
       font-size: 15px;
-    }
-
-    .coin-container {
-      padding-bottom: 90px;
     }
 
     .qrcode-image {
@@ -2165,6 +2171,10 @@
 
     .pay-btn {
       padding: 0 20px;
+    }
+
+    .pay-footer {
+      margin: 16px -10px -10px -10px;
     }
   }
 }
@@ -2538,20 +2548,4 @@
     flex-direction: column;
     gap: 12px;
   }
-}
-
-
-// ==========================================
-// 确保 pay-footer 只在充值页面显示
-// ==========================================
-
-// 当不在充值页面时，隐藏 pay-footer（以防万一）
-body:not(:has(.coin-pay-page)) .pay-footer {
-  display: none !important;
-}
-
-// 确保 Discourse 默认 footer 在充值页面不被遮挡
-.coin-pay-page ~ footer,
-.coin-pay-page + footer {
-  margin-bottom: 80px;
 }

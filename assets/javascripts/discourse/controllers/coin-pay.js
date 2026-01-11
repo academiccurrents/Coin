@@ -79,7 +79,7 @@ export default class CoinPayController extends Controller {
     const names = {
       alipay: "支付宝",
       wxpay: "微信",
-      qqpay: "QQ钱包"
+      paypal: "PayPal"
     };
     return names[this.selectedPaymentType] || this.selectedPaymentType;
   }

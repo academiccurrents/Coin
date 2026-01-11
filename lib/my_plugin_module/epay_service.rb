@@ -48,7 +48,7 @@ module ::MyPluginModule
       [
         { type: 'alipay', name: '支付宝', icon: 'alipay' },
         { type: 'wxpay', name: '微信支付', icon: 'wechat' },
-        { type: 'qqpay', name: 'QQ钱包', icon: 'qq' }
+        { type: 'paypal', name: 'PayPal', icon: 'paypal' }
       ]
     end
 
