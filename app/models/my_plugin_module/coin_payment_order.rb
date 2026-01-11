@@ -11,7 +11,7 @@ module ::MyPluginModule
                optional: true
 
     # 状态枚举: 0=pending, 1=paid, 2=failed, 3=expired
-    enum status: { pending: 0, paid: 1, failed: 2, expired: 3 }
+    enum :status, { pending: 0, paid: 1, failed: 2, expired: 3 }
 
     validates :out_trade_no, presence: true, uniqueness: true
     validates :coin_amount, presence: true, numericality: { greater_than: 0, only_integer: true }

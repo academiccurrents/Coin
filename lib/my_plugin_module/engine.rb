@@ -2,7 +2,7 @@
 
 module ::MyPluginModule
   class Engine < ::Rails::Engine
-    engine_name PLUGIN_NAME
+    engine_name "discourse-coin"
     isolate_namespace MyPluginModule
   end
 end
