@@ -7,13 +7,17 @@ export default class CoinPayRoute extends Route {
   @service currentUser;
   @service router;
 
+  queryParams = {
+    payment: { refreshModel: false }
+  };
+
   beforeModel() {
     if (!this.currentUser) {
       this.router.transitionTo("login");
     }
   }
 
-  async model() {
+  async model(params) {
     try {
       const [packagesResult, channelsResult, pendingResult] = await Promise.all([
         ajax("/coin/pay/packages.json"),
@@ -28,7 +32,8 @@ export default class CoinPayRoute extends Route {
         balance: packagesResult.balance || 0,
         coinName: packagesResult.coin_name || "硬币",
         channels: channelsResult.channels || [],
-        pendingOrder: pendingResult.has_pending ? pendingResult.order : null
+        pendingOrder: pendingResult.has_pending ? pendingResult.order : null,
+        paymentStatus: params.payment || null
       };
     } catch (error) {
       console.error("加载充值数据失败:", error);
@@ -40,7 +45,8 @@ export default class CoinPayRoute extends Route {
         coinName: "硬币",
         channels: [],
         pendingOrder: null,
-        error: true
+        error: true,
+        paymentStatus: params.payment || null
       };
     }
   }

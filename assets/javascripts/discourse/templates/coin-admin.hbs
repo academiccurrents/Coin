@@ -162,7 +162,7 @@
                 </div>
                 <div class="invoice-info">
                   <span class="invoice-user">{{invoice.username}}</span>
-                  <span class="invoice-amount">{{invoice.amount}} 硬币</span>
+                  <span class="invoice-amount">{{invoice.amount}} {{model.coinName}}</span>
                   <span class="invoice-reason">{{invoice.reason}}</span>
                 </div>
               </div>
@@ -235,7 +235,7 @@
                 </div>
                 <div class="invoice-info">
                   <span class="invoice-user">{{invoice.username}}</span>
-                  <span class="invoice-amount">{{invoice.amount}} 硬币</span>
+                  <span class="invoice-amount">{{invoice.amount}} {{model.coinName}}</span>
                   <span class="invoice-reason">{{invoice.reason}}</span>
                 </div>
               </div>
@@ -330,7 +330,7 @@
               </div>
               <div class="edit-invoice-row">
                 <span class="edit-invoice-label">金额</span>
-                <span class="edit-invoice-value">{{this.editingInvoice.amount}} 硬币</span>
+                <span class="edit-invoice-value">{{this.editingInvoice.amount}} {{model.coinName}}</span>
               </div>
             </div>
           {{/if}}

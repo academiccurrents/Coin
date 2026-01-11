@@ -93,6 +93,7 @@ module ::MyPluginModule
         actual_price: order.actual_price.to_f,
         payment_type: order.payment_type,
         remaining_seconds: order.remaining_seconds,
+        pay_url: order.pay_url,
         created_at: order.created_at.iso8601
       }
     end

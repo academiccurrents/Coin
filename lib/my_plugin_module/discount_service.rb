@@ -12,9 +12,11 @@ module ::MyPluginModule
       min_rate || 100
     end
 
-    # 计算折扣后的价格
+    # 计算折扣后的价格（低于0.01元不打折）
     def self.calculate_discounted_price(original_price, discount_rate)
-      (original_price.to_f * discount_rate / 100.0).round(2)
+      discounted = (original_price.to_f * discount_rate / 100.0).round(2)
+      # 如果折扣后价格低于0.01元，则不打折，返回原价
+      discounted < 0.01 ? original_price.to_f.round(2) : discounted
     end
 
     # 获取用户所属的所有折扣组

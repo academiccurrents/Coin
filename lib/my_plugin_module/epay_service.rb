@@ -18,13 +18,9 @@ module ::MyPluginModule
       @api_endpoint = "#{@api_url}/api.php"
     end
 
-    # 获取支付渠道（返回默认渠道）
+    # 获取支付渠道（从数据库获取启用的渠道）
     def get_payment_channels
-      [
-        { type: 'alipay', name: '支付宝', icon: 'alipay' },
-        { type: 'wxpay', name: '微信支付', icon: 'wxpay' },
-        { type: 'paypal', name: 'PayPal', icon: 'paypal' }
-      ]
+      CoinPaymentChannel.enabled_channels
     end
 
     # 发起页面跳转支付

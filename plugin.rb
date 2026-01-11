@@ -27,6 +27,7 @@ after_initialize do
     coin_discount_group
     coin_discount_group_user
     coin_payment_order
+    coin_payment_channel
   ].each do |model|
     require_relative "app/models/my_plugin_module/#{model}"
   end

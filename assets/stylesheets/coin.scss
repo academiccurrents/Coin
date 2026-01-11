@@ -2678,3 +2678,541 @@
     gap: 12px;
   }
 }
+
+
+// 待支付订单提示 - 继续支付按钮
+.pending-order-alert {
+  .pending-alert-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px 12px 16px;
+  }
+
+  .pending-continue-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--coin-warning);
+    color: white;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #e68600;
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .svg-icon {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .pending-alert-close {
+    position: static;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(0, 0, 0, 0.1);
+    color: inherit;
+    opacity: 0.8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    flex-shrink: 0;
+
+    &:hover {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .svg-icon {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+
+// ==========================================
+// 渠道管理样式
+// ==========================================
+
+// 无渠道提示
+.no-channels-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--coin-text-secondary);
+
+  .svg-icon {
+    width: 48px;
+    height: 48px;
+    opacity: 0.5;
+  }
+
+  span {
+    font-size: 15px;
+    font-weight: 500;
+  }
+}
+
+// 渠道管理模态框
+.channel-modal {
+  max-width: 480px;
+}
+
+.admin-channel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-channel-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--coin-bg-secondary);
+  border-radius: var(--coin-radius);
+  transition: all 0.2s ease;
+
+  &.disabled {
+    opacity: 0.5;
+  }
+
+  &:hover {
+    background: var(--coin-border);
+  }
+}
+
+.admin-channel-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-channel-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .svg-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  &.alipay {
+    background: rgba(0, 166, 226, 0.1);
+    color: #00A6E2;
+  }
+
+  &.wxpay {
+    background: rgba(7, 193, 96, 0.1);
+    color: #07C160;
+  }
+
+  &.paypal {
+    background: rgba(0, 48, 135, 0.1);
+    color: #003087;
+  }
+
+  &.qqpay {
+    background: rgba(18, 183, 245, 0.1);
+    color: #12B7F5;
+  }
+
+  &.unionpay, &.bank {
+    background: rgba(0, 82, 165, 0.1);
+    color: #0052A5;
+  }
+
+  &.usdt {
+    background: rgba(38, 161, 123, 0.1);
+    color: #26A17B;
+  }
+}
+
+.admin-channel-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-channel-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--coin-text);
+}
+
+.admin-channel-type {
+  font-size: 12px;
+  color: var(--coin-text-secondary);
+}
+
+.admin-channel-actions {
+  flex-shrink: 0;
+}
+
+// Toggle 开关样式
+.channel-toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+  cursor: pointer;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--coin-border);
+    border-radius: 28px;
+    transition: all 0.3s ease;
+
+    &::before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  input:checked + .toggle-slider {
+    background-color: var(--coin-success);
+  }
+
+  input:checked + .toggle-slider::before {
+    transform: translateX(22px);
+  }
+}
+
+// 响应式
+@media (max-width: 600px) {
+  .channel-modal {
+    max-width: 100%;
+  }
+
+  .admin-channel-item {
+    padding: 12px 14px;
+  }
+
+  .admin-channel-icon {
+    width: 40px;
+    height: 40px;
+
+    .svg-icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .admin-channel-name {
+    font-size: 14px;
+  }
+}
+
+// ==================== 折扣管理样式 ====================
+
+.discount-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--tertiary-very-low, #e8f4fd);
+  border-radius: var(--coin-radius);
+  margin-bottom: 16px;
+  
+  .svg-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--coin-primary);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  
+  span {
+    font-size: 13px;
+    color: var(--coin-text-secondary);
+    line-height: 1.5;
+  }
+}
+
+.discount-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.discount-group-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--coin-bg);
+  border: 1px solid var(--coin-border);
+  border-radius: var(--coin-radius);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: var(--coin-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+}
+
+.discount-group-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.discount-group-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.discount-group-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--coin-text);
+}
+
+.discount-group-rate {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--coin-success);
+  background: rgba(52, 199, 89, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.discount-group-users {
+  font-size: 12px;
+  color: var(--coin-text-secondary);
+}
+
+.discount-group-desc {
+  display: block;
+  font-size: 13px;
+  color: var(--coin-text-secondary);
+  margin-top: 4px;
+}
+
+.discount-group-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+// 用户搜索区域
+.user-search-section {
+  margin-bottom: 20px;
+}
+
+.user-search-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.user-search-input {
+  flex: 1;
+}
+
+.user-search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--coin-primary);
+  color: white;
+  border: none;
+  border-radius: var(--coin-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: var(--coin-primary-hover);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .svg-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.user-search-results {
+  margin-top: 8px;
+  background: var(--coin-bg);
+  border: 1px solid var(--coin-border);
+  border-radius: var(--coin-radius);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.user-search-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  
+  &:hover {
+    background: var(--coin-bg-secondary);
+  }
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--coin-border);
+  }
+  
+  .add-icon {
+    margin-left: auto;
+    width: 16px;
+    height: 16px;
+    color: var(--coin-success);
+  }
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--coin-text);
+}
+
+.section-title-small {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--coin-text);
+  margin-bottom: 12px;
+}
+
+.group-users-section {
+  border-top: 1px solid var(--coin-border);
+  padding-top: 16px;
+}
+
+.group-users-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.group-user-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--coin-bg-secondary);
+  border: 1px solid var(--coin-border);
+  border-radius: 20px;
+  
+  .user-avatar {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .user-name {
+    font-size: 13px;
+  }
+}
+
+.user-remove-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--coin-text-secondary);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: var(--coin-danger);
+    color: white;
+  }
+  
+  .svg-icon {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.form-hint {
+  display: block;
+  font-size: 12px;
+  color: var(--coin-text-secondary);
+  margin-top: 4px;
+}
+
+// 响应式
+@media (max-width: 600px) {
+  .discount-group-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  .discount-group-actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .group-users-list {
+    flex-direction: column;
+  }
+  
+  .group-user-item {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

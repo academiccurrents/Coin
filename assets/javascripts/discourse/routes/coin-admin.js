@@ -5,6 +5,7 @@ import { service } from "@ember/service";
 export default class CoinAdminRoute extends Route {
   @service currentUser;
   @service router;
+  @service siteSettings;
 
   beforeModel() {
     if (!this.currentUser?.admin) {
@@ -27,7 +28,8 @@ export default class CoinAdminRoute extends Route {
         pendingInvoices: invoicesResult.invoices || [],
         completedInvoices: completedInvoicesResult.invoices || [],
         completedInvoicesTotal: completedInvoicesResult.total || 0,
-        hasMoreCompletedInvoices: completedInvoicesResult.has_more || false
+        hasMoreCompletedInvoices: completedInvoicesResult.has_more || false,
+        coinName: this.siteSettings.coin_name || "硬币"
       };
     } catch (error) {
       console.error("加载管理员数据失败:", error);
@@ -38,6 +40,7 @@ export default class CoinAdminRoute extends Route {
         completedInvoices: [],
         completedInvoicesTotal: 0,
         hasMoreCompletedInvoices: false,
+        coinName: this.siteSettings.coin_name || "硬币",
         error: true,
         errorMessage: error.jqXHR?.responseJSON?.errors?.[0] || error.message
       };

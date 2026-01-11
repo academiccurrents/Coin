@@ -45,4 +45,19 @@ MyPluginModule::Engine.routes.draw do
   put "/pay/admin/packages/:id" => "pay#update_package"
   delete "/pay/admin/packages/:id" => "pay#delete_package"
   post "/pay/admin/seed_packages" => "pay#seed_packages"
+
+  # 管理员渠道管理
+  get "/pay/admin/channels" => "pay#admin_channels"
+  put "/pay/admin/channels/:id" => "pay#update_channel"
+  post "/pay/admin/seed_channels" => "pay#seed_channels"
+
+  # 管理员折扣管理
+  get "/pay/admin/discount_groups" => "pay#admin_discount_groups"
+  post "/pay/admin/discount_groups" => "pay#create_discount_group"
+  put "/pay/admin/discount_groups/:id" => "pay#update_discount_group"
+  delete "/pay/admin/discount_groups/:id" => "pay#delete_discount_group"
+  get "/pay/admin/discount_groups/:id/users" => "pay#discount_group_users"
+  post "/pay/admin/discount_users" => "pay#add_discount_user"
+  delete "/pay/admin/discount_users" => "pay#remove_discount_user"
+  get "/pay/admin/search_users" => "pay#search_users"
 end

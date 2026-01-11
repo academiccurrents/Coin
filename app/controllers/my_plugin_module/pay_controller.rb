@@ -59,6 +59,8 @@ module ::MyPluginModule
       if mode == 'qrcode'
         result = epay.create_api_pay(pay_params)
         if result[:success]
+          # 保存 pay_url 到订单
+          order.update(pay_url: result[:url]) if result[:url].present?
           render_json_dump({
             success: true,
             order_id: order.id,
@@ -71,6 +73,8 @@ module ::MyPluginModule
         end
       else
         result = epay.create_page_pay(pay_params)
+        # 保存 pay_url 到订单
+        order.update(pay_url: result[:url]) if result[:url].present?
         render_json_dump({
           success: true,
           order_id: order.id,
@@ -107,7 +111,7 @@ module ::MyPluginModule
       render plain: result[:success] ? 'success' : 'fail'
     end
 
-    # GET /coin/pay/return - 同步回调处理
+    # GET /coin/pay/return - 同步回调处理（易支付支付完成后跳转回来）
     def return_callback
       epay = EpayService.new
       callback_params = params.to_unsafe_h.except(:controller, :action)
@@ -118,9 +122,9 @@ module ::MyPluginModule
           params[:trade_no],
           params[:money]
         )
-        redirect_to "/coin?payment=success"
+        redirect_to "/coin/pay?payment=success", allow_other_host: false
       else
-        redirect_to "/coin?payment=failed"
+        redirect_to "/coin/pay?payment=failed", allow_other_host: false
       end
     end
 
@@ -186,6 +190,8 @@ module ::MyPluginModule
       if mode == 'qrcode'
         result = epay.create_api_pay(pay_params)
         if result[:success]
+          # 保存 pay_url 到订单
+          order.update(pay_url: result[:url]) if result[:url].present?
           render_json_dump({
             success: true,
             order_id: order.id,
@@ -198,6 +204,8 @@ module ::MyPluginModule
         end
       else
         result = epay.create_page_pay(pay_params)
+        # 保存 pay_url 到订单
+        order.update(pay_url: result[:url]) if result[:url].present?
         render_json_dump({
           success: true,
           order_id: order.id,
@@ -269,6 +277,138 @@ module ::MyPluginModule
       render_json_dump({ success: true, created_count: created.length, packages: created })
     end
 
+    # ==================== 管理员渠道管理 ====================
+
+    def admin_channels
+      ensure_admin!
+      channels = CoinPaymentChannel.ordered.map { |c| serialize_admin_channel(c) }
+      render_json_dump({ success: true, channels: channels })
+    end
+
+    def update_channel
+      ensure_admin!
+      channel = CoinPaymentChannel.find(params[:id])
+      
+      update_params = {}
+      update_params[:name] = params[:name] if params[:name].present?
+      update_params[:enabled] = params[:enabled] == true || params[:enabled] == 'true' if params.key?(:enabled)
+      update_params[:display_order] = params[:display_order].to_i if params[:display_order].present?
+
+      channel.update!(update_params)
+      render_json_dump({ success: true, channel: serialize_admin_channel(channel) })
+    end
+
+    def seed_channels
+      ensure_admin!
+      default_channels = [
+        { channel_type: 'alipay', name: '支付宝', icon: 'alipay', display_order: 1 },
+        { channel_type: 'wxpay', name: '微信支付', icon: 'wxpay', display_order: 2 },
+        { channel_type: 'paypal', name: 'PayPal', icon: 'paypal', display_order: 3 }
+      ]
+
+      created = []
+      default_channels.each do |ch_data|
+        next if CoinPaymentChannel.exists?(channel_type: ch_data[:channel_type])
+        channel = CoinPaymentChannel.create!(ch_data.merge(enabled: true))
+        created << serialize_admin_channel(channel)
+      end
+
+      render_json_dump({ success: true, created_count: created.length, channels: created })
+    end
+
+    # ==================== 管理员折扣管理 ====================
+
+    def admin_discount_groups
+      ensure_admin!
+      groups = CoinDiscountGroup.ordered.map { |g| serialize_discount_group(g) }
+      render_json_dump({ success: true, groups: groups })
+    end
+
+    def create_discount_group
+      ensure_admin!
+      group = CoinDiscountGroup.create!(
+        name: params[:name],
+        discount_rate: params[:discount_rate].to_i,
+        description: params[:description]
+      )
+      render_json_dump({ success: true, group: serialize_discount_group(group) })
+    end
+
+    def update_discount_group
+      ensure_admin!
+      group = CoinDiscountGroup.find(params[:id])
+      
+      update_params = {}
+      update_params[:name] = params[:name] if params[:name].present?
+      update_params[:discount_rate] = params[:discount_rate].to_i if params[:discount_rate].present?
+      update_params[:description] = params[:description] if params.key?(:description)
+
+      group.update!(update_params)
+      render_json_dump({ success: true, group: serialize_discount_group(group) })
+    end
+
+    def delete_discount_group
+      ensure_admin!
+      CoinDiscountGroup.find(params[:id]).destroy!
+      render_json_dump({ success: true })
+    end
+
+    def discount_group_users
+      ensure_admin!
+      group = CoinDiscountGroup.find(params[:id])
+      users = DiscountService.get_group_users(group.id, limit: 200)
+      render_json_dump({ success: true, users: users })
+    end
+
+    def add_discount_user
+      ensure_admin!
+      username = params[:username]
+      group_id = params[:group_id]
+
+      user = User.find_by_username(username)
+      return render_json_error("用户不存在", status: 404) unless user
+
+      group = CoinDiscountGroup.find(group_id)
+      
+      if DiscountService.user_in_group?(user.id, group.id)
+        return render_json_error("用户已在该折扣组中", status: 400)
+      end
+
+      DiscountService.add_user_to_group(user.id, group.id)
+      render_json_dump({ 
+        success: true, 
+        user: {
+          id: user.id,
+          username: user.username,
+          avatar_url: user.avatar_template.gsub('{size}', '45')
+        }
+      })
+    end
+
+    def remove_discount_user
+      ensure_admin!
+      user_id = params[:user_id]
+      group_id = params[:group_id]
+
+      DiscountService.remove_user_from_group(user_id, group_id)
+      render_json_dump({ success: true })
+    end
+
+    def search_users
+      ensure_admin!
+      term = params[:term]
+      return render_json_dump({ success: true, users: [] }) if term.blank?
+
+      users = User.where("username ILIKE ?", "%#{term}%").limit(10).map do |user|
+        {
+          id: user.id,
+          username: user.username,
+          avatar_url: user.avatar_template.gsub('{size}', '45')
+        }
+      end
+      render_json_dump({ success: true, users: users })
+    end
+
     private
 
     def ensure_admin!
@@ -298,6 +438,28 @@ module ::MyPluginModule
         recommended: package.recommended,
         active: package.active,
         created_at: package.created_at.iso8601
+      }
+    end
+
+    def serialize_admin_channel(channel)
+      {
+        id: channel.id,
+        channel_type: channel.channel_type,
+        name: channel.name,
+        icon: channel.icon,
+        enabled: channel.enabled,
+        display_order: channel.display_order
+      }
+    end
+
+    def serialize_discount_group(group)
+      {
+        id: group.id,
+        name: group.name,
+        discount_rate: group.discount_rate,
+        description: group.description,
+        user_count: group.user_count,
+        created_at: group.created_at.iso8601
       }
     end
   end

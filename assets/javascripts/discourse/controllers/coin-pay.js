@@ -9,6 +9,9 @@ export default class CoinPayController extends Controller {
   @service siteSettings;
   @service currentUser;
 
+  queryParams = ["payment"];
+  @tracked payment = null;
+
   @tracked selectedPackageId = null;
   @tracked selectedPaymentType = "alipay";
   @tracked isLoading = false;
@@ -33,6 +36,29 @@ export default class CoinPayController extends Controller {
   @tracked editingPackage = null;
   @tracked showEditModal = false;
 
+  // 管理员渠道管理
+  @tracked showChannelModal = false;
+  @tracked adminChannels = [];
+  @tracked isChannelLoading = false;
+
+  // 管理员折扣管理
+  @tracked showDiscountModal = false;
+  @tracked discountGroups = [];
+  @tracked isDiscountLoading = false;
+  @tracked editingGroup = null;
+  @tracked showGroupEditModal = false;
+  @tracked showGroupUsersModal = false;
+  @tracked selectedGroupId = null;
+  @tracked groupUsers = [];
+  @tracked userSearchTerm = "";
+  @tracked userSearchResults = [];
+  @tracked isSearching = false;
+
+  // 折扣组编辑表单
+  @tracked editGroupName = "";
+  @tracked editGroupRate = "";
+  @tracked editGroupDescription = "";
+
   // 编辑表单
   @tracked editCoinAmount = "";
   @tracked editPrice = "";
@@ -43,6 +69,14 @@ export default class CoinPayController extends Controller {
 
   get isAdmin() {
     return this.currentUser?.admin;
+  }
+
+  get paymentSuccess() {
+    return this.model?.paymentStatus === "success";
+  }
+
+  get paymentFailed() {
+    return this.model?.paymentStatus === "failed" || this.model?.paymentStatus === "error";
   }
 
   get hasPendingOrder() {
@@ -86,7 +120,9 @@ export default class CoinPayController extends Controller {
 
   get payDisabled() {
     if (this.isLoading) return true;
+    if (this.showPendingAlert) return true;
     if (!this.selectedPaymentType) return true;
+    if (!this.model?.channels?.length) return true;
     if (this.isCustomMode) {
       const amount = parseInt(this.customAmount) || 0;
       return amount < 1 || amount > 10000;
@@ -445,6 +481,309 @@ export default class CoinPayController extends Controller {
     } finally {
       this.isAdminLoading = false;
     }
+  }
+
+  // ==================== 渠道管理功能 ====================
+
+  @action
+  async openChannelModal() {
+    this.showChannelModal = true;
+    await this.loadAdminChannels();
+  }
+
+  @action
+  closeChannelModal() {
+    this.showChannelModal = false;
+  }
+
+  @action
+  async loadAdminChannels() {
+    this.isChannelLoading = true;
+    try {
+      const result = await ajax("/coin/pay/admin/channels.json");
+      this.adminChannels = result.channels || [];
+    } catch (error) {
+      console.error("加载渠道失败:", error);
+      alert("加载渠道失败");
+    } finally {
+      this.isChannelLoading = false;
+    }
+  }
+
+  @action
+  async toggleChannelEnabled(channel) {
+    this.isChannelLoading = true;
+    try {
+      await ajax(`/coin/pay/admin/channels/${channel.id}.json`, {
+        type: "PUT",
+        data: { enabled: !channel.enabled }
+      });
+      await this.loadAdminChannels();
+      this.send('refreshModel');
+    } catch (error) {
+      console.error("更新渠道状态失败:", error);
+      alert("更新失败");
+    } finally {
+      this.isChannelLoading = false;
+    }
+  }
+
+  @action
+  async seedChannels() {
+    if (!confirm("确定要重置默认渠道吗？（支付宝/微信/PayPal）")) {
+      return;
+    }
+
+    this.isChannelLoading = true;
+    try {
+      const result = await ajax("/coin/pay/admin/seed_channels.json", {
+        type: "POST"
+      });
+      if (result.created_count > 0) {
+        alert(`成功添加 ${result.created_count} 个渠道`);
+      } else {
+        alert("默认渠道已存在");
+      }
+      await this.loadAdminChannels();
+      this.send('refreshModel');
+    } catch (error) {
+      console.error("添加渠道失败:", error);
+      alert("添加渠道失败");
+    } finally {
+      this.isChannelLoading = false;
+    }
+  }
+
+  // ==================== 折扣管理功能 ====================
+
+  @action
+  async openDiscountModal() {
+    this.showDiscountModal = true;
+    await this.loadDiscountGroups();
+  }
+
+  @action
+  closeDiscountModal() {
+    this.showDiscountModal = false;
+    this.editingGroup = null;
+    this.showGroupEditModal = false;
+    this.showGroupUsersModal = false;
+  }
+
+  @action
+  async loadDiscountGroups() {
+    this.isDiscountLoading = true;
+    try {
+      const result = await ajax("/coin/pay/admin/discount_groups.json");
+      this.discountGroups = result.groups || [];
+    } catch (error) {
+      console.error("加载折扣组失败:", error);
+      alert("加载折扣组失败");
+    } finally {
+      this.isDiscountLoading = false;
+    }
+  }
+
+  @action
+  openCreateGroupModal() {
+    this.editingGroup = null;
+    this.editGroupName = "";
+    this.editGroupRate = "90";
+    this.editGroupDescription = "";
+    this.showGroupEditModal = true;
+  }
+
+  @action
+  openEditGroupModal(group) {
+    this.editingGroup = group;
+    this.editGroupName = group.name;
+    this.editGroupRate = String(group.discount_rate);
+    this.editGroupDescription = group.description || "";
+    this.showGroupEditModal = true;
+  }
+
+  @action
+  closeGroupEditModal() {
+    this.showGroupEditModal = false;
+    this.editingGroup = null;
+  }
+
+  @action
+  updateGroupField(field, event) {
+    this[field] = event.target.value;
+  }
+
+  @action
+  async saveDiscountGroup() {
+    const rate = parseInt(this.editGroupRate) || 0;
+    if (!this.editGroupName.trim()) {
+      alert("请输入折扣组名称");
+      return;
+    }
+    if (rate < 1 || rate > 100) {
+      alert("折扣率必须在1-100之间");
+      return;
+    }
+
+    const data = {
+      name: this.editGroupName.trim(),
+      discount_rate: rate,
+      description: this.editGroupDescription
+    };
+
+    this.isDiscountLoading = true;
+    try {
+      if (this.editingGroup) {
+        await ajax(`/coin/pay/admin/discount_groups/${this.editingGroup.id}.json`, {
+          type: "PUT",
+          data
+        });
+      } else {
+        await ajax("/coin/pay/admin/discount_groups.json", {
+          type: "POST",
+          data
+        });
+      }
+      this.closeGroupEditModal();
+      await this.loadDiscountGroups();
+      this.send('refreshModel');
+    } catch (error) {
+      console.error("保存折扣组失败:", error);
+      alert("保存失败: " + (error.jqXHR?.responseJSON?.errors?.[0] || error.message));
+    } finally {
+      this.isDiscountLoading = false;
+    }
+  }
+
+  @action
+  async deleteDiscountGroup(group) {
+    if (!confirm(`确定要删除折扣组"${group.name}"吗？该组内的用户将失去折扣。`)) {
+      return;
+    }
+
+    this.isDiscountLoading = true;
+    try {
+      await ajax(`/coin/pay/admin/discount_groups/${group.id}.json`, {
+        type: "DELETE"
+      });
+      await this.loadDiscountGroups();
+      this.send('refreshModel');
+    } catch (error) {
+      console.error("删除折扣组失败:", error);
+      alert("删除失败");
+    } finally {
+      this.isDiscountLoading = false;
+    }
+  }
+
+  @action
+  async openGroupUsersModal(group) {
+    this.selectedGroupId = group.id;
+    this.showGroupUsersModal = true;
+    this.userSearchTerm = "";
+    this.userSearchResults = [];
+    await this.loadGroupUsers(group.id);
+  }
+
+  @action
+  closeGroupUsersModal() {
+    this.showGroupUsersModal = false;
+    this.selectedGroupId = null;
+    this.groupUsers = [];
+    this.userSearchTerm = "";
+    this.userSearchResults = [];
+  }
+
+  @action
+  async loadGroupUsers(groupId) {
+    this.isDiscountLoading = true;
+    try {
+      const result = await ajax(`/coin/pay/admin/discount_groups/${groupId}/users.json`);
+      this.groupUsers = result.users || [];
+    } catch (error) {
+      console.error("加载用户列表失败:", error);
+      alert("加载用户列表失败");
+    } finally {
+      this.isDiscountLoading = false;
+    }
+  }
+
+  @action
+  updateUserSearchTerm(event) {
+    this.userSearchTerm = event.target.value;
+  }
+
+  @action
+  async searchUsers() {
+    if (!this.userSearchTerm.trim()) {
+      this.userSearchResults = [];
+      return;
+    }
+
+    this.isSearching = true;
+    try {
+      const result = await ajax("/coin/pay/admin/search_users.json", {
+        data: { term: this.userSearchTerm.trim() }
+      });
+      // 过滤掉已在组内的用户
+      const existingIds = this.groupUsers.map(u => u.id);
+      this.userSearchResults = (result.users || []).filter(u => !existingIds.includes(u.id));
+    } catch (error) {
+      console.error("搜索用户失败:", error);
+    } finally {
+      this.isSearching = false;
+    }
+  }
+
+  @action
+  async addUserToGroup(user) {
+    this.isDiscountLoading = true;
+    try {
+      await ajax("/coin/pay/admin/discount_users.json", {
+        type: "POST",
+        data: {
+          username: user.username,
+          group_id: this.selectedGroupId
+        }
+      });
+      this.groupUsers = [...this.groupUsers, user];
+      this.userSearchResults = this.userSearchResults.filter(u => u.id !== user.id);
+      await this.loadDiscountGroups();
+    } catch (error) {
+      console.error("添加用户失败:", error);
+      alert("添加失败: " + (error.jqXHR?.responseJSON?.errors?.[0] || error.message));
+    } finally {
+      this.isDiscountLoading = false;
+    }
+  }
+
+  @action
+  async removeUserFromGroup(user) {
+    if (!confirm(`确定要将用户"${user.username}"从该折扣组移除吗？`)) {
+      return;
+    }
+
+    this.isDiscountLoading = true;
+    try {
+      await ajax("/coin/pay/admin/discount_users.json", {
+        type: "DELETE",
+        data: {
+          user_id: user.id,
+          group_id: this.selectedGroupId
+        }
+      });
+      this.groupUsers = this.groupUsers.filter(u => u.id !== user.id);
+      await this.loadDiscountGroups();
+    } catch (error) {
+      console.error("移除用户失败:", error);
+      alert("移除失败");
+    } finally {
+      this.isDiscountLoading = false;
+    }
+  }
+
+  get selectedGroup() {
+    return this.discountGroups.find(g => g.id === this.selectedGroupId);
   }
 
   willDestroy() {
