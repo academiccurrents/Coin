@@ -19,6 +19,29 @@
   --coin-radius-lg: 16px;
 }
 
+// d-icon 通用样式
+.coin-page {
+  .d-icon {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  // Spinner 动画
+  .d-icon.fa-spin,
+  .fa-spin {
+    animation: fa-spin 1s infinite linear;
+  }
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 // 页面容器
 .coin-page {
   min-height: calc(100vh - 60px);
@@ -104,8 +127,9 @@
     color: white;
   }
 
-  i {
-    font-size: 14px;
+  .d-icon {
+    width: 14px;
+    height: 14px;
   }
 }
 
@@ -152,8 +176,9 @@
   align-items: center;
   justify-content: center;
 
-  i {
-    font-size: 28px;
+  .d-icon {
+    width: 28px;
+    height: 28px;
   }
 }
 
@@ -260,7 +285,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+
+  .d-icon {
+    width: 20px;
+    height: 20px;
+  }
 
   &.blue {
     background: rgba(0, 122, 255, 0.1);
@@ -309,8 +338,9 @@
   color: var(--coin-text);
   margin: 0;
 
-  i {
-    font-size: 16px;
+  .d-icon {
+    width: 16px;
+    height: 16px;
     color: var(--coin-primary);
   }
 }
@@ -370,8 +400,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
   flex-shrink: 0;
+
+  .d-icon {
+    width: 16px;
+    height: 16px;
+  }
 
   &.recharge {
     background: rgba(52, 199, 89, 0.1);
@@ -447,8 +481,9 @@
     transform: scale(1.1);
   }
 
-  i {
-    font-size: 14px;
+  .d-icon {
+    width: 14px;
+    height: 14px;
   }
 }
 
@@ -463,12 +498,12 @@
 }
 
 .empty-icon {
-  font-size: 48px;
   color: var(--coin-border);
   margin-bottom: 12px;
 
-  i {
-    font-size: inherit;
+  .d-icon {
+    width: 48px;
+    height: 48px;
   }
 }
 
@@ -537,8 +572,9 @@
   align-items: center;
   gap: 10px;
 
-  i {
-    font-size: 20px;
+  .d-icon {
+    width: 20px;
+    height: 20px;
     color: var(--coin-primary);
   }
 
@@ -737,8 +773,9 @@
     color: white;
   }
 
-  i {
-    font-size: 18px;
+  .d-icon {
+    width: 18px;
+    height: 18px;
   }
 }
 
@@ -793,8 +830,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
   flex-shrink: 0;
+
+  .d-icon {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .stat-content {
@@ -1016,8 +1057,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
   flex-shrink: 0;
+
+  .d-icon {
+    width: 16px;
+    height: 16px;
+  }
 
   &.pending {
     background: rgba(255, 149, 0, 0.1);

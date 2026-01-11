@@ -4,14 +4,14 @@
     <div class="coin-nav">
       <div class="coin-nav-left">
         <button class="coin-nav-back" {{on "click" this.goToCoinPage}}>
-          <i class="fa-solid fa-arrow-left"></i>
+          {{d-icon "arrow-left"}}
         </button>
         <span class="coin-nav-icon">📄</span>
         <span class="coin-nav-title">发票记录</span>
       </div>
       <div class="coin-nav-right">
         <button class="coin-nav-btn" {{on "click" this.refreshData}}>
-          <i class="fa-solid fa-arrows-rotate"></i>
+          {{d-icon "sync"}}
         </button>
       </div>
     </div>
@@ -20,7 +20,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          <i class="fa-solid fa-clock"></i>
+          {{d-icon "clock"}}
           <span>待开票</span>
         </h2>
         <span class="section-badge warning">{{this.pendingInvoices.length}}</span>
@@ -31,7 +31,7 @@
             <div class="invoice-card pending">
               <div class="invoice-left">
                 <div class="invoice-icon pending">
-                  <i class="fa-solid fa-hourglass-half"></i>
+                  {{d-icon "hourglass-half"}}
                 </div>
                 <div class="invoice-info">
                   <span class="invoice-amount">{{invoice.amount}} 硬币</span>
@@ -40,14 +40,14 @@
                 </div>
               </div>
               <div class="invoice-status pending">
-                <i class="fa-solid fa-clock"></i>
+                {{d-icon "clock"}}
                 <span>待处理</span>
               </div>
             </div>
           {{/each}}
         {{else}}
           <div class="empty-state small">
-            <i class="fa-solid fa-inbox"></i>
+            {{d-icon "inbox"}}
             <span>暂无待开票记录</span>
           </div>
         {{/if}}
@@ -58,7 +58,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          <i class="fa-solid fa-circle-check"></i>
+          {{d-icon "check-circle"}}
           <span>已开票</span>
         </h2>
         <span class="section-badge success">{{this.completedInvoices.length}}</span>
@@ -69,7 +69,7 @@
             <div class="invoice-card completed">
               <div class="invoice-left">
                 <div class="invoice-icon completed">
-                  <i class="fa-solid fa-check"></i>
+                  {{d-icon "check"}}
                 </div>
                 <div class="invoice-info">
                   <span class="invoice-amount">{{invoice.amount}} 硬币</span>
@@ -83,12 +83,12 @@
               <div class="invoice-actions">
                 {{#if invoice.invoice_url}}
                   <a href="{{invoice.invoice_url}}" target="_blank" rel="noopener noreferrer" class="invoice-view-btn">
-                    <i class="fa-solid fa-external-link"></i>
+                    {{d-icon "external-link"}}
                     <span>查看发票</span>
                   </a>
                 {{/if}}
                 <div class="invoice-status completed">
-                  <i class="fa-solid fa-check"></i>
+                  {{d-icon "check"}}
                   <span>已完成</span>
                 </div>
               </div>
@@ -96,7 +96,7 @@
           {{/each}}
         {{else}}
           <div class="empty-state small">
-            <i class="fa-solid fa-inbox"></i>
+            {{d-icon "inbox"}}
             <span>暂无已开票记录</span>
           </div>
         {{/if}}
@@ -107,7 +107,7 @@
   {{!-- 成功提示 --}}
   {{#if this.showSuccessMessage}}
     <div class="coin-toast success">
-      <i class="fa-solid fa-circle-check"></i>
+      {{d-icon "check-circle"}}
       <span>{{this.successMessage}}</span>
     </div>
   {{/if}}

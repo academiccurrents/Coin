@@ -4,14 +4,14 @@
     <div class="coin-nav">
       <div class="coin-nav-left">
         <button class="coin-nav-back" {{on "click" this.goToCoinPage}}>
-          <i class="fa-solid fa-arrow-left"></i>
+          {{d-icon "arrow-left"}}
         </button>
         <span class="coin-nav-icon">⚙️</span>
         <span class="coin-nav-title">管理员面板</span>
       </div>
       <div class="coin-nav-right">
         <button class="coin-nav-btn" {{on "click" this.refreshData}}>
-          <i class="fa-solid fa-arrows-rotate"></i>
+          {{d-icon "sync"}}
         </button>
       </div>
     </div>
@@ -20,7 +20,7 @@
     <div class="admin-stats-grid">
       <div class="stat-card blue">
         <div class="stat-icon">
-          <i class="fa-solid fa-users"></i>
+          {{d-icon "users"}}
         </div>
         <div class="stat-content">
           <span class="stat-value">{{this.statistics.total_users}}</span>
@@ -29,7 +29,7 @@
       </div>
       <div class="stat-card gold">
         <div class="stat-icon">
-          <i class="fa-solid fa-coins"></i>
+          {{d-icon "dollar-sign"}}
         </div>
         <div class="stat-content">
           <span class="stat-value">{{this.statistics.total_balance}}</span>
@@ -38,7 +38,7 @@
       </div>
       <div class="stat-card green">
         <div class="stat-icon">
-          <i class="fa-solid fa-chart-line"></i>
+          {{d-icon "chart-line"}}
         </div>
         <div class="stat-content">
           <span class="stat-value">{{this.statistics.average_balance}}</span>
@@ -51,7 +51,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          <i class="fa-solid fa-magnifying-glass"></i>
+          {{d-icon "search"}}
           <span>查询用户</span>
         </h2>
       </div>
@@ -68,9 +68,9 @@
           </div>
           <button class="form-btn primary" {{on "click" this.queryUserBalance}} disabled={{this.isLoading}}>
             {{#if this.isLoading}}
-              <i class="fa-solid fa-spinner fa-spin"></i>
+              {{d-icon "spinner" class="fa-spin"}}
             {{else}}
-              <i class="fa-solid fa-search"></i>
+              {{d-icon "search"}}
             {{/if}}
             <span>查询</span>
           </button>
@@ -85,7 +85,7 @@
               <span class="query-balance">余额: <strong>{{this.queryResult.balance}}</strong></span>
             </div>
             <button class="query-close-btn" {{on "click" this.closeQueryResult}}>
-              <i class="fa-solid fa-xmark"></i>
+              {{d-icon "times"}}
             </button>
           </div>
           <div class="query-transactions">
@@ -111,7 +111,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          <i class="fa-solid fa-sliders"></i>
+          {{d-icon "sliders-h"}}
           <span>调整积分</span>
         </h2>
       </div>
@@ -150,10 +150,10 @@
         </div>
         <button class="form-btn primary full-width" {{on "click" this.adjustPoints}} disabled={{this.isLoading}}>
           {{#if this.isLoading}}
-            <i class="fa-solid fa-spinner fa-spin"></i>
+            {{d-icon "spinner" class="fa-spin"}}
             <span>处理中...</span>
           {{else}}
-            <i class="fa-solid fa-check"></i>
+            {{d-icon "check"}}
             <span>确认调整</span>
           {{/if}}
         </button>
@@ -164,7 +164,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          <i class="fa-solid fa-file-invoice"></i>
+          {{d-icon "file-alt"}}
           <span>待处理发票</span>
         </h2>
         <span class="section-badge warning">{{this.pendingInvoices.length}}</span>
@@ -175,7 +175,7 @@
             <div class="invoice-card pending">
               <div class="invoice-left">
                 <div class="invoice-icon">
-                  <i class="fa-solid fa-clock"></i>
+                  {{d-icon "clock"}}
                 </div>
                 <div class="invoice-info">
                   <span class="invoice-user">{{invoice.username}}</span>
@@ -184,14 +184,14 @@
                 </div>
               </div>
               <button class="invoice-action-btn" {{on "click" (fn this.openProcessInvoiceModal invoice)}}>
-                <i class="fa-solid fa-check"></i>
+                {{d-icon "check"}}
                 <span>处理</span>
               </button>
             </div>
           {{/each}}
         {{else}}
           <div class="empty-state small">
-            <i class="fa-solid fa-inbox"></i>
+            {{d-icon "inbox"}}
             <span>暂无待处理发票</span>
           </div>
         {{/if}}
@@ -202,7 +202,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          <i class="fa-solid fa-clock-rotate-left"></i>
+          {{d-icon "history"}}
           <span>最近充值</span>
         </h2>
       </div>
@@ -212,7 +212,7 @@
             <div class="transaction-card">
               <div class="transaction-left">
                 <div class="transaction-icon recharge">
-                  <i class="fa-solid fa-arrow-down"></i>
+                  {{d-icon "arrow-down"}}
                 </div>
                 <div class="transaction-details">
                   <span class="transaction-title">{{transaction.username}}</span>
@@ -226,7 +226,7 @@
           {{/each}}
         {{else}}
           <div class="empty-state small">
-            <i class="fa-solid fa-inbox"></i>
+            {{d-icon "inbox"}}
             <span>暂无充值记录</span>
           </div>
         {{/if}}
@@ -240,11 +240,11 @@
       <div class="coin-modal" {{on "click" this.stopPropagation}}>
         <div class="modal-header">
           <div class="modal-title-wrap">
-            <i class="fa-solid fa-file-invoice"></i>
+            {{d-icon "file-alt"}}
             <h3>处理发票</h3>
           </div>
           <button class="modal-close-btn" {{on "click" this.closeProcessInvoiceModal}}>
-            <i class="fa-solid fa-xmark"></i>
+            {{d-icon "times"}}
           </button>
         </div>
         <div class="modal-body">
@@ -264,10 +264,10 @@
           <button class="modal-btn cancel" {{on "click" this.closeProcessInvoiceModal}}>取消</button>
           <button class="modal-btn primary" {{on "click" this.processInvoice}} disabled={{this.isLoading}}>
             {{#if this.isLoading}}
-              <i class="fa-solid fa-spinner fa-spin"></i>
+              {{d-icon "spinner" class="fa-spin"}}
               <span>处理中...</span>
             {{else}}
-              <i class="fa-solid fa-check"></i>
+              {{d-icon "check"}}
               <span>确认处理</span>
             {{/if}}
           </button>
@@ -279,7 +279,7 @@
   {{!-- 成功提示 --}}
   {{#if this.showSuccessMessage}}
     <div class="coin-toast success">
-      <i class="fa-solid fa-circle-check"></i>
+      {{d-icon "check-circle"}}
       <span>{{this.successMessage}}</span>
     </div>
   {{/if}}

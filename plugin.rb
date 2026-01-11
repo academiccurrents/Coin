@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # name: discourse-coin
-# about: A comprehensive coin/points management plugin for Discourse with invoice request system
+# about: 一款基于易支付的积分动态充值插件
 # meta_topic_id: TODO
 # version: 0.0.2
 # authors: pandacc

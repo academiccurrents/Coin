@@ -1,1 +1,5 @@
 en:
+  site_settings:
+    coin_enabled: "Enable Coin Plugin"
+    coin_name: "Coin name (default: Coin)"
+    coin_invoice_enabled: "Enable invoice request feature"

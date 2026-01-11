@@ -9,12 +9,12 @@
       <div class="coin-nav-right">
         {{#if this.currentUser.admin}}
           <button class="coin-nav-btn" {{on "click" this.goToAdminPage}}>
-            <i class="fa-solid fa-shield-halved"></i>
+            {{d-icon "shield-alt"}}
             <span>管理</span>
           </button>
         {{/if}}
         <button class="coin-nav-btn" {{on "click" this.refreshData}}>
-          <i class="fa-solid fa-arrows-rotate"></i>
+          {{d-icon "sync"}}
         </button>
       </div>
     </div>
@@ -25,7 +25,7 @@
         <div class="balance-bg-pattern"></div>
         <div class="balance-content">
           <div class="balance-icon-wrap">
-            <i class="fa-solid fa-coins"></i>
+            {{d-icon "dollar-sign"}}
           </div>
           <div class="balance-info">
             <span class="balance-label">可用余额</span>
@@ -38,12 +38,12 @@
         <div class="balance-actions">
           {{#if this.coinInvoiceEnabled}}
             <button class="balance-action-btn primary" {{on "click" this.openInvoiceModal}}>
-              <i class="fa-solid fa-file-invoice"></i>
+              {{d-icon "file-alt"}}
               <span>申请发票</span>
             </button>
           {{/if}}
           <button class="balance-action-btn secondary" {{on "click" this.goToInvoicePage}}>
-            <i class="fa-solid fa-receipt"></i>
+            {{d-icon "file"}}
             <span>发票记录</span>
           </button>
         </div>
@@ -54,19 +54,19 @@
     <div class="coin-quick-actions">
       <div class="quick-action-item" {{on "click" this.goToInvoicePage}}>
         <div class="quick-action-icon blue">
-          <i class="fa-solid fa-clock-rotate-left"></i>
+          {{d-icon "history"}}
         </div>
         <span class="quick-action-text">历史记录</span>
       </div>
       <div class="quick-action-item" {{on "click" this.openInvoiceModal}}>
         <div class="quick-action-icon green">
-          <i class="fa-solid fa-file-circle-plus"></i>
+          {{d-icon "file-alt"}}
         </div>
         <span class="quick-action-text">开发票</span>
       </div>
       <div class="quick-action-item">
         <div class="quick-action-icon orange">
-          <i class="fa-solid fa-circle-question"></i>
+          {{d-icon "question-circle"}}
         </div>
         <span class="quick-action-text">帮助</span>
       </div>
@@ -76,7 +76,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          <i class="fa-solid fa-list-ul"></i>
+          {{d-icon "list"}}
           <span>交易记录</span>
         </h2>
         <span class="section-badge">{{model.transactions.length}}</span>
@@ -89,11 +89,11 @@
               <div class="transaction-left">
                 <div class="transaction-icon {{transaction.transaction_type}}">
                   {{#if (eq transaction.transaction_type "recharge")}}
-                    <i class="fa-solid fa-arrow-down"></i>
+                    {{d-icon "arrow-down"}}
                   {{else if (eq transaction.transaction_type "admin_adjust")}}
-                    <i class="fa-solid fa-sliders"></i>
+                    {{d-icon "sliders-h"}}
                   {{else}}
-                    <i class="fa-solid fa-arrow-up"></i>
+                    {{d-icon "arrow-up"}}
                   {{/if}}
                 </div>
                 <div class="transaction-details">
@@ -116,7 +116,7 @@
                 </span>
                 {{#if (and this.coinInvoiceEnabled (eq transaction.transaction_type "recharge"))}}
                   <button class="transaction-invoice-btn" {{on "click" (fn this.openInvoiceFromTransactionModal transaction)}}>
-                    <i class="fa-solid fa-file-invoice"></i>
+                    {{d-icon "file-alt"}}
                   </button>
                 {{/if}}
               </div>
@@ -125,7 +125,7 @@
         {{else}}
           <div class="empty-state">
             <div class="empty-icon">
-              <i class="fa-solid fa-inbox"></i>
+              {{d-icon "inbox"}}
             </div>
             <span class="empty-title">暂无交易记录</span>
             <span class="empty-desc">您的交易记录将在这里显示</span>
@@ -141,11 +141,11 @@
       <div class="coin-modal" {{on "click" this.stopPropagation}}>
         <div class="modal-header">
           <div class="modal-title-wrap">
-            <i class="fa-solid fa-file-invoice"></i>
+            {{d-icon "file-alt"}}
             <h3>申请发票</h3>
           </div>
           <button class="modal-close-btn" {{on "click" this.closeInvoiceModal}}>
-            <i class="fa-solid fa-xmark"></i>
+            {{d-icon "times"}}
           </button>
         </div>
         <div class="modal-body">
@@ -178,10 +178,10 @@
           <button class="modal-btn cancel" {{on "click" this.closeInvoiceModal}}>取消</button>
           <button class="modal-btn primary" {{on "click" this.submitInvoiceRequest}} disabled={{this.isLoading}}>
             {{#if this.isLoading}}
-              <i class="fa-solid fa-spinner fa-spin"></i>
+              {{d-icon "spinner" class="fa-spin"}}
               <span>提交中...</span>
             {{else}}
-              <i class="fa-solid fa-paper-plane"></i>
+              {{d-icon "paper-plane"}}
               <span>提交申请</span>
             {{/if}}
           </button>
@@ -196,11 +196,11 @@
       <div class="coin-modal" {{on "click" this.stopPropagation}}>
         <div class="modal-header">
           <div class="modal-title-wrap">
-            <i class="fa-solid fa-file-invoice"></i>
+            {{d-icon "file-alt"}}
             <h3>从交易申请发票</h3>
           </div>
           <button class="modal-close-btn" {{on "click" this.closeInvoiceFromTransactionModal}}>
-            <i class="fa-solid fa-xmark"></i>
+            {{d-icon "times"}}
           </button>
         </div>
         <div class="modal-body">
@@ -236,10 +236,10 @@
           <button class="modal-btn cancel" {{on "click" this.closeInvoiceFromTransactionModal}}>取消</button>
           <button class="modal-btn primary" {{on "click" this.submitInvoiceFromTransaction}} disabled={{this.isLoading}}>
             {{#if this.isLoading}}
-              <i class="fa-solid fa-spinner fa-spin"></i>
+              {{d-icon "spinner" class="fa-spin"}}
               <span>提交中...</span>
             {{else}}
-              <i class="fa-solid fa-paper-plane"></i>
+              {{d-icon "paper-plane"}}
               <span>提交申请</span>
             {{/if}}
           </button>
@@ -251,7 +251,7 @@
   {{!-- 成功提示 --}}
   {{#if this.showSuccessMessage}}
     <div class="coin-toast success">
-      <i class="fa-solid fa-circle-check"></i>
+      {{d-icon "check-circle"}}
       <span>{{this.successMessage}}</span>
     </div>
   {{/if}}

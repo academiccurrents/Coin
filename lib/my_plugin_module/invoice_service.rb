@@ -72,11 +72,11 @@ module ::MyPluginModule
       scope
         .limit(limit)
         .map do |invoice|
+          next nil unless invoice.user
           {
             id: invoice.id,
             user_id: invoice.user_id,
             username: invoice.user.username,
-            avatar_url: invoice.user.avatar_template_url.gsub("{size}", "45"),
             amount: invoice.amount,
             status: invoice.status,
             reason: invoice.reason,
@@ -85,7 +85,7 @@ module ::MyPluginModule
             created_at: invoice.created_at.iso8601,
             updated_at: invoice.updated_at.iso8601
           }
-        end
+        end.compact
     end
 
     def self.process_invoice(invoice_id, invoice_url)

@@ -63,42 +63,26 @@ module ::MyPluginModule
         end
     end
 
-    def self.get_user_transactions_by_username(user_id, limit: 20)
-      CoinTransaction
-        .by_user(user_id)
-        .recent
-        .limit(limit)
-        .map do |t|
-          {
-            id: t.id,
-            amount: t.amount,
-            balance_after: t.balance_after,
-            reason: t.reason,
-            transaction_type: t.transaction_type,
-            created_at: t.created_at.iso8601
-          }
-        end
-    end
-
     def self.get_recent_recharges(limit: 20)
-      CoinTransaction
+      # 使用 includes 预加载 user 关联，避免 N+1 查询
+      transactions = CoinTransaction
+        .includes(:user)
         .by_type("recharge")
         .recent
         .limit(limit)
-        .joins(:user)
-        .select("coin_transactions.*, users.username, users.avatar_template")
-        .map do |t|
-          {
-            id: t.id,
-            user_id: t.user_id,
-            username: t.user.username,
-            avatar_url: t.user.avatar_template_url.gsub("{size}", "45"),
-            amount: t.amount,
-            balance_after: t.balance_after,
-            reason: t.reason,
-            created_at: t.created_at.iso8601
-          }
-        end
+
+      transactions.map do |t|
+        next nil unless t.user
+        {
+          id: t.id,
+          user_id: t.user_id,
+          username: t.user.username,
+          amount: t.amount,
+          balance_after: t.balance_after,
+          reason: t.reason,
+          created_at: t.created_at.iso8601
+        }
+      end.compact
     end
 
     def self.get_statistics
@@ -141,18 +125,17 @@ module ::MyPluginModule
 
     def self.get_all_users_balance(limit: 50)
       CoinUserBalance
-        .joins(:user)
-        .select("coin_user_balances.*, users.username, users.avatar_template")
-        .order("coin_user_balances.balance DESC")
+        .includes(:user)
+        .order(balance: :desc)
         .limit(limit)
         .map do |b|
+          next nil unless b.user
           {
             user_id: b.user_id,
             username: b.user.username,
-            avatar_url: b.user.avatar_template_url.gsub("{size}", "45"),
             balance: b.balance
           }
-        end
+        end.compact
     end
   end
 end
