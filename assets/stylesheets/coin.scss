@@ -1988,7 +1988,7 @@
     }
   }
 
-  // 支付底部
+  // 支付底部 - 仅在充值页面内显示
   .pay-footer {
     position: fixed;
     bottom: 0;
@@ -2000,7 +2000,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    z-index: 100;
+    z-index: 1000;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
   }
 
@@ -2167,4 +2167,391 @@
       padding: 0 20px;
     }
   }
+}
+
+
+// ==========================================
+// 自定义充值样式
+// ==========================================
+
+.coin-pay-page {
+  // 自定义充值卡片
+  .custom-package {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 100px;
+    background: var(--coin-bg-secondary);
+    border: 2px dashed var(--coin-border);
+
+    &:hover {
+      border-color: var(--coin-primary);
+      background: rgba(0, 122, 255, 0.02);
+    }
+
+    &.selected {
+      border-style: solid;
+      border-color: var(--coin-primary);
+      background: rgba(0, 122, 255, 0.05);
+    }
+  }
+
+  .custom-package-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--coin-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--coin-primary);
+
+    .svg-icon {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .custom-package-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--coin-text-secondary);
+  }
+
+  // 自定义输入区域
+  .custom-input-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--coin-border);
+  }
+
+  .custom-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .custom-input {
+    width: 100%;
+    height: 52px;
+    padding: 0 80px 0 16px;
+    border: 2px solid var(--coin-primary);
+    border-radius: 12px;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--coin-text);
+    background: var(--coin-bg);
+    outline: none;
+    transition: all 0.2s ease;
+
+    &::placeholder {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--coin-text-secondary);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+    }
+  }
+
+  .custom-input-suffix {
+    position: absolute;
+    right: 16px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--coin-text-secondary);
+  }
+
+  .custom-input-hint {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--coin-text-secondary);
+  }
+
+  .custom-input-error {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--coin-danger);
+  }
+
+  // 支付底部优化
+  .pay-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .pay-coins {
+    font-size: 12px;
+    color: var(--coin-text-secondary);
+  }
+}
+
+// ==========================================
+// 管理员套餐管理样式
+// ==========================================
+
+.admin-modal {
+  max-width: 560px;
+}
+
+.admin-modal-body {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.admin-actions-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.admin-action-btn {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+
+  .svg-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  &.primary {
+    background: var(--coin-primary);
+    color: white;
+
+    &:hover {
+      background: var(--coin-primary-hover);
+    }
+  }
+
+  &.secondary {
+    background: var(--coin-bg-secondary);
+    color: var(--coin-text);
+    border: 1px solid var(--coin-border);
+
+    &:hover {
+      background: var(--coin-border);
+    }
+  }
+}
+
+.admin-loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--coin-text-secondary);
+}
+
+.admin-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--coin-text-secondary);
+  font-size: 14px;
+}
+
+.admin-package-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-package-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: var(--coin-bg-secondary);
+  border-radius: var(--coin-radius);
+  transition: all 0.2s ease;
+
+  &.inactive {
+    opacity: 0.6;
+  }
+
+  &:hover {
+    background: var(--coin-border);
+  }
+}
+
+.admin-package-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-package-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-package-coins {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--coin-text);
+}
+
+.admin-package-price {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--coin-primary);
+}
+
+.admin-package-tag {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &.recommended {
+    background: rgba(255, 149, 0, 0.1);
+    color: #FF9500;
+  }
+
+  &.inactive {
+    background: rgba(142, 142, 147, 0.1);
+    color: #8E8E93;
+  }
+}
+
+.admin-package-desc {
+  font-size: 13px;
+  color: var(--coin-text-secondary);
+}
+
+.admin-package-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.admin-pkg-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: none;
+  background: var(--coin-bg);
+  color: var(--coin-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  .svg-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover {
+    background: var(--coin-primary);
+    color: white;
+  }
+
+  &.danger:hover {
+    background: var(--coin-danger);
+    color: white;
+  }
+}
+
+// 表单复选框行
+.checkbox-row {
+  display: flex;
+  gap: 24px;
+  margin-top: 8px;
+}
+
+// 响应式优化
+@media (max-width: 600px) {
+  .coin-pay-page {
+    .custom-input {
+      height: 48px;
+      font-size: 18px;
+    }
+
+    .custom-package {
+      min-height: 90px;
+    }
+
+    .custom-package-icon {
+      width: 32px;
+      height: 32px;
+
+      .svg-icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    .custom-package-text {
+      font-size: 13px;
+    }
+  }
+
+  .admin-modal {
+    max-width: 100%;
+  }
+
+  .admin-modal-body {
+    max-height: 50vh;
+  }
+
+  .admin-actions-bar {
+    flex-direction: column;
+
+    .admin-action-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .admin-package-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .admin-package-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .checkbox-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+
+// ==========================================
+// 确保 pay-footer 只在充值页面显示
+// ==========================================
+
+// 当不在充值页面时，隐藏 pay-footer（以防万一）
+body:not(:has(.coin-pay-page)) .pay-footer {
+  display: none !important;
+}
+
+// 确保 Discourse 默认 footer 在充值页面不被遮挡
+.coin-pay-page ~ footer,
+.coin-pay-page + footer {
+  margin-bottom: 80px;
 }

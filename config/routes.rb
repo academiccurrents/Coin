@@ -28,8 +28,16 @@ MyPluginModule::Engine.routes.draw do
   get "/pay/packages" => "pay#packages"
   get "/pay/channels" => "pay#payment_channels"
   post "/pay/create_order" => "pay#create_order"
+  post "/pay/create_custom_order" => "pay#create_custom_order"
   post "/pay/notify" => "pay#notify_callback"
   get "/pay/return" => "pay#return_callback"
   get "/pay/order_status" => "pay#order_status"
   get "/pay/orders" => "pay#orders"
+
+  # 管理员套餐管理
+  get "/pay/admin/packages" => "pay#admin_packages"
+  post "/pay/admin/packages" => "pay#create_package"
+  put "/pay/admin/packages/:id" => "pay#update_package"
+  delete "/pay/admin/packages/:id" => "pay#delete_package"
+  post "/pay/admin/seed_packages" => "pay#seed_packages"
 end

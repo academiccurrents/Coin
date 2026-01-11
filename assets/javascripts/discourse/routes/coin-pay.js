@@ -1,6 +1,7 @@
 import Route from "@ember/routing/route";
 import { ajax } from "discourse/lib/ajax";
 import { service } from "@ember/service";
+import { action } from "@ember/object";
 
 export default class CoinPayRoute extends Route {
   @service currentUser;
@@ -39,5 +40,10 @@ export default class CoinPayRoute extends Route {
         error: true
       };
     }
+  }
+
+  @action
+  refreshModel() {
+    this.refresh();
   }
 }
