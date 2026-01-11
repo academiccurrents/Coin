@@ -51,20 +51,29 @@ module ::MyPluginModule
     end
 
     def self.get_user_transactions(user_id, limit: 20)
-      CoinTransaction
+      transactions = CoinTransaction
         .by_user(user_id)
         .recent
         .limit(limit)
-        .map do |t|
-          {
-            id: t.id,
-            amount: t.amount,
-            balance_after: t.balance_after,
-            reason: t.reason,
-            transaction_type: t.transaction_type,
-            created_at: t.created_at.iso8601
-          }
-        end
+
+      # 获取该用户所有已申请发票的交易ID
+      invoice_transaction_ids = CoinInvoiceRequest
+        .where(user_id: user_id)
+        .pluck(:admin_note)
+        .map { |note| note&.match(/关联交易ID: (\d+)/)&.[](1)&.to_i }
+        .compact
+
+      transactions.map do |t|
+        {
+          id: t.id,
+          amount: t.amount,
+          balance_after: t.balance_after,
+          reason: t.reason,
+          transaction_type: t.transaction_type,
+          created_at: t.created_at.iso8601,
+          invoice_requested: invoice_transaction_ids.include?(t.id)
+        }
+      end
     end
 
     def self.get_recent_recharges(limit: 20)
