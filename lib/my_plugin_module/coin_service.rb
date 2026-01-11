@@ -13,7 +13,7 @@ module ::MyPluginModule
       get_user_balance(user.id)
     end
 
-    def self.adjust_points!(acting_user, target_user, amount, reason: "管理员调整")
+    def self.adjust_points!(acting_user, target_user, amount, reason: "管理员调整", mark_as_recharge: false)
       ActiveRecord::Base.transaction do
         balance = CoinUserBalance.get_or_create(target_user.id)
         old_balance = balance.balance
@@ -25,15 +25,18 @@ module ::MyPluginModule
 
         balance.update!(balance: new_balance)
 
+        # 如果标记为充值，则使用 recharge 类型，否则使用 admin_adjust
+        transaction_type = mark_as_recharge ? "recharge" : "admin_adjust"
+
         CoinTransaction.create!(
           user_id: target_user.id,
           amount: amount,
           balance_after: new_balance,
           reason: reason,
-          transaction_type: "admin_adjust"
+          transaction_type: transaction_type
         )
 
-        Rails.logger.info "[积分] 用户 #{target_user.username} 积分调整: #{amount > 0 ? '+' : ''}#{amount}，原因: #{reason}"
+        Rails.logger.info "[积分] 用户 #{target_user.username} 积分调整: #{amount > 0 ? '+' : ''}#{amount}，原因: #{reason}，类型: #{transaction_type}"
 
         {
           user_id: target_user.id,
@@ -41,7 +44,8 @@ module ::MyPluginModule
           old_balance: old_balance,
           new_balance: new_balance,
           amount: amount,
-          reason: reason
+          reason: reason,
+          transaction_type: transaction_type
         }
       end
     end

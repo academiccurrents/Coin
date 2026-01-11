@@ -11,11 +11,7 @@ export default class CoinController extends Controller {
   
   @tracked isLoading = false;
   @tracked showInvoiceModal = false;
-  @tracked showInvoiceFromTransactionModal = false;
-  @tracked invoiceAmount = "";
-  @tracked invoiceReason = "";
   @tracked selectedTransactionId = null;
-  @tracked selectedTransactionAmount = 0;
   @tracked showSuccessMessage = false;
   @tracked successMessage = "";
 
@@ -27,6 +23,20 @@ export default class CoinController extends Controller {
     return this.siteSettings?.coin_invoice_enabled === true;
   }
 
+  // 获取可开票的充值记录（只有recharge类型且金额>0且未申请过发票的）
+  get invoiceableTransactions() {
+    const transactions = this.model?.transactions || [];
+    return transactions.filter(t => 
+      t.transaction_type === "recharge" && 
+      t.amount > 0 && 
+      !t.invoice_requested
+    );
+  }
+
+  get submitDisabled() {
+    return this.isLoading || !this.selectedTransactionId;
+  }
+
   @action
   stopPropagation(event) {
     event.stopPropagation();
@@ -35,94 +45,30 @@ export default class CoinController extends Controller {
   @action
   openInvoiceModal() {
     this.showInvoiceModal = true;
-    this.invoiceAmount = "";
-    this.invoiceReason = "";
+    this.selectedTransactionId = null;
   }
 
   @action
   closeInvoiceModal() {
     this.showInvoiceModal = false;
-    this.invoiceAmount = "";
-    this.invoiceReason = "";
+    this.selectedTransactionId = null;
+  }
+
+  @action
+  selectTransaction(transaction) {
+    this.selectedTransactionId = transaction.id;
   }
 
   @action
   openInvoiceFromTransactionModal(transaction) {
     this.selectedTransactionId = transaction.id;
-    this.selectedTransactionAmount = transaction.amount;
-    this.invoiceAmount = transaction.amount.toString();
-    this.invoiceReason = "从充值记录申请发票";
-    this.showInvoiceFromTransactionModal = true;
-  }
-
-  @action
-  closeInvoiceFromTransactionModal() {
-    this.showInvoiceFromTransactionModal = false;
-    this.selectedTransactionId = null;
-    this.selectedTransactionAmount = 0;
-    this.invoiceAmount = "";
-    this.invoiceReason = "";
-  }
-
-  @action
-  updateInvoiceAmount(event) {
-    this.invoiceAmount = event.target.value;
-  }
-
-  @action
-  updateInvoiceReason(event) {
-    this.invoiceReason = event.target.value;
+    this.showInvoiceModal = true;
   }
 
   @action
   async submitInvoiceRequest() {
-    const amount = parseInt(this.invoiceAmount);
-    const reason = this.invoiceReason || "发票申请";
-
-    if (!amount || amount <= 0) {
-      alert("请输入有效的申请金额");
-      return;
-    }
-
-    if (amount > this.model.balance) {
-      alert("积分不足，当前余额: " + this.model.balance);
-      return;
-    }
-
-    this.isLoading = true;
-
-    try {
-      const result = await ajax("/coin/invoice/create.json", {
-        type: "POST",
-        data: { amount, reason }
-      });
-
-      if (result.success) {
-        this.successMessage = "发票申请提交成功！";
-        this.showSuccessMessage = true;
-        this.closeInvoiceModal();
-        setTimeout(() => { this.showSuccessMessage = false; }, 3000);
-      }
-    } catch (error) {
-      console.error("提交发票申请失败:", error);
-      alert("提交失败: " + (error.jqXHR?.responseJSON?.errors?.[0] || error.message));
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  @action
-  async submitInvoiceFromTransaction() {
-    const amount = parseInt(this.invoiceAmount);
-    const reason = this.invoiceReason || "从交易记录申请发票";
-
-    if (!amount || amount <= 0) {
-      alert("请输入有效的申请金额");
-      return;
-    }
-
-    if (amount > this.model.balance) {
-      alert("积分不足，当前余额: " + this.model.balance);
+    if (!this.selectedTransactionId) {
+      alert("请选择要申请发票的充值记录");
       return;
     }
 
@@ -132,17 +78,16 @@ export default class CoinController extends Controller {
       const result = await ajax("/coin/invoice/create_from_transaction.json", {
         type: "POST",
         data: {
-          transaction_id: this.selectedTransactionId,
-          amount,
-          reason
+          transaction_id: this.selectedTransactionId
         }
       });
 
       if (result.success) {
         this.successMessage = "发票申请提交成功！";
         this.showSuccessMessage = true;
-        this.closeInvoiceFromTransactionModal();
+        this.closeInvoiceModal();
         setTimeout(() => { this.showSuccessMessage = false; }, 3000);
+        this.router.refresh();
       }
     } catch (error) {
       console.error("提交发票申请失败:", error);
@@ -165,6 +110,11 @@ export default class CoinController extends Controller {
   @action
   goToAdminPage() {
     this.router.transitionTo("coin-admin");
+  }
+
+  @action
+  goToPayPage() {
+    window.location.href = "/coin/pay";
   }
 
   @action

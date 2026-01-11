@@ -4,14 +4,14 @@
     <div class="coin-nav">
       <div class="coin-nav-left">
         <button class="coin-nav-back" {{on "click" this.goToCoinPage}}>
-          {{d-icon "arrow-left"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>
         </button>
         <span class="coin-nav-icon">⚙️</span>
         <span class="coin-nav-title">管理员面板</span>
       </div>
       <div class="coin-nav-right">
         <button class="coin-nav-btn" {{on "click" this.refreshData}}>
-          {{d-icon "sync"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M105.1 202.6c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0L386.3 160H352c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c0 0 0 0 0 0c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V48c0-17.7-14.3-32-32-32s-32 14.3-32 32v35.2L446.4 65.9C349.8-30.7 193.8-30.7 97.2 65.9c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2zM480 256c-17.7 0-32 14.3-32 32v35.2l-17.1-17.1c-96.6-96.6-252.6-96.6-349.2 0c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0l17.1 17.1H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V288c0-17.7-14.3-32-32-32z"/></svg>
         </button>
       </div>
     </div>
@@ -20,7 +20,7 @@
     <div class="admin-stats-grid">
       <div class="stat-card blue">
         <div class="stat-icon">
-          {{d-icon "users"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M144 0a80 80 0 1 1 0 160A80 80 0 1 1 144 0zM512 0a80 80 0 1 1 0 160A80 80 0 1 1 512 0zM0 298.7C0 239.8 47.8 192 106.7 192h42.7c15.9 0 31 3.5 44.6 9.7c-1.3 7.2-1.9 14.7-1.9 22.3c0 38.2 16.8 72.5 43.3 96c-.2 0-.4 0-.7 0H21.3C9.6 320 0 310.4 0 298.7zM405.3 320c-.2 0-.4 0-.7 0c26.6-23.5 43.3-57.8 43.3-96c0-7.6-.7-15-1.9-22.3c13.6-6.3 28.7-9.7 44.6-9.7h42.7C592.2 192 640 239.8 640 298.7c0 11.8-9.6 21.3-21.3 21.3H405.3zM224 224a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zM128 485.3C128 411.7 187.7 352 261.3 352H378.7C452.3 352 512 411.7 512 485.3c0 14.7-11.9 26.7-26.7 26.7H154.7c-14.7 0-26.7-11.9-26.7-26.7z"/></svg>
         </div>
         <div class="stat-content">
           <span class="stat-value">{{this.statistics.total_users}}</span>
@@ -29,7 +29,7 @@
       </div>
       <div class="stat-card gold">
         <div class="stat-icon">
-          {{d-icon "dollar-sign"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M160 0c17.7 0 32 14.3 32 32V67.7c1.6 .2 3.1 .4 4.7 .7c10.6 1.6 42.1 6.7 55.1 10c17.1 4.3 27.5 21.7 23.2 38.9s-21.7 27.5-38.9 23.2c-9.3-2.4-37.6-7-48.9-8.7c-32.1-4.8-59.6-2.4-78.5 4.9c-18.3 7-25.9 16.9-27.9 28c-1.9 10.7-.5 16.8 1.3 20.6c1.9 4 5.6 8.5 12.9 13.4c16.2 10.8 41.1 17.9 73.3 26.7l2.8 .8c28.4 7.7 63.2 17.2 89 34.3c14.1 9.4 27.3 22.1 35.5 39.7c8.3 17.8 10.1 37.8 6.3 59.1c-6.9 38-33.1 63.4-65.6 76.7c-13.7 5.6-28.6 9.2-44.4 11V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V445.1c-.4-.1-.9-.1-1.3-.2l-.2 0 0 0c-24.4-3.8-64.5-14.3-91.5-26.3c-16.2-7.2-23.4-26.1-16.2-42.2s26.1-23.4 42.2-16.2c20.9 9.3 55.3 18.4 75.2 21.6c31.9 4.7 58.2 2 76-5.3c16.9-6.9 24.6-16.9 26.8-28.9c1.9-10.6 .4-16.7-1.3-20.4c-1.9-4-5.6-8.4-13-13.3c-16.4-10.9-41.5-18.1-74-27l-2.8-.7c-28.1-7.6-62.4-16.9-87.8-33.9c-14.1-9.4-27.2-22-35.4-39.6c-8.3-17.8-10.1-37.9-6.3-59.2C54 115.1 80.2 89.4 113.6 76.1c13.5-5.4 28.1-9 43.4-11.1V32c0-17.7 14.3-32 32-32z"/></svg>
         </div>
         <div class="stat-content">
           <span class="stat-value">{{this.statistics.total_balance}}</span>
@@ -38,7 +38,7 @@
       </div>
       <div class="stat-card green">
         <div class="stat-icon">
-          {{d-icon "chart-line"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M64 64c0-17.7-14.3-32-32-32S0 46.3 0 64V400c0 44.2 35.8 80 80 80H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H80c-8.8 0-16-7.2-16-16V64zm406.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L320 210.7l-57.4-57.4c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L240 221.3l57.4 57.4c12.5 12.5 32.8 12.5 45.3 0l128-128z"/></svg>
         </div>
         <div class="stat-content">
           <span class="stat-value">{{this.statistics.average_balance}}</span>
@@ -51,27 +51,17 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          {{d-icon "search"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
           <span>查询用户</span>
         </h2>
       </div>
       <div class="admin-form">
         <div class="form-row">
           <div class="form-field flex-1">
-            <input
-              type="text"
-              class="form-input"
-              placeholder="输入用户名查询..."
-              value={{this.queryUsername}}
-              {{on "input" this.updateQueryUsername}}
-            />
+            <input type="text" class="form-input" placeholder="输入用户名查询..." value={{this.queryUsername}} {{on "input" this.updateQueryUsername}} />
           </div>
           <button class="form-btn primary" {{on "click" this.queryUserBalance}} disabled={{this.isLoading}}>
-            {{#if this.isLoading}}
-              {{d-icon "spinner" class="fa-spin"}}
-            {{else}}
-              {{d-icon "search"}}
-            {{/if}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>
             <span>查询</span>
           </button>
         </div>
@@ -85,7 +75,7 @@
               <span class="query-balance">余额: <strong>{{this.queryResult.balance}}</strong></span>
             </div>
             <button class="query-close-btn" {{on "click" this.closeQueryResult}}>
-              {{d-icon "times"}}
+              <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
             </button>
           </div>
           <div class="query-transactions">
@@ -111,7 +101,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          {{d-icon "sliders-h"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M0 416c0 17.7 14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384c-17.7 0-32 14.3-32 32zm128 0a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM320 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm32-80c-32.8 0-61 19.7-73.3 48L32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48zM192 128a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm73.3-64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64z"/></svg>
           <span>调整积分</span>
         </h2>
       </div>
@@ -119,41 +109,28 @@
         <div class="form-row">
           <div class="form-field">
             <label class="form-label">用户名</label>
-            <input
-              type="text"
-              class="form-input"
-              placeholder="输入用户名"
-              value={{this.adjustUsername}}
-              {{on "input" this.updateAdjustUsername}}
-            />
+            <input type="text" class="form-input" placeholder="输入用户名" value={{this.adjustUsername}} {{on "input" this.updateAdjustUsername}} />
           </div>
           <div class="form-field">
             <label class="form-label">调整数量</label>
-            <input
-              type="number"
-              class="form-input"
-              placeholder="正数增加，负数扣除"
-              value={{this.adjustAmount}}
-              {{on "input" this.updateAdjustAmount}}
-            />
+            <input type="number" class="form-input" placeholder="正数增加，负数扣除" value={{this.adjustAmount}} {{on "input" this.updateAdjustAmount}} />
           </div>
         </div>
         <div class="form-field">
           <label class="form-label">调整原因 <span class="optional">(可选)</span></label>
-          <input
-            type="text"
-            class="form-input"
-            placeholder="输入调整原因"
-            value={{this.adjustReason}}
-            {{on "input" this.updateAdjustReason}}
-          />
+          <input type="text" class="form-input" placeholder="输入调整原因" value={{this.adjustReason}} {{on "input" this.updateAdjustReason}} />
+        </div>
+        <div class="form-field">
+          <label class="form-checkbox">
+            <input type="checkbox" checked={{this.markAsRecharge}} {{on "change" this.toggleMarkAsRecharge}} />
+            <span class="checkbox-label">标记为充值（用户可申请发票）</span>
+            <span class="checkbox-hint">调试功能：勾选后此次加分将被标记为充值类型</span>
+          </label>
         </div>
         <button class="form-btn primary full-width" {{on "click" this.adjustPoints}} disabled={{this.isLoading}}>
           {{#if this.isLoading}}
-            {{d-icon "spinner" class="fa-spin"}}
             <span>处理中...</span>
           {{else}}
-            {{d-icon "check"}}
             <span>确认调整</span>
           {{/if}}
         </button>
@@ -164,7 +141,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          {{d-icon "file-alt"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM112 256H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
           <span>待处理发票</span>
         </h2>
         <span class="section-badge warning">{{this.pendingInvoices.length}}</span>
@@ -175,7 +152,7 @@
             <div class="invoice-card pending">
               <div class="invoice-left">
                 <div class="invoice-icon">
-                  {{d-icon "clock"}}
+                  <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></svg>
                 </div>
                 <div class="invoice-info">
                   <span class="invoice-user">{{invoice.username}}</span>
@@ -184,14 +161,14 @@
                 </div>
               </div>
               <button class="invoice-action-btn" {{on "click" (fn this.openProcessInvoiceModal invoice)}}>
-                {{d-icon "check"}}
+                <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
                 <span>处理</span>
               </button>
             </div>
           {{/each}}
         {{else}}
           <div class="empty-state small">
-            {{d-icon "inbox"}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121z"/></svg>
             <span>暂无待处理发票</span>
           </div>
         {{/if}}
@@ -202,7 +179,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          {{d-icon "history"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg>
           <span>最近充值</span>
         </h2>
       </div>
@@ -212,7 +189,7 @@
             <div class="transaction-card">
               <div class="transaction-left">
                 <div class="transaction-icon recharge">
-                  {{d-icon "arrow-down"}}
+                  <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"/></svg>
                 </div>
                 <div class="transaction-details">
                   <span class="transaction-title">{{transaction.username}}</span>
@@ -226,7 +203,7 @@
           {{/each}}
         {{else}}
           <div class="empty-state small">
-            {{d-icon "inbox"}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121z"/></svg>
             <span>暂无充值记录</span>
           </div>
         {{/if}}
@@ -240,23 +217,17 @@
       <div class="coin-modal" {{on "click" this.stopPropagation}}>
         <div class="modal-header">
           <div class="modal-title-wrap">
-            {{d-icon "file-alt"}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0z"/></svg>
             <h3>处理发票</h3>
           </div>
           <button class="modal-close-btn" {{on "click" this.closeProcessInvoiceModal}}>
-            {{d-icon "times"}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
           </button>
         </div>
         <div class="modal-body">
           <div class="form-field">
             <label class="form-label">发票URL</label>
-            <input
-              type="url"
-              class="form-input"
-              placeholder="请输入发票图片URL"
-              value={{this.invoiceUrl}}
-              {{on "input" this.updateInvoiceUrl}}
-            />
+            <input type="url" class="form-input" placeholder="请输入发票图片URL" value={{this.invoiceUrl}} {{on "input" this.updateInvoiceUrl}} />
             <span class="form-hint">请上传发票图片到图床，然后粘贴URL</span>
           </div>
         </div>
@@ -264,10 +235,9 @@
           <button class="modal-btn cancel" {{on "click" this.closeProcessInvoiceModal}}>取消</button>
           <button class="modal-btn primary" {{on "click" this.processInvoice}} disabled={{this.isLoading}}>
             {{#if this.isLoading}}
-              {{d-icon "spinner" class="fa-spin"}}
               <span>处理中...</span>
             {{else}}
-              {{d-icon "check"}}
+              <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
               <span>确认处理</span>
             {{/if}}
           </button>
@@ -279,7 +249,7 @@
   {{!-- 成功提示 --}}
   {{#if this.showSuccessMessage}}
     <div class="coin-toast success">
-      {{d-icon "check-circle"}}
+      <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
       <span>{{this.successMessage}}</span>
     </div>
   {{/if}}

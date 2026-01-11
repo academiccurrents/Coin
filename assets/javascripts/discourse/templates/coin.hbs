@@ -9,12 +9,12 @@
       <div class="coin-nav-right">
         {{#if this.currentUser.admin}}
           <button class="coin-nav-btn" {{on "click" this.goToAdminPage}}>
-            {{d-icon "shield-alt"}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.6 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0z"/></svg>
             <span>管理</span>
           </button>
         {{/if}}
         <button class="coin-nav-btn" {{on "click" this.refreshData}}>
-          {{d-icon "sync"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M105.1 202.6c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0L386.3 160H352c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c0 0 0 0 0 0c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V48c0-17.7-14.3-32-32-32s-32 14.3-32 32v35.2L446.4 65.9C349.8-30.7 193.8-30.7 97.2 65.9c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2zM480 256c-17.7 0-32 14.3-32 32v35.2l-17.1-17.1c-96.6-96.6-252.6-96.6-349.2 0c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0l17.1 17.1H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V288c0-17.7-14.3-32-32-32z"/></svg>
         </button>
       </div>
     </div>
@@ -25,7 +25,7 @@
         <div class="balance-bg-pattern"></div>
         <div class="balance-content">
           <div class="balance-icon-wrap">
-            {{d-icon "dollar-sign"}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M160 0c17.7 0 32 14.3 32 32V67.7c1.6 .2 3.1 .4 4.7 .7c10.6 1.6 42.1 6.7 55.1 10c17.1 4.3 27.5 21.7 23.2 38.9s-21.7 27.5-38.9 23.2c-9.3-2.4-37.6-7-48.9-8.7c-32.1-4.8-59.6-2.4-78.5 4.9c-18.3 7-25.9 16.9-27.9 28c-1.9 10.7-.5 16.8 1.3 20.6c1.9 4 5.6 8.5 12.9 13.4c16.2 10.8 41.1 17.9 73.3 26.7l2.8 .8c28.4 7.7 63.2 17.2 89 34.3c14.1 9.4 27.3 22.1 35.5 39.7c8.3 17.8 10.1 37.8 6.3 59.1c-6.9 38-33.1 63.4-65.6 76.7c-13.7 5.6-28.6 9.2-44.4 11V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V445.1c-.4-.1-.9-.1-1.3-.2l-.2 0 0 0c-24.4-3.8-64.5-14.3-91.5-26.3c-16.2-7.2-23.4-26.1-16.2-42.2s26.1-23.4 42.2-16.2c20.9 9.3 55.3 18.4 75.2 21.6c31.9 4.7 58.2 2 76-5.3c16.9-6.9 24.6-16.9 26.8-28.9c1.9-10.6 .4-16.7-1.3-20.4c-1.9-4-5.6-8.4-13-13.3c-16.4-10.9-41.5-18.1-74-27l-2.8-.7c-28.1-7.6-62.4-16.9-87.8-33.9c-14.1-9.4-27.2-22-35.4-39.6c-8.3-17.8-10.1-37.9-6.3-59.2C54 115.1 80.2 89.4 113.6 76.1c13.5-5.4 28.1-9 43.4-11.1V32c0-17.7 14.3-32 32-32z"/></svg>
           </div>
           <div class="balance-info">
             <span class="balance-label">可用余额</span>
@@ -36,39 +36,21 @@
           </div>
         </div>
         <div class="balance-actions">
+          <button class="balance-action-btn primary" {{on "click" this.goToPayPage}}>
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M64 64C28.7 64 0 92.7 0 128V384c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H64zm64 320H64V320c35.3 0 64 28.7 64 64zM64 192V128h64c0 35.3-28.7 64-64 64zM448 384c0-35.3 28.7-64 64-64v64H448zm64-192c-35.3 0-64-28.7-64-64h64v64zM288 160a96 96 0 1 1 0 192 96 96 0 1 1 0-192z"/></svg>
+            <span>充值</span>
+          </button>
           {{#if this.coinInvoiceEnabled}}
-            <button class="balance-action-btn primary" {{on "click" this.openInvoiceModal}}>
-              {{d-icon "file-alt"}}
+            <button class="balance-action-btn secondary" {{on "click" this.openInvoiceModal}}>
+              <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0zM80 64h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16s7.2-16 16-16zm0 64h64c8.8 0 16 7.2 16 16s-7.2 16-16 16H80c-8.8 0-16-7.2-16-16s7.2-16 16-16zm16 96H288c17.7 0 32 14.3 32 32v64c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V256c0-17.7 14.3-32 32-32z"/></svg>
               <span>申请发票</span>
             </button>
           {{/if}}
           <button class="balance-action-btn secondary" {{on "click" this.goToInvoicePage}}>
-            {{d-icon "file"}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z"/></svg>
             <span>发票记录</span>
           </button>
         </div>
-      </div>
-    </div>
-
-    {{!-- 快捷操作 --}}
-    <div class="coin-quick-actions">
-      <div class="quick-action-item" {{on "click" this.goToInvoicePage}}>
-        <div class="quick-action-icon blue">
-          {{d-icon "history"}}
-        </div>
-        <span class="quick-action-text">历史记录</span>
-      </div>
-      <div class="quick-action-item" {{on "click" this.openInvoiceModal}}>
-        <div class="quick-action-icon green">
-          {{d-icon "file-alt"}}
-        </div>
-        <span class="quick-action-text">开发票</span>
-      </div>
-      <div class="quick-action-item">
-        <div class="quick-action-icon orange">
-          {{d-icon "question-circle"}}
-        </div>
-        <span class="quick-action-text">帮助</span>
       </div>
     </div>
 
@@ -76,7 +58,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          {{d-icon "list"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M40 48C26.7 48 16 58.7 16 72v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V72c0-13.3-10.7-24-24-24H40zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H192zM16 232v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V232c0-13.3-10.7-24-24-24H40c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24H88c13.3 0 24-10.7 24-24V392c0-13.3-10.7-24-24-24H40z"/></svg>
           <span>交易记录</span>
         </h2>
         <span class="section-badge">{{model.transactions.length}}</span>
@@ -89,11 +71,11 @@
               <div class="transaction-left">
                 <div class="transaction-icon {{transaction.transaction_type}}">
                   {{#if (eq transaction.transaction_type "recharge")}}
-                    {{d-icon "arrow-down"}}
+                    <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"/></svg>
                   {{else if (eq transaction.transaction_type "admin_adjust")}}
-                    {{d-icon "sliders-h"}}
+                    <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M0 416c0 17.7 14.3 32 32 32l54.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 448c17.7 0 32-14.3 32-32s-14.3-32-32-32l-246.7 0c-12.3-28.3-40.5-48-73.3-48s-61 19.7-73.3 48L32 384c-17.7 0-32 14.3-32 32zm128 0a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM320 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm32-80c-32.8 0-61 19.7-73.3 48L32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l246.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48l54.7 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-54.7 0c-12.3-28.3-40.5-48-73.3-48zM192 128a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm73.3-64C253 35.7 224.8 16 192 16s-61 19.7-73.3 48L32 64C14.3 64 0 78.3 0 96s14.3 32 32 32l86.7 0c12.3 28.3 40.5 48 73.3 48s61-19.7 73.3-48L480 128c17.7 0 32-14.3 32-32s-14.3-32-32-32L265.3 64z"/></svg>
                   {{else}}
-                    {{d-icon "arrow-up"}}
+                    <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M214.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-160 160c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 141.2V448c0 17.7 14.3 32 32 32s32-14.3 32-32V141.2L329.4 246.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-160-160z"/></svg>
                   {{/if}}
                 </div>
                 <div class="transaction-details">
@@ -107,6 +89,7 @@
                       消费
                     {{/if}}
                     · {{format-date transaction.created_at format="medium"}}
+                    · #{{transaction.id}}
                   </span>
                 </div>
               </div>
@@ -114,9 +97,10 @@
                 <span class="transaction-amount {{if (gt transaction.amount 0) 'positive' 'negative'}}">
                   {{#if (gt transaction.amount 0)}}+{{/if}}{{transaction.amount}}
                 </span>
-                {{#if (and this.coinInvoiceEnabled (eq transaction.transaction_type "recharge"))}}
+                {{!-- 只有充值类型且金额大于0且未开票的才显示开票按钮 --}}
+                {{#if (and this.coinInvoiceEnabled (eq transaction.transaction_type "recharge") (gt transaction.amount 0) (not transaction.invoice_requested))}}
                   <button class="transaction-invoice-btn" {{on "click" (fn this.openInvoiceFromTransactionModal transaction)}}>
-                    {{d-icon "file-alt"}}
+                    <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0z"/></svg>
                   </button>
                 {{/if}}
               </div>
@@ -125,7 +109,7 @@
         {{else}}
           <div class="empty-state">
             <div class="empty-icon">
-              {{d-icon "inbox"}}
+              <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121zm0 64H391l48 192H387.8c-12.1 0-23.2 6.8-28.6 17.7l-14.3 28.6c-5.4 10.8-16.5 17.7-28.6 17.7H195.8c-12.1 0-23.2-6.8-28.6-17.7l-14.3-28.6c-5.4-10.8-16.5-17.7-28.6-17.7H73L121 96z"/></svg>
             </div>
             <span class="empty-title">暂无交易记录</span>
             <span class="empty-desc">您的交易记录将在这里显示</span>
@@ -135,111 +119,55 @@
     </div>
   </div>
 
-  {{!-- 申请发票模态框 --}}
+  {{!-- 申请发票模态框 - 选择可开票的充值记录 --}}
   {{#if this.showInvoiceModal}}
     <div class="coin-modal-overlay" {{on "click" this.closeInvoiceModal}}>
-      <div class="coin-modal" {{on "click" this.stopPropagation}}>
+      <div class="coin-modal coin-modal-lg" {{on "click" this.stopPropagation}}>
         <div class="modal-header">
           <div class="modal-title-wrap">
-            {{d-icon "file-alt"}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0z"/></svg>
             <h3>申请发票</h3>
           </div>
           <button class="modal-close-btn" {{on "click" this.closeInvoiceModal}}>
-            {{d-icon "times"}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
           </button>
         </div>
         <div class="modal-body">
-          <div class="form-field">
-            <label class="form-label">申请金额</label>
-            <div class="input-with-suffix">
-              <input
-                type="number"
-                class="form-input"
-                placeholder="请输入金额"
-                value={{this.invoiceAmount}}
-                {{on "input" this.updateInvoiceAmount}}
-              />
-              <span class="input-suffix">{{model.coinName}}</span>
-            </div>
-            <span class="form-hint">可用余额: {{this.formattedBalance}} {{model.coinName}}</span>
-          </div>
-          <div class="form-field">
-            <label class="form-label">申请原因 <span class="optional">(可选)</span></label>
-            <textarea
-              class="form-textarea"
-              placeholder="请输入申请原因..."
-              rows="3"
-              value={{this.invoiceReason}}
-              {{on "input" this.updateInvoiceReason}}
-            ></textarea>
+          <p class="modal-hint">请选择要申请发票的充值记录（仅充值记录可申请发票）</p>
+          <div class="invoice-select-list">
+            {{#if this.invoiceableTransactions.length}}
+              {{#each this.invoiceableTransactions as |transaction|}}
+                <div class="invoice-select-item {{if (eq this.selectedTransactionId transaction.id) 'selected'}}" {{on "click" (fn this.selectTransaction transaction)}}>
+                  <div class="invoice-select-left">
+                    <div class="invoice-select-radio">
+                      {{#if (eq this.selectedTransactionId transaction.id)}}
+                        <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
+                      {{else}}
+                        <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>
+                      {{/if}}
+                    </div>
+                    <div class="invoice-select-info">
+                      <span class="invoice-select-reason">{{transaction.reason}}</span>
+                      <span class="invoice-select-meta">#{{transaction.id}} · {{format-date transaction.created_at format="medium"}}</span>
+                    </div>
+                  </div>
+                  <div class="invoice-select-amount">+{{transaction.amount}}</div>
+                </div>
+              {{/each}}
+            {{else}}
+              <div class="empty-state small">
+                <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121z"/></svg>
+                <span>暂无可开票的充值记录</span>
+              </div>
+            {{/if}}
           </div>
         </div>
         <div class="modal-footer">
           <button class="modal-btn cancel" {{on "click" this.closeInvoiceModal}}>取消</button>
-          <button class="modal-btn primary" {{on "click" this.submitInvoiceRequest}} disabled={{this.isLoading}}>
+          <button class="modal-btn primary" {{on "click" this.submitInvoiceRequest}} disabled={{this.submitDisabled}}>
             {{#if this.isLoading}}
-              {{d-icon "spinner" class="fa-spin"}}
               <span>提交中...</span>
             {{else}}
-              {{d-icon "paper-plane"}}
-              <span>提交申请</span>
-            {{/if}}
-          </button>
-        </div>
-      </div>
-    </div>
-  {{/if}}
-
-  {{!-- 从交易申请发票模态框 --}}
-  {{#if this.showInvoiceFromTransactionModal}}
-    <div class="coin-modal-overlay" {{on "click" this.closeInvoiceFromTransactionModal}}>
-      <div class="coin-modal" {{on "click" this.stopPropagation}}>
-        <div class="modal-header">
-          <div class="modal-title-wrap">
-            {{d-icon "file-alt"}}
-            <h3>从交易申请发票</h3>
-          </div>
-          <button class="modal-close-btn" {{on "click" this.closeInvoiceFromTransactionModal}}>
-            {{d-icon "times"}}
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="transaction-summary">
-            <span class="summary-label">交易金额</span>
-            <span class="summary-value">{{this.selectedTransactionAmount}} {{model.coinName}}</span>
-          </div>
-          <div class="form-field">
-            <label class="form-label">申请金额</label>
-            <div class="input-with-suffix">
-              <input
-                type="number"
-                class="form-input"
-                placeholder="请输入金额"
-                value={{this.invoiceAmount}}
-                {{on "input" this.updateInvoiceAmount}}
-              />
-              <span class="input-suffix">{{model.coinName}}</span>
-            </div>
-          </div>
-          <div class="form-field">
-            <label class="form-label">申请原因 <span class="optional">(可选)</span></label>
-            <textarea
-              class="form-textarea"
-              placeholder="请输入申请原因..."
-              rows="3"
-              value={{this.invoiceReason}}
-              {{on "input" this.updateInvoiceReason}}
-            ></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="modal-btn cancel" {{on "click" this.closeInvoiceFromTransactionModal}}>取消</button>
-          <button class="modal-btn primary" {{on "click" this.submitInvoiceFromTransaction}} disabled={{this.isLoading}}>
-            {{#if this.isLoading}}
-              {{d-icon "spinner" class="fa-spin"}}
-              <span>提交中...</span>
-            {{else}}
-              {{d-icon "paper-plane"}}
               <span>提交申请</span>
             {{/if}}
           </button>
@@ -251,7 +179,7 @@
   {{!-- 成功提示 --}}
   {{#if this.showSuccessMessage}}
     <div class="coin-toast success">
-      {{d-icon "check-circle"}}
+      <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
       <span>{{this.successMessage}}</span>
     </div>
   {{/if}}

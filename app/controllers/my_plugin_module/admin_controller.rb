@@ -19,6 +19,7 @@ module ::MyPluginModule
         target_username = params[:username]
         amount = params[:amount].to_i
         reason = params[:reason] || "管理员调整"
+        mark_as_recharge = params[:mark_as_recharge] == "true" || params[:mark_as_recharge] == true
 
         unless target_username.present?
           render_json_error("用户名不能为空", status: 400)
@@ -40,7 +41,8 @@ module ::MyPluginModule
           current_user,
           target_user,
           amount,
-          reason: reason
+          reason: reason,
+          mark_as_recharge: mark_as_recharge
         )
 
         render_json_dump({

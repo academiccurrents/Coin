@@ -17,6 +17,7 @@ export default class CoinAdminController extends Controller {
   @tracked adjustUsername = "";
   @tracked adjustAmount = "";
   @tracked adjustReason = "";
+  @tracked markAsRecharge = false;
   @tracked queryUsername = "";
   @tracked queryResult = null;
   @tracked showQueryResult = false;
@@ -131,10 +132,16 @@ export default class CoinAdminController extends Controller {
   }
 
   @action
+  toggleMarkAsRecharge(event) {
+    this.markAsRecharge = event.target.checked;
+  }
+
+  @action
   async adjustPoints() {
     const username = this.adjustUsername.trim();
     const amount = parseInt(this.adjustAmount);
     const reason = this.adjustReason || "管理员调整";
+    const markAsRecharge = this.markAsRecharge;
 
     if (!username) {
       alert("请输入用户名");
@@ -151,7 +158,7 @@ export default class CoinAdminController extends Controller {
     try {
       const result = await ajax("/coin/admin/adjust_points.json", {
         type: "POST",
-        data: { username, amount, reason }
+        data: { username, amount, reason, mark_as_recharge: markAsRecharge }
       });
 
       if (result.success) {
@@ -160,6 +167,7 @@ export default class CoinAdminController extends Controller {
         this.adjustUsername = "";
         this.adjustAmount = "";
         this.adjustReason = "";
+        this.markAsRecharge = false;
         setTimeout(() => { this.showSuccessMessage = false; }, 3000);
         this.router.refresh();
       }

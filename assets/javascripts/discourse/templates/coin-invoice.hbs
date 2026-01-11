@@ -4,14 +4,14 @@
     <div class="coin-nav">
       <div class="coin-nav-left">
         <button class="coin-nav-back" {{on "click" this.goToCoinPage}}>
-          {{d-icon "arrow-left"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>
         </button>
         <span class="coin-nav-icon">📄</span>
         <span class="coin-nav-title">发票记录</span>
       </div>
       <div class="coin-nav-right">
         <button class="coin-nav-btn" {{on "click" this.refreshData}}>
-          {{d-icon "sync"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M105.1 202.6c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0L386.3 160H352c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c0 0 0 0 0 0c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V48c0-17.7-14.3-32-32-32s-32 14.3-32 32v35.2L446.4 65.9C349.8-30.7 193.8-30.7 97.2 65.9c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2zM480 256c-17.7 0-32 14.3-32 32v35.2l-17.1-17.1c-96.6-96.6-252.6-96.6-349.2 0c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0l17.1 17.1H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V288c0-17.7-14.3-32-32-32z"/></svg>
         </button>
       </div>
     </div>
@@ -20,7 +20,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          {{d-icon "clock"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></svg>
           <span>待开票</span>
         </h2>
         <span class="section-badge warning">{{this.pendingInvoices.length}}</span>
@@ -31,7 +31,7 @@
             <div class="invoice-card pending">
               <div class="invoice-left">
                 <div class="invoice-icon pending">
-                  {{d-icon "hourglass-half"}}
+                  <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M32 0C14.3 0 0 14.3 0 32S14.3 64 32 64V75c0 42.4 16.9 83.1 46.9 113.1L146.7 256 78.9 323.9C48.9 353.9 32 394.6 32 437v11c-17.7 0-32 14.3-32 32s14.3 32 32 32H352c17.7 0 32-14.3 32-32s-14.3-32-32-32V437c0-42.4-16.9-83.1-46.9-113.1L237.3 256l67.9-67.9c30-30 46.9-70.7 46.9-113.1V64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM288 437v11H96V437c0-25.5 10.1-49.9 28.1-67.9L192 301.3l67.9 67.9c18 18 28.1 42.4 28.1 67.9z"/></svg>
                 </div>
                 <div class="invoice-info">
                   <span class="invoice-amount">{{invoice.amount}} 硬币</span>
@@ -40,14 +40,14 @@
                 </div>
               </div>
               <div class="invoice-status pending">
-                {{d-icon "clock"}}
+                <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></svg>
                 <span>待处理</span>
               </div>
             </div>
           {{/each}}
         {{else}}
           <div class="empty-state small">
-            {{d-icon "inbox"}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121z"/></svg>
             <span>暂无待开票记录</span>
           </div>
         {{/if}}
@@ -58,7 +58,7 @@
     <div class="coin-section">
       <div class="section-header">
         <h2 class="section-title">
-          {{d-icon "check-circle"}}
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
           <span>已开票</span>
         </h2>
         <span class="section-badge success">{{this.completedInvoices.length}}</span>
@@ -69,7 +69,7 @@
             <div class="invoice-card completed">
               <div class="invoice-left">
                 <div class="invoice-icon completed">
-                  {{d-icon "check"}}
+                  <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
                 </div>
                 <div class="invoice-info">
                   <span class="invoice-amount">{{invoice.amount}} 硬币</span>
@@ -83,12 +83,12 @@
               <div class="invoice-actions">
                 {{#if invoice.invoice_url}}
                   <a href="{{invoice.invoice_url}}" target="_blank" rel="noopener noreferrer" class="invoice-view-btn">
-                    {{d-icon "external-link"}}
+                    <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32h82.7L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3V192c0 17.7 14.3 32 32 32s32-14.3 32-32V32c0-17.7-14.3-32-32-32H320zM80 32C35.8 32 0 67.8 0 112V432c0 44.2 35.8 80 80 80H400c44.2 0 80-35.8 80-80V320c0-17.7-14.3-32-32-32s-32 14.3-32 32V432c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16H192c17.7 0 32-14.3 32-32s-14.3-32-32-32H80z"/></svg>
                     <span>查看发票</span>
                   </a>
                 {{/if}}
                 <div class="invoice-status completed">
-                  {{d-icon "check"}}
+                  <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
                   <span>已完成</span>
                 </div>
               </div>
@@ -96,7 +96,7 @@
           {{/each}}
         {{else}}
           <div class="empty-state small">
-            {{d-icon "inbox"}}
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M121 32C91.6 32 66 52 58.9 80.5L1.9 308.4C.6 313.5 0 318.7 0 323.9V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V323.9c0-5.2-.6-10.4-1.9-15.5l-57-227.9C446 52 420.4 32 391 32H121z"/></svg>
             <span>暂无已开票记录</span>
           </div>
         {{/if}}
@@ -107,7 +107,7 @@
   {{!-- 成功提示 --}}
   {{#if this.showSuccessMessage}}
     <div class="coin-toast success">
-      {{d-icon "check-circle"}}
+      <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
       <span>{{this.successMessage}}</span>
     </div>
   {{/if}}
