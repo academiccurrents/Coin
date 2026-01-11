@@ -93,11 +93,13 @@ module ::MyPluginModule
       total_users = CoinUserBalance.count
       total_balance = CoinUserBalance.sum(:balance)
       total_recharge = CoinTransaction.where(transaction_type: "recharge").where("amount > 0").sum(:amount)
+      pending_invoices_count = CoinInvoiceRequest.by_status("pending").count
 
       {
         total_users: total_users,
         total_balance: total_balance,
-        total_recharge: total_recharge
+        total_recharge: total_recharge,
+        pending_invoices_count: pending_invoices_count
       }
     end
 

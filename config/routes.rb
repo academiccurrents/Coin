@@ -20,4 +20,6 @@ MyPluginModule::Engine.routes.draw do
   get "/admin/user_statistics" => "admin#user_statistics"
   get "/admin/pending_invoices" => "admin#pending_invoices"
   post "/admin/process_invoice" => "admin#process_invoice"
+  get "/admin/completed_invoices" => "admin#completed_invoices"
+  post "/admin/update_invoice_url" => "admin#update_invoice_url"
 end

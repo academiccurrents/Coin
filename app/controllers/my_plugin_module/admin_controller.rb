@@ -213,5 +213,62 @@ module ::MyPluginModule
         render_json_error(e.message, status: 500)
       end
     end
+
+    def completed_invoices
+      ensure_logged_in
+      ensure_admin
+
+      begin
+        limit = (params[:limit] || 20).to_i
+        offset = (params[:offset] || 0).to_i
+
+        result = MyPluginModule::InvoiceService.get_completed_invoices(limit: limit, offset: offset)
+
+        render_json_dump({
+          success: true,
+          invoices: result[:invoices],
+          total: result[:total],
+          has_more: result[:has_more]
+        })
+      rescue => e
+        Rails.logger.error "[管理员] 获取已处理发票失败: #{e.message}"
+        render_json_error("获取已处理发票失败", status: 500)
+      end
+    end
+
+    def update_invoice_url
+      ensure_logged_in
+      ensure_admin
+
+      begin
+        invoice_id = params[:id].to_i
+        new_url = params[:invoice_url]
+
+        unless invoice_id > 0
+          render_json_error("发票ID无效", status: 400)
+          return
+        end
+
+        unless new_url.present?
+          render_json_error("发票URL不能为空", status: 400)
+          return
+        end
+
+        invoice = MyPluginModule::InvoiceService.update_invoice_url(invoice_id, new_url)
+
+        render_json_dump({
+          success: true,
+          message: "发票URL更新成功",
+          invoice: {
+            id: invoice.id,
+            invoice_url: invoice.invoice_url,
+            updated_at: invoice.updated_at.iso8601
+          }
+        })
+      rescue => e
+        Rails.logger.error "[管理员] 更新发票URL失败: #{e.message}"
+        render_json_error(e.message, status: 500)
+      end
+    end
   end
 end

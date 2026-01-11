@@ -21,6 +21,15 @@ export default class CoinAdminController extends Controller {
   @tracked queryUsername = "";
   @tracked queryResult = null;
   @tracked showQueryResult = false;
+  
+  // 已处理发票相关
+  @tracked completedInvoicesPage = 0;
+  @tracked completedInvoicesList = [];
+  @tracked hasMoreCompletedInvoices = false;
+  @tracked isLoadingMore = false;
+  @tracked showEditInvoiceModal = false;
+  @tracked editingInvoice = null;
+  @tracked editInvoiceUrl = "";
 
   get pendingInvoices() {
     return this.model?.pendingInvoices || [];
@@ -32,6 +41,22 @@ export default class CoinAdminController extends Controller {
 
   get statistics() {
     return this.model?.statistics || {};
+  }
+
+  get completedInvoices() {
+    // 如果已加载更多，使用本地列表；否则使用model数据
+    if (this.completedInvoicesList.length > 0) {
+      return this.completedInvoicesList;
+    }
+    return this.model?.completedInvoices || [];
+  }
+
+  get showLoadMoreCompletedInvoices() {
+    // 如果已经加载过更多，使用本地状态；否则使用model数据
+    if (this.completedInvoicesPage > 0) {
+      return this.hasMoreCompletedInvoices;
+    }
+    return this.model?.hasMoreCompletedInvoices || false;
   }
 
   get transactionTypeLabels() {
@@ -59,6 +84,8 @@ export default class CoinAdminController extends Controller {
 
   @action
   refreshData() {
+    this.completedInvoicesList = [];
+    this.completedInvoicesPage = 0;
     this.router.refresh();
   }
 
@@ -106,7 +133,7 @@ export default class CoinAdminController extends Controller {
         this.showSuccessMessage = true;
         this.closeProcessInvoiceModal();
         setTimeout(() => { this.showSuccessMessage = false; }, 3000);
-        this.router.refresh();
+        this.refreshData();
       }
     } catch (error) {
       console.error("处理发票失败:", error);
@@ -169,7 +196,7 @@ export default class CoinAdminController extends Controller {
         this.adjustReason = "";
         this.markAsRecharge = false;
         setTimeout(() => { this.showSuccessMessage = false; }, 3000);
-        this.router.refresh();
+        this.refreshData();
       }
     } catch (error) {
       console.error("调整积分失败:", error);
@@ -229,5 +256,90 @@ export default class CoinAdminController extends Controller {
     this.showQueryResult = false;
     this.queryResult = null;
     this.queryUsername = "";
+  }
+
+  // 已处理发票相关方法
+  @action
+  async loadMoreCompletedInvoices() {
+    if (this.isLoadingMore) return;
+    
+    this.isLoadingMore = true;
+    const nextOffset = (this.completedInvoicesPage + 1) * 20;
+
+    try {
+      const result = await ajax("/coin/admin/completed_invoices.json", {
+        type: "GET",
+        data: { limit: 20, offset: nextOffset }
+      });
+
+      if (result.success) {
+        // 初始化列表（如果是第一次加载更多）
+        if (this.completedInvoicesList.length === 0) {
+          this.completedInvoicesList = [...(this.model?.completedInvoices || [])];
+        }
+        this.completedInvoicesList = [...this.completedInvoicesList, ...result.invoices];
+        this.completedInvoicesPage = this.completedInvoicesPage + 1;
+        this.hasMoreCompletedInvoices = result.has_more;
+      }
+    } catch (error) {
+      console.error("加载更多已处理发票失败:", error);
+      alert("加载失败: " + (error.jqXHR?.responseJSON?.errors?.[0] || error.message));
+    } finally {
+      this.isLoadingMore = false;
+    }
+  }
+
+  @action
+  openEditInvoiceModal(invoice) {
+    this.editingInvoice = invoice;
+    this.editInvoiceUrl = invoice.invoice_url || "";
+    this.showEditInvoiceModal = true;
+  }
+
+  @action
+  closeEditInvoiceModal() {
+    this.showEditInvoiceModal = false;
+    this.editingInvoice = null;
+    this.editInvoiceUrl = "";
+  }
+
+  @action
+  updateEditInvoiceUrl(event) {
+    this.editInvoiceUrl = event.target.value;
+  }
+
+  @action
+  async saveInvoiceUrl() {
+    const newUrl = this.editInvoiceUrl.trim();
+
+    if (!newUrl) {
+      alert("请输入发票URL");
+      return;
+    }
+
+    this.isLoading = true;
+
+    try {
+      const result = await ajax("/coin/admin/update_invoice_url.json", {
+        type: "POST",
+        data: {
+          id: this.editingInvoice.id,
+          invoice_url: newUrl
+        }
+      });
+
+      if (result.success) {
+        this.successMessage = "发票URL更新成功！";
+        this.showSuccessMessage = true;
+        this.closeEditInvoiceModal();
+        setTimeout(() => { this.showSuccessMessage = false; }, 3000);
+        this.refreshData();
+      }
+    } catch (error) {
+      console.error("更新发票URL失败:", error);
+      alert("更新失败: " + (error.jqXHR?.responseJSON?.errors?.[0] || error.message));
+    } finally {
+      this.isLoading = false;
+    }
   }
 }

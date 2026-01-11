@@ -131,5 +131,54 @@ module ::MyPluginModule
         invoice
       end
     end
+
+    def self.get_completed_invoices(limit: 20, offset: 0)
+      scope = CoinInvoiceRequest.includes(:user).by_status("completed").recent
+
+      total = scope.count
+      invoices = scope.offset(offset).limit(limit).map do |invoice|
+        next nil unless invoice.user
+        {
+          id: invoice.id,
+          user_id: invoice.user_id,
+          username: invoice.user.username,
+          amount: invoice.amount,
+          status: invoice.status,
+          reason: invoice.reason,
+          admin_note: invoice.admin_note,
+          invoice_url: invoice.invoice_url,
+          created_at: invoice.created_at.iso8601,
+          updated_at: invoice.updated_at.iso8601
+        }
+      end.compact
+
+      {
+        invoices: invoices,
+        total: total,
+        has_more: (offset + limit) < total
+      }
+    end
+
+    def self.update_invoice_url(invoice_id, new_url)
+      invoice = CoinInvoiceRequest.find_by(id: invoice_id)
+
+      unless invoice
+        raise StandardError, "发票申请不存在"
+      end
+
+      unless invoice.completed?
+        raise StandardError, "只能修改已完成的发票URL"
+      end
+
+      unless new_url.present?
+        raise StandardError, "发票URL不能为空"
+      end
+
+      ActiveRecord::Base.transaction do
+        invoice.update!(invoice_url: new_url)
+        Rails.logger.info "[发票] 发票 #{invoice_id} URL已更新为: #{new_url}"
+        invoice
+      end
+    end
   end
 end
