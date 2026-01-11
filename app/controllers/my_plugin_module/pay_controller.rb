@@ -84,7 +84,7 @@ module ::MyPluginModule
       end
     end
 
-    # POST/GET /coin_epay_notify - 异步回调处理（路由在 Discourse 主应用中）
+    # POST/GET /coin/callback/notify - 异步回调处理
     def notify_callback
       epay = EpayService.new
       callback_params = params.to_unsafe_h.except(:controller, :action)
@@ -111,7 +111,7 @@ module ::MyPluginModule
       render plain: result[:success] ? 'success' : 'fail'
     end
 
-    # GET /coin_epay_return - 同步回调处理（路由在 Discourse 主应用中）
+    # GET /coin/callback/return - 同步回调处理
     def return_callback
       epay = EpayService.new
       callback_params = params.to_unsafe_h.except(:controller, :action)

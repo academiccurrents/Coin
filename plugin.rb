@@ -53,17 +53,16 @@ after_initialize do
     require_relative "app/controllers/my_plugin_module/#{controller}"
   end
 
+  # 加载独立的易支付回调控制器（不在 MyPluginModule 命名空间内）
+  require_relative "app/controllers/coin_epay_controller"
+
   # 挂载 Engine 到 /coin 路径
   Discourse::Application.routes.append do
     mount ::MyPluginModule::Engine, at: "/coin"
-  end
-  
-  # 易支付回调路由 - 直接注册到 Discourse 主应用，绕过 Ember 路由
-  Discourse::Application.routes.prepend do
-    # 异步回调
-    get "/coin_epay_notify" => "my_plugin_module/pay#notify_callback"
-    post "/coin_epay_notify" => "my_plugin_module/pay#notify_callback"
-    # 同步回调
-    get "/coin_epay_return" => "my_plugin_module/pay#return_callback"
+    
+    # 易支付回调路由 - 直接注册在主应用路由，避免被 Ember 前端路由拦截
+    get "/coin_epay_return" => "coin_epay#return_page"
+    get "/coin_epay_notify" => "coin_epay#notify"
+    post "/coin_epay_notify" => "coin_epay#notify"
   end
 end

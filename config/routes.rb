@@ -30,7 +30,10 @@ MyPluginModule::Engine.routes.draw do
   post "/pay/create_order" => "pay#create_order"
   post "/pay/create_custom_order" => "pay#create_custom_order"
   
-  # 易支付回调路由已移至 Discourse 主应用路由（plugin.rb）
+  # 易支付回调路由 - 使用 /callback 前缀避免与 Ember /pay 路由冲突
+  get "/callback/notify" => "pay#notify_callback"
+  post "/callback/notify" => "pay#notify_callback"
+  get "/callback/return" => "pay#return_callback"
   
   get "/pay/order_status" => "pay#order_status"
   get "/pay/pending_order" => "pay#pending_order"
