@@ -10,9 +10,6 @@
         <span class="coin-nav-title">管理员面板</span>
       </div>
       <div class="coin-nav-right">
-        <button class="coin-nav-btn" {{on "click" this.refreshData}}>
-          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M105.1 202.6c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0L386.3 160H352c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c0 0 0 0 0 0c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V48c0-17.7-14.3-32-32-32s-32 14.3-32 32v35.2L446.4 65.9C349.8-30.7 193.8-30.7 97.2 65.9c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2zM480 256c-17.7 0-32 14.3-32 32v35.2l-17.1-17.1c-96.6-96.6-252.6-96.6-349.2 0c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0l17.1 17.1H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V288c0-17.7-14.3-32-32-32z"/></svg>
-        </button>
       </div>
     </div>
 
@@ -38,11 +35,11 @@
       </div>
       <div class="stat-card green">
         <div class="stat-icon">
-          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M64 64c0-17.7-14.3-32-32-32S0 46.3 0 64V400c0 44.2 35.8 80 80 80H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H80c-8.8 0-16-7.2-16-16V64zm406.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L320 210.7l-57.4-57.4c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L240 221.3l57.4 57.4c12.5 12.5 32.8 12.5 45.3 0l128-128z"/></svg>
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"/></svg>
         </div>
         <div class="stat-content">
-          <span class="stat-value">{{this.statistics.average_balance}}</span>
-          <span class="stat-label">平均积分</span>
+          <span class="stat-value">{{this.statistics.total_recharge}}</span>
+          <span class="stat-label">充值积分</span>
         </div>
       </div>
     </div>

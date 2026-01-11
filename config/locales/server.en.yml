@@ -1,5 +1,7 @@
 en:
   site_settings:
+    categories:
+      discourse_coin: "Coin Management"
     coin_enabled: "Enable Coin Plugin"
     coin_name: "Coin name (default: Coin)"
     coin_invoice_enabled: "Enable invoice request feature"

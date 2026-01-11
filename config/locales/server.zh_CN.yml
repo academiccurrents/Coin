@@ -1,5 +1,7 @@
 zh_CN:
   site_settings:
+    categories:
+      discourse_coin: "积分管理"
     coin_enabled: "启用积分插件"
     coin_name: "积分名称（默认：硬币）"
     coin_invoice_enabled: "启用发票申请功能"

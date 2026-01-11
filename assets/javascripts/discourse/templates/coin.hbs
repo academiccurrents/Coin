@@ -13,9 +13,6 @@
             <span>管理</span>
           </button>
         {{/if}}
-        <button class="coin-nav-btn" {{on "click" this.refreshData}}>
-          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M105.1 202.6c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0L386.3 160H352c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c0 0 0 0 0 0c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V48c0-17.7-14.3-32-32-32s-32 14.3-32 32v35.2L446.4 65.9C349.8-30.7 193.8-30.7 97.2 65.9c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2zM480 256c-17.7 0-32 14.3-32 32v35.2l-17.1-17.1c-96.6-96.6-252.6-96.6-349.2 0c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0l17.1 17.1H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V288c0-17.7-14.3-32-32-32z"/></svg>
-        </button>
       </div>
     </div>
 
@@ -138,20 +135,20 @@
             {{#if this.invoiceableTransactions.length}}
               {{#each this.invoiceableTransactions as |transaction|}}
                 <div class="invoice-select-item {{if (eq this.selectedTransactionId transaction.id) 'selected'}}" {{on "click" (fn this.selectTransaction transaction)}}>
-                  <div class="invoice-select-left">
-                    <div class="invoice-select-radio">
-                      {{#if (eq this.selectedTransactionId transaction.id)}}
-                        <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
-                      {{else}}
-                        <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>
-                      {{/if}}
-                    </div>
-                    <div class="invoice-select-info">
-                      <span class="invoice-select-reason">{{transaction.reason}}</span>
-                      <span class="invoice-select-meta">#{{transaction.id}} · {{format-date transaction.created_at format="medium"}}</span>
-                    </div>
+                  <div class="invoice-select-radio">
+                    {{#if (eq this.selectedTransactionId transaction.id)}}
+                      <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
+                    {{else}}
+                      <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>
+                    {{/if}}
                   </div>
-                  <div class="invoice-select-amount">+{{transaction.amount}}</div>
+                  <div class="invoice-select-content">
+                    <div class="invoice-select-main">
+                      <span class="invoice-select-reason">{{transaction.reason}}</span>
+                      <span class="invoice-select-amount">+{{transaction.amount}}</span>
+                    </div>
+                    <span class="invoice-select-meta">#{{transaction.id}} · {{format-date transaction.created_at format="medium"}}</span>
+                  </div>
                 </div>
               {{/each}}
             {{else}}

@@ -25,12 +25,6 @@ module ::MyPluginModule
 
     def self.create_invoice_from_transaction(user_id, transaction_id, amount, reason)
       ActiveRecord::Base.transaction do
-        balance = CoinService.get_user_balance(user_id)
-
-        if amount > balance
-          raise StandardError, "积分不足，当前余额: #{balance}，申请金额: #{amount}"
-        end
-
         invoice = CoinInvoiceRequest.create!(
           user_id: user_id,
           amount: amount,

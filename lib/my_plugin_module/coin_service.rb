@@ -92,12 +92,12 @@ module ::MyPluginModule
     def self.get_statistics
       total_users = CoinUserBalance.count
       total_balance = CoinUserBalance.sum(:balance)
-      average_balance = total_users > 0 ? (total_balance.to_f / total_users).round(2) : 0
+      total_recharge = CoinTransaction.where(transaction_type: "recharge").where("amount > 0").sum(:amount)
 
       {
         total_users: total_users,
         total_balance: total_balance,
-        average_balance: average_balance
+        total_recharge: total_recharge
       }
     end
 

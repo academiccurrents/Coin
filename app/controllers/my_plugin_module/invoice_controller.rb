@@ -51,24 +51,46 @@ module ::MyPluginModule
 
       begin
         transaction_id = params[:transaction_id].to_i
-        amount = params[:amount].to_i
-        reason = params[:reason] || "从交易记录申请发票"
 
         unless transaction_id > 0
           render_json_error("交易ID无效", status: 400)
           return
         end
 
-        unless amount > 0
-          render_json_error("申请金额必须大于0", status: 400)
+        # 从交易记录中获取信息
+        transaction = CoinTransaction.find_by(id: transaction_id, user_id: current_user.id)
+        
+        unless transaction
+          render_json_error("交易记录不存在或无权访问", status: 404)
+          return
+        end
+
+        unless transaction.transaction_type == "recharge"
+          render_json_error("只有充值记录可以申请发票", status: 400)
+          return
+        end
+
+        unless transaction.amount > 0
+          render_json_error("交易金额必须大于0", status: 400)
+          return
+        end
+
+        # 检查是否已经申请过发票
+        existing_invoice = CoinInvoiceRequest.find_by(
+          user_id: current_user.id,
+          admin_note: "关联交易ID: #{transaction_id}"
+        )
+        
+        if existing_invoice
+          render_json_error("该交易记录已申请过发票", status: 400)
           return
         end
 
         invoice = MyPluginModule::InvoiceService.create_invoice_from_transaction(
           current_user.id,
           transaction_id,
-          amount,
-          reason
+          transaction.amount,
+          transaction.reason || "充值发票申请"
         )
 
         render_json_dump({

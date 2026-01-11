@@ -1242,3 +1242,240 @@
     justify-content: flex-end;
   }
 }
+
+// 发票选择列表样式
+.invoice-select-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.invoice-select-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--coin-bg-secondary);
+  border-radius: var(--coin-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    background: var(--coin-border);
+  }
+
+  &.selected {
+    border-color: var(--coin-primary);
+    background: rgba(0, 122, 255, 0.05);
+  }
+}
+
+.invoice-select-radio {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--coin-text-secondary);
+
+  .svg-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .selected & {
+    color: var(--coin-primary);
+  }
+}
+
+.invoice-select-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.invoice-select-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.invoice-select-reason {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--coin-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.invoice-select-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: #34C759;
+  flex-shrink: 0;
+}
+
+.invoice-select-meta {
+  font-size: 13px;
+  color: var(--coin-text-secondary);
+}
+
+.modal-hint {
+  font-size: 14px;
+  color: var(--coin-text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+// 大尺寸模态框
+.coin-modal-lg {
+  max-width: 520px;
+}
+
+// Checkbox 样式
+.form-checkbox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 2px 0 0 0;
+    cursor: pointer;
+    accent-color: var(--coin-primary);
+  }
+
+  .checkbox-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--coin-text);
+  }
+
+  .checkbox-hint {
+    width: 100%;
+    font-size: 12px;
+    color: var(--coin-text-secondary);
+    padding-left: 26px;
+    margin-top: -4px;
+  }
+}
+
+// SVG 图标通用样式
+.svg-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.coin-nav-btn .svg-icon,
+.coin-nav-back .svg-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.balance-icon-wrap .svg-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.balance-action-btn .svg-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.section-title .svg-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--coin-primary);
+}
+
+.transaction-icon .svg-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.transaction-invoice-btn .svg-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.empty-icon .svg-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.empty-state.small .svg-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--coin-text-secondary);
+  margin-bottom: 8px;
+}
+
+.modal-title-wrap .svg-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--coin-primary);
+}
+
+.modal-close-btn .svg-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.modal-btn .svg-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.stat-icon .svg-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.form-btn .svg-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.query-close-btn .svg-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.invoice-icon .svg-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.invoice-action-btn .svg-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.invoice-view-btn .svg-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.invoice-status .svg-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.coin-toast .svg-icon {
+  width: 18px;
+  height: 18px;
+}
