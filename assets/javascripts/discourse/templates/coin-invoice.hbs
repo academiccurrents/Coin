@@ -1,89 +1,114 @@
-<div class="coin-page">
+<div class="coin-page coin-invoice-page">
   <div class="coin-container">
-    <div class="coin-header">
-      <h1 class="coin-title">发票记录</h1>
-      <div class="coin-actions-header">
-        <button class="coin-button coin-button-tertiary" {{on "click" this.goToCoinPage}}>
-          <span class="button-icon"><i class="fa-solid fa-arrow-left"></i></span>
-          <span class="button-text">返回</span>
+    {{!-- 顶部导航栏 --}}
+    <div class="coin-nav">
+      <div class="coin-nav-left">
+        <button class="coin-nav-back" {{on "click" this.goToCoinPage}}>
+          <i class="fa-solid fa-arrow-left"></i>
         </button>
-        <button class="coin-button coin-button-tertiary" {{on "click" this.refreshData}}>
-          <span class="button-icon"><i class="fa-solid fa-rotate"></i></span>
-          <span class="button-text">刷新</span>
+        <span class="coin-nav-icon">📄</span>
+        <span class="coin-nav-title">发票记录</span>
+      </div>
+      <div class="coin-nav-right">
+        <button class="coin-nav-btn" {{on "click" this.refreshData}}>
+          <i class="fa-solid fa-arrows-rotate"></i>
         </button>
       </div>
     </div>
 
+    {{!-- 待开票 --}}
     <div class="coin-section">
-      <h2 class="section-title">待开票</h2>
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fa-solid fa-clock"></i>
+          <span>待开票</span>
+        </h2>
+        <span class="section-badge warning">{{this.pendingInvoices.length}}</span>
+      </div>
       <div class="invoice-list">
         {{#if this.pendingInvoices}}
           {{#each this.pendingInvoices as |invoice|}}
-            <div class="invoice-item invoice-pending">
-              <div class="invoice-icon"><i class="fa-solid fa-clock"></i></div>
-              <div class="invoice-info">
-                <div class="invoice-amount">{{invoice.amount}} 硬币</div>
-                <div class="invoice-reason">{{invoice.reason}}</div>
-                <div class="invoice-date">{{format-date invoice.created_at}}</div>
+            <div class="invoice-card pending">
+              <div class="invoice-left">
+                <div class="invoice-icon pending">
+                  <i class="fa-solid fa-hourglass-half"></i>
+                </div>
+                <div class="invoice-info">
+                  <span class="invoice-amount">{{invoice.amount}} 硬币</span>
+                  <span class="invoice-reason">{{invoice.reason}}</span>
+                  <span class="invoice-date">{{format-date invoice.created_at format="medium"}}</span>
+                </div>
               </div>
-              <div class="invoice-status status-pending">
-                {{this.statusLabels.pending.label}}
+              <div class="invoice-status pending">
+                <i class="fa-solid fa-clock"></i>
+                <span>待处理</span>
               </div>
             </div>
           {{/each}}
         {{else}}
-          <div class="empty-state">
-            <div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div>
-            <div class="empty-text">暂无待开票记录</div>
+          <div class="empty-state small">
+            <i class="fa-solid fa-inbox"></i>
+            <span>暂无待开票记录</span>
           </div>
         {{/if}}
       </div>
     </div>
 
+    {{!-- 已开票 --}}
     <div class="coin-section">
-      <h2 class="section-title">已开票</h2>
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>已开票</span>
+        </h2>
+        <span class="section-badge success">{{this.completedInvoices.length}}</span>
+      </div>
       <div class="invoice-list">
         {{#if this.completedInvoices}}
           {{#each this.completedInvoices as |invoice|}}
-            <div class="invoice-item invoice-completed">
-              <div class="invoice-icon"><i class="fa-solid fa-circle-check"></i></div>
-              <div class="invoice-info">
-                <div class="invoice-amount">{{invoice.amount}} 硬币</div>
-                <div class="invoice-reason">{{invoice.reason}}</div>
-                {{#if invoice.admin_note}}
-                  <div class="invoice-note">备注: {{invoice.admin_note}}</div>
-                {{/if}}
-                {{#if invoice.invoice_url}}
-                  <div class="invoice-url">
-                    <a href="{{invoice.invoice_url}}" target="_blank" rel="noopener noreferrer">
-                      <i class="fa-solid fa-external-link-alt"></i> 查看发票
-                    </a>
-                  </div>
-                {{/if}}
-                <div class="invoice-date">{{format-date invoice.updated_at}}</div>
+            <div class="invoice-card completed">
+              <div class="invoice-left">
+                <div class="invoice-icon completed">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+                <div class="invoice-info">
+                  <span class="invoice-amount">{{invoice.amount}} 硬币</span>
+                  <span class="invoice-reason">{{invoice.reason}}</span>
+                  {{#if invoice.admin_note}}
+                    <span class="invoice-note">备注: {{invoice.admin_note}}</span>
+                  {{/if}}
+                  <span class="invoice-date">{{format-date invoice.updated_at format="medium"}}</span>
+                </div>
               </div>
-              <div class="invoice-status status-completed">
-                {{this.statusLabels.completed.label}}
+              <div class="invoice-actions">
+                {{#if invoice.invoice_url}}
+                  <a href="{{invoice.invoice_url}}" target="_blank" rel="noopener noreferrer" class="invoice-view-btn">
+                    <i class="fa-solid fa-external-link"></i>
+                    <span>查看发票</span>
+                  </a>
+                {{/if}}
+                <div class="invoice-status completed">
+                  <i class="fa-solid fa-check"></i>
+                  <span>已完成</span>
+                </div>
               </div>
             </div>
           {{/each}}
         {{else}}
-          <div class="empty-state">
-            <div class="empty-icon"><i class="fa-solid fa-folder-open"></i></div>
-            <div class="empty-text">暂无已开票记录</div>
+          <div class="empty-state small">
+            <i class="fa-solid fa-inbox"></i>
+            <span>暂无已开票记录</span>
           </div>
         {{/if}}
       </div>
     </div>
   </div>
 
+  {{!-- 成功提示 --}}
   {{#if this.showSuccessMessage}}
-    <div class="coin-success-popup">
-      <div class="success-content">
-        <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
-        <div class="success-message">{{this.successMessage}}</div>
-        <button class="success-close" {{on "click" this.hideSuccessMessage}}>确定</button>
-      </div>
+    <div class="coin-toast success">
+      <i class="fa-solid fa-circle-check"></i>
+      <span>{{this.successMessage}}</span>
     </div>
   {{/if}}
 </div>

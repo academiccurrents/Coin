@@ -1,8 +1,20 @@
 import Route from "@ember/routing/route";
 import { ajax } from "discourse/lib/ajax";
+import { service } from "@ember/service";
 
 export default class CoinRoute extends Route {
+  @service currentUser;
+
   async model() {
+    if (!this.currentUser) {
+      return {
+        balance: 0,
+        coinName: "硬币",
+        transactions: [],
+        needLogin: true
+      };
+    }
+
     try {
       const [balanceResult, transactionsResult] = await Promise.all([
         ajax("/coin/balance.json"),

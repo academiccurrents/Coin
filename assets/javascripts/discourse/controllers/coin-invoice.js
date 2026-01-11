@@ -1,7 +1,6 @@
 import Controller from "@ember/controller";
 import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
-import { ajax } from "discourse/lib/ajax";
 import { service } from "@ember/service";
 
 export default class CoinInvoiceController extends Controller {
@@ -11,11 +10,11 @@ export default class CoinInvoiceController extends Controller {
   @tracked successMessage = "";
 
   get pendingInvoices() {
-    return this.model.invoices.filter(inv => inv.status === "pending");
+    return (this.model?.invoices || []).filter(inv => inv.status === "pending");
   }
 
   get completedInvoices() {
-    return this.model.invoices.filter(inv => inv.status === "completed");
+    return (this.model?.invoices || []).filter(inv => inv.status === "completed");
   }
 
   get statusLabels() {

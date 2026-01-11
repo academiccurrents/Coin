@@ -6,6 +6,8 @@ import { service } from "@ember/service";
 
 export default class CoinAdminController extends Controller {
   @service router;
+  @service currentUser;
+  
   @tracked isLoading = false;
   @tracked showSuccessMessage = false;
   @tracked successMessage = "";
@@ -20,15 +22,28 @@ export default class CoinAdminController extends Controller {
   @tracked showQueryResult = false;
 
   get pendingInvoices() {
-    return this.model.pendingInvoices || [];
+    return this.model?.pendingInvoices || [];
   }
 
   get recentTransactions() {
-    return this.model.recentTransactions || [];
+    return this.model?.recentTransactions || [];
   }
 
   get statistics() {
-    return this.model.statistics || {};
+    return this.model?.statistics || {};
+  }
+
+  get transactionTypeLabels() {
+    return {
+      recharge: { label: "充值", color: "#34C759" },
+      admin_adjust: { label: "管理员调整", color: "#007AFF" },
+      consumption: { label: "消费扣除", color: "#FF3B30" }
+    };
+  }
+
+  @action
+  stopPropagation(event) {
+    event.stopPropagation();
   }
 
   @action
@@ -89,11 +104,7 @@ export default class CoinAdminController extends Controller {
         this.successMessage = "发票处理成功！";
         this.showSuccessMessage = true;
         this.closeProcessInvoiceModal();
-
-        setTimeout(() => {
-          this.showSuccessMessage = false;
-        }, 3000);
-
+        setTimeout(() => { this.showSuccessMessage = false; }, 3000);
         this.router.refresh();
       }
     } catch (error) {
@@ -140,25 +151,16 @@ export default class CoinAdminController extends Controller {
     try {
       const result = await ajax("/coin/admin/adjust_points.json", {
         type: "POST",
-        data: {
-          username: username,
-          amount: amount,
-          reason: reason
-        }
+        data: { username, amount, reason }
       });
 
       if (result.success) {
         this.successMessage = `积分调整成功！${amount > 0 ? '+' : ''}${amount}`;
         this.showSuccessMessage = true;
-
         this.adjustUsername = "";
         this.adjustAmount = "";
         this.adjustReason = "";
-
-        setTimeout(() => {
-          this.showSuccessMessage = false;
-        }, 3000);
-
+        setTimeout(() => { this.showSuccessMessage = false; }, 3000);
         this.router.refresh();
       }
     } catch (error) {
@@ -189,11 +191,11 @@ export default class CoinAdminController extends Controller {
       const [balanceResult, transactionsResult] = await Promise.all([
         ajax("/coin/admin/user_balance.json", {
           type: "GET",
-          data: { username: username }
+          data: { username }
         }),
         ajax("/coin/admin/user_transactions.json", {
           type: "GET",
-          data: { username: username, limit: 20 }
+          data: { username, limit: 20 }
         })
       ]);
 

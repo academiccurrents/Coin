@@ -1,7 +1,17 @@
 import Route from "@ember/routing/route";
 import { ajax } from "discourse/lib/ajax";
+import { service } from "@ember/service";
 
 export default class CoinAdminRoute extends Route {
+  @service currentUser;
+  @service router;
+
+  beforeModel() {
+    if (!this.currentUser?.admin) {
+      this.router.transitionTo("coin");
+    }
+  }
+
   async model() {
     try {
       const [statisticsResult, transactionsResult, invoicesResult] = await Promise.all([
@@ -17,9 +27,8 @@ export default class CoinAdminRoute extends Route {
       };
     } catch (error) {
       console.error("加载管理员数据失败:", error);
-      console.error("错误详情:", error.jqXHR?.responseText || error.message);
       return {
-        statistics: {},
+        statistics: { total_users: 0, total_balance: 0, average_balance: 0 },
         recentTransactions: [],
         pendingInvoices: [],
         error: true,

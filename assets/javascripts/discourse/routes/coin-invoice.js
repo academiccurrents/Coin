@@ -1,7 +1,17 @@
 import Route from "@ember/routing/route";
 import { ajax } from "discourse/lib/ajax";
+import { service } from "@ember/service";
 
 export default class CoinInvoiceRoute extends Route {
+  @service currentUser;
+  @service router;
+
+  beforeModel() {
+    if (!this.currentUser) {
+      this.router.transitionTo("coin");
+    }
+  }
+
   async model() {
     try {
       const result = await ajax("/coin/invoice/list.json");

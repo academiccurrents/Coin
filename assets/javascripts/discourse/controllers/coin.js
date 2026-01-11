@@ -7,6 +7,8 @@ import { service } from "@ember/service";
 export default class CoinController extends Controller {
   @service router;
   @service siteSettings;
+  @service currentUser;
+  
   @tracked isLoading = false;
   @tracked showInvoiceModal = false;
   @tracked showInvoiceFromTransactionModal = false;
@@ -18,27 +20,16 @@ export default class CoinController extends Controller {
   @tracked successMessage = "";
 
   get formattedBalance() {
-    return this.model.balance.toLocaleString();
+    return (this.model?.balance || 0).toLocaleString();
   }
 
   get coinInvoiceEnabled() {
     return this.siteSettings?.coin_invoice_enabled === true;
   }
 
-  get transactionTypes() {
-    return {
-      recharge: "充值",
-      admin_adjust: "管理员调整",
-      consumption: "消费扣除"
-    };
-  }
-
-  get transactionTypeLabels() {
-    return {
-      recharge: { label: "充值", color: "#34C759" },
-      admin_adjust: { label: "管理员调整", color: "#007AFF" },
-      consumption: { label: "消费扣除", color: "#FF3B30" }
-    };
+  @action
+  stopPropagation(event) {
+    event.stopPropagation();
   }
 
   @action
@@ -103,20 +94,14 @@ export default class CoinController extends Controller {
     try {
       const result = await ajax("/coin/invoice/create.json", {
         type: "POST",
-        data: {
-          amount: amount,
-          reason: reason
-        }
+        data: { amount, reason }
       });
 
       if (result.success) {
         this.successMessage = "发票申请提交成功！";
         this.showSuccessMessage = true;
         this.closeInvoiceModal();
-
-        setTimeout(() => {
-          this.showSuccessMessage = false;
-        }, 3000);
+        setTimeout(() => { this.showSuccessMessage = false; }, 3000);
       }
     } catch (error) {
       console.error("提交发票申请失败:", error);
@@ -148,8 +133,8 @@ export default class CoinController extends Controller {
         type: "POST",
         data: {
           transaction_id: this.selectedTransactionId,
-          amount: amount,
-          reason: reason
+          amount,
+          reason
         }
       });
 
@@ -157,10 +142,7 @@ export default class CoinController extends Controller {
         this.successMessage = "发票申请提交成功！";
         this.showSuccessMessage = true;
         this.closeInvoiceFromTransactionModal();
-
-        setTimeout(() => {
-          this.showSuccessMessage = false;
-        }, 3000);
+        setTimeout(() => { this.showSuccessMessage = false; }, 3000);
       }
     } catch (error) {
       console.error("提交发票申请失败:", error);
@@ -177,7 +159,12 @@ export default class CoinController extends Controller {
 
   @action
   goToInvoicePage() {
-    this.router.transitionTo("coin.invoice");
+    this.router.transitionTo("coin-invoice");
+  }
+
+  @action
+  goToAdminPage() {
+    this.router.transitionTo("coin-admin");
   }
 
   @action
