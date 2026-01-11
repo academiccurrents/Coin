@@ -9,11 +9,22 @@ export default class CoinController extends Controller {
   @service siteSettings;
   @service currentUser;
   
+  queryParams = ["payment"];
+  @tracked payment = null;
+  
   @tracked isLoading = false;
   @tracked showInvoiceModal = false;
   @tracked selectedTransactionId = null;
   @tracked showSuccessMessage = false;
   @tracked successMessage = "";
+
+  get paymentSuccess() {
+    return this.model?.paymentStatus === "success";
+  }
+
+  get paymentFailed() {
+    return this.model?.paymentStatus === "failed" || this.model?.paymentStatus === "error";
+  }
 
   get formattedBalance() {
     return (this.model?.balance || 0).toLocaleString();

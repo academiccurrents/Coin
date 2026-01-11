@@ -4,14 +4,20 @@ import { service } from "@ember/service";
 
 export default class CoinRoute extends Route {
   @service currentUser;
+  @service router;
 
-  async model() {
+  queryParams = {
+    payment: { refreshModel: false }
+  };
+
+  async model(params) {
     if (!this.currentUser) {
       return {
         balance: 0,
         coinName: "硬币",
         transactions: [],
-        needLogin: true
+        needLogin: true,
+        paymentStatus: params.payment || null
       };
     }
 
@@ -24,7 +30,8 @@ export default class CoinRoute extends Route {
       return {
         balance: balanceResult.balance || 0,
         coinName: balanceResult.coin_name || "硬币",
-        transactions: transactionsResult.transactions || []
+        transactions: transactionsResult.transactions || [],
+        paymentStatus: params.payment || null
       };
     } catch (error) {
       console.error("加载积分数据失败:", error);
@@ -32,7 +39,8 @@ export default class CoinRoute extends Route {
         balance: 0,
         coinName: "硬币",
         transactions: [],
-        error: true
+        error: true,
+        paymentStatus: params.payment || null
       };
     }
   }

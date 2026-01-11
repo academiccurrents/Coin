@@ -16,6 +16,11 @@ export default class CoinPayController extends Controller {
   @tracked qrcodeUrl = "";
   @tracked currentOrderNo = "";
   @tracked pollingTimer = null;
+  @tracked countdownTimer = null;
+  @tracked remainingSeconds = 0;
+
+  // 待支付订单提示
+  @tracked showPendingAlert = false;
 
   // 自定义充值
   @tracked customAmount = "";
@@ -38,6 +43,20 @@ export default class CoinPayController extends Controller {
 
   get isAdmin() {
     return this.currentUser?.admin;
+  }
+
+  get hasPendingOrder() {
+    return this.model?.pendingOrder && this.remainingSeconds > 0;
+  }
+
+  get pendingOrder() {
+    return this.model?.pendingOrder;
+  }
+
+  get formattedCountdown() {
+    const mins = Math.floor(this.remainingSeconds / 60);
+    const secs = this.remainingSeconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
   get selectedPackage() {
@@ -431,5 +450,43 @@ export default class CoinPayController extends Controller {
   willDestroy() {
     super.willDestroy();
     this.stopPolling();
+    this.stopCountdown();
+  }
+
+  // 初始化待支付订单倒计时
+  initPendingOrder() {
+    if (this.model?.pendingOrder) {
+      this.remainingSeconds = this.model.pendingOrder.remaining_seconds || 0;
+      this.showPendingAlert = this.remainingSeconds > 0;
+      if (this.remainingSeconds > 0) {
+        this.startCountdown();
+      }
+    }
+  }
+
+  startCountdown() {
+    this.stopCountdown();
+    this.countdownTimer = setInterval(() => {
+      if (this.remainingSeconds > 0) {
+        this.remainingSeconds--;
+      } else {
+        this.stopCountdown();
+        this.showPendingAlert = false;
+        // 刷新页面数据
+        this.send('refreshModel');
+      }
+    }, 1000);
+  }
+
+  stopCountdown() {
+    if (this.countdownTimer) {
+      clearInterval(this.countdownTimer);
+      this.countdownTimer = null;
+    }
+  }
+
+  @action
+  dismissPendingAlert() {
+    this.showPendingAlert = false;
   }
 }

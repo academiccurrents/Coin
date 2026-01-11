@@ -4,6 +4,9 @@ module ::MyPluginModule
   class CoinPaymentOrder < ActiveRecord::Base
     self.table_name = 'coin_payment_orders'
 
+    # 订单过期时间（秒）
+    ORDER_EXPIRE_SECONDS = 120  # 2分钟
+
     belongs_to :user
     belongs_to :recharge_package, 
                class_name: 'MyPluginModule::CoinRechargePackage', 
@@ -22,7 +25,7 @@ module ::MyPluginModule
 
     scope :recent, -> { order(created_at: :desc) }
     scope :by_user, ->(user_id) { where(user_id: user_id) }
-    scope :pending_expired, -> { pending.where("created_at < ?", 30.minutes.ago) }
+    scope :pending_expired, -> { pending.where("created_at < ?", ORDER_EXPIRE_SECONDS.seconds.ago) }
 
     def mark_as_paid!(trade_no)
       update!(
@@ -41,7 +44,19 @@ module ::MyPluginModule
     end
 
     def can_process_callback?
-      pending?
+      pending? && !expired_by_time?
+    end
+
+    # 检查订单是否已超时（基于创建时间）
+    def expired_by_time?
+      created_at < ORDER_EXPIRE_SECONDS.seconds.ago
+    end
+
+    # 获取剩余秒数
+    def remaining_seconds
+      return 0 if !pending? || expired_by_time?
+      expire_at = created_at + ORDER_EXPIRE_SECONDS.seconds
+      [(expire_at - Time.current).to_i, 0].max
     end
   end
 end

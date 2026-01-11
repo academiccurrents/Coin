@@ -15,9 +15,10 @@ export default class CoinPayRoute extends Route {
 
   async model() {
     try {
-      const [packagesResult, channelsResult] = await Promise.all([
+      const [packagesResult, channelsResult, pendingResult] = await Promise.all([
         ajax("/coin/pay/packages.json"),
-        ajax("/coin/pay/channels.json")
+        ajax("/coin/pay/channels.json"),
+        ajax("/coin/pay/pending_order.json")
       ]);
 
       return {
@@ -26,7 +27,8 @@ export default class CoinPayRoute extends Route {
         hasDiscount: packagesResult.has_discount || false,
         balance: packagesResult.balance || 0,
         coinName: packagesResult.coin_name || "硬币",
-        channels: channelsResult.channels || []
+        channels: channelsResult.channels || [],
+        pendingOrder: pendingResult.has_pending ? pendingResult.order : null
       };
     } catch (error) {
       console.error("加载充值数据失败:", error);
@@ -37,9 +39,15 @@ export default class CoinPayRoute extends Route {
         balance: 0,
         coinName: "硬币",
         channels: [],
+        pendingOrder: null,
         error: true
       };
     }
+  }
+
+  setupController(controller, model) {
+    super.setupController(controller, model);
+    controller.initPendingOrder();
   }
 
   @action

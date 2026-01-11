@@ -9,331 +9,214 @@ module ::MyPluginModule
     # GET /coin/pay - 充值页面
     def index
       render "default/empty"
-    rescue => e
-      Rails.logger.error "[支付] 页面错误: #{e.message}"
-      render plain: "Error: #{e.message}", status: 500
     end
 
     # GET /coin/pay/packages - 获取套餐列表和折扣信息
     def packages
-      begin
-        packages = CoinRechargePackage.active.ordered
-        discount_rate = DiscountService.get_user_discount(current_user.id)
-        balance = CoinService.get_user_balance(current_user.id)
+      packages = CoinRechargePackage.active.ordered
+      discount_rate = DiscountService.get_user_discount(current_user.id)
+      balance = CoinService.get_user_balance(current_user.id)
 
-        render_json_dump({
-          success: true,
-          packages: packages.map { |p| serialize_package(p, discount_rate) },
-          discount_rate: discount_rate,
-          has_discount: discount_rate < 100,
-          balance: balance,
-          coin_name: SiteSetting.coin_name || "硬币"
-        })
-      rescue => e
-        Rails.logger.error "[支付] 获取套餐失败: #{e.message}"
-        render_json_error("获取套餐失败", status: 500)
-      end
+      render_json_dump({
+        success: true,
+        packages: packages.map { |p| serialize_package(p, discount_rate) },
+        discount_rate: discount_rate,
+        has_discount: discount_rate < 100,
+        balance: balance,
+        coin_name: SiteSetting.coin_name || "硬币"
+      })
     end
 
     # GET /coin/pay/channels - 获取支付渠道
     def payment_channels
-      begin
-        epay = EpayService.new
-        channels = epay.get_payment_channels
-
-        render_json_dump({
-          success: true,
-          channels: channels
-        })
-      rescue => e
-        Rails.logger.error "[支付] 获取支付渠道失败: #{e.message}"
-        render_json_error("获取支付渠道失败", status: 500)
-      end
+      epay = EpayService.new
+      channels = epay.get_payment_channels
+      render_json_dump({ success: true, channels: channels })
     end
 
     # POST /coin/pay/create_order - 创建支付订单
     def create_order
-      begin
-        package_id = params[:package_id]
-        payment_type = params[:payment_type] || 'alipay'
-        mode = params[:mode] || 'page' # page 或 qrcode
+      package_id = params[:package_id]
+      payment_type = params[:payment_type] || 'alipay'
+      mode = params[:mode] || 'page'
 
-        package = CoinRechargePackage.active.find_by(id: package_id)
-        unless package
-          render_json_error("套餐不存在或已下架", status: 400)
-          return
-        end
+      package = CoinRechargePackage.active.find_by(id: package_id)
+      return render_json_error("套餐不存在或已下架", status: 400) unless package
 
-        # 创建订单
-        order = PaymentService.create_order(current_user, package, payment_type)
-        epay = EpayService.new
+      order = PaymentService.create_order(current_user, package, payment_type)
+      epay = EpayService.new
 
-        # 构建支付参数
-        coin_name = SiteSetting.coin_name || "硬币"
-        pay_params = {
-          type: payment_type,
-          out_trade_no: order.out_trade_no,
-          notify_url: "#{Discourse.base_url}/coin/pay/notify",
-          return_url: "#{Discourse.base_url}/coin/pay/return",
-          name: "充值 #{order.coin_amount} #{coin_name}",
-          money: order.actual_price.to_s
-        }
+      coin_name = SiteSetting.coin_name || "硬币"
+      pay_params = {
+        type: payment_type,
+        out_trade_no: order.out_trade_no,
+        notify_url: "#{Discourse.base_url}/coin/pay/notify",
+        return_url: "#{Discourse.base_url}/coin/pay/return",
+        name: "充值 #{order.coin_amount} #{coin_name}",
+        money: order.actual_price.to_s
+      }
 
-        if mode == 'qrcode'
-          # API支付，获取二维码
-          result = epay.create_api_pay(pay_params)
-          if result[:success]
-            render_json_dump({
-              success: true,
-              order_id: order.id,
-              out_trade_no: order.out_trade_no,
-              qrcode: result[:qrcode],
-              pay_url: result[:url]
-            })
-          else
-            render_json_error(result[:error] || "创建支付失败", status: 500)
-          end
-        else
-          # 页面跳转支付
-          result = epay.create_page_pay(pay_params)
+      if mode == 'qrcode'
+        result = epay.create_api_pay(pay_params)
+        if result[:success]
           render_json_dump({
             success: true,
             order_id: order.id,
             out_trade_no: order.out_trade_no,
+            qrcode: result[:qrcode],
             pay_url: result[:url]
           })
+        else
+          render_json_error(result[:error] || "创建支付失败", status: 500)
         end
-      rescue => e
-        Rails.logger.error "[支付] 创建订单失败: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
-        render_json_error("创建订单失败: #{e.message}", status: 500)
+      else
+        result = epay.create_page_pay(pay_params)
+        render_json_dump({
+          success: true,
+          order_id: order.id,
+          out_trade_no: order.out_trade_no,
+          pay_url: result[:url]
+        })
       end
     end
 
-
-    # POST /coin/pay/notify - 异步回调处理
+    # POST/GET /coin/pay/notify - 异步回调处理
     def notify_callback
-      begin
-        Rails.logger.info "[支付] 收到异步回调: #{params.to_unsafe_h}"
-        
-        epay = EpayService.new
-        callback_params = params.to_unsafe_h.except(:controller, :action)
+      epay = EpayService.new
+      callback_params = params.to_unsafe_h.except(:controller, :action)
 
-        # 验证签名
-        unless epay.verify_callback(callback_params)
-          Rails.logger.error "[支付] 回调验签失败: #{callback_params}"
-          render plain: 'fail'
-          return
-        end
-
-        # 检查交易状态
-        trade_status = params[:trade_status]
-        unless trade_status == 'TRADE_SUCCESS'
-          Rails.logger.info "[支付] 交易状态非成功: #{trade_status}"
-          render plain: 'success' # 返回success避免重复通知
-          return
-        end
-
-        # 处理支付成功
-        result = PaymentService.process_payment_success(
-          params[:out_trade_no],
-          params[:trade_no],
-          params[:money]
-        )
-
-        if result[:success]
-          Rails.logger.info "[支付] 回调处理成功: #{params[:out_trade_no]}"
-          render plain: 'success'
-        else
-          Rails.logger.error "[支付] 回调处理失败: #{result[:error]}"
-          render plain: 'fail'
-        end
-      rescue => e
-        Rails.logger.error "[支付] 回调处理异常: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
+      # 验证签名
+      unless epay.verify_callback(callback_params)
         render plain: 'fail'
+        return
       end
+
+      # 检查交易状态
+      unless params[:trade_status] == 'TRADE_SUCCESS'
+        render plain: 'success'
+        return
+      end
+
+      # 处理支付成功
+      result = PaymentService.process_payment_success(
+        params[:out_trade_no],
+        params[:trade_no],
+        params[:money]
+      )
+
+      render plain: result[:success] ? 'success' : 'fail'
     end
 
     # GET /coin/pay/return - 同步回调处理
     def return_callback
-      begin
-        Rails.logger.info "[支付] ========== 同步回调开始 =========="
-        Rails.logger.info "[支付] 原始参数: #{params.to_unsafe_h}"
-        
-        epay = EpayService.new
-        callback_params = params.to_unsafe_h.except(:controller, :action)
-        
-        Rails.logger.info "[支付] 过滤后参数: #{callback_params}"
-        Rails.logger.info "[支付] trade_status: #{params[:trade_status]}"
-        Rails.logger.info "[支付] out_trade_no: #{params[:out_trade_no]}"
+      epay = EpayService.new
+      callback_params = params.to_unsafe_h.except(:controller, :action)
 
-        # 验证签名
-        sign_valid = epay.verify_callback(callback_params)
-        Rails.logger.info "[支付] 签名验证结果: #{sign_valid}"
-        
-        if sign_valid && params[:trade_status] == 'TRADE_SUCCESS'
-          Rails.logger.info "[支付] 开始处理支付成功..."
-          
-          # 同步回调也处理支付成功（防止异步回调延迟或失败）
-          result = PaymentService.process_payment_success(
-            params[:out_trade_no],
-            params[:trade_no],
-            params[:money]
-          )
-          
-          Rails.logger.info "[支付] PaymentService处理结果: #{result.inspect}"
-          
-          if result[:success]
-            Rails.logger.info "[支付] 同步回调处理成功: #{params[:out_trade_no]}"
-          else
-            Rails.logger.warn "[支付] 同步回调处理失败: #{result[:error]}"
-          end
-          
-          redirect_to "/coin?payment=success"
-        else
-          Rails.logger.warn "[支付] 同步回调验签失败或状态非成功 - sign_valid: #{sign_valid}, trade_status: #{params[:trade_status]}"
-          redirect_to "/coin?payment=failed"
-        end
-      rescue => e
-        Rails.logger.error "[支付] 同步回调异常: #{e.message}\n#{e.backtrace.first(10).join("\n")}"
-        redirect_to "/coin?payment=error"
+      if epay.verify_callback(callback_params) && params[:trade_status] == 'TRADE_SUCCESS'
+        PaymentService.process_payment_success(
+          params[:out_trade_no],
+          params[:trade_no],
+          params[:money]
+        )
+        redirect_to "/coin?payment=success"
+      else
+        redirect_to "/coin?payment=failed"
       end
     end
 
     # GET /coin/pay/order_status - 查询订单状态
     def order_status
-      begin
-        out_trade_no = params[:out_trade_no]
-        
-        unless out_trade_no.present?
-          render_json_error("订单号不能为空", status: 400)
-          return
-        end
+      out_trade_no = params[:out_trade_no]
+      return render_json_error("订单号不能为空", status: 400) unless out_trade_no.present?
 
-        result = PaymentService.get_order_status(out_trade_no, current_user.id)
-        
-        unless result
-          render_json_error("订单不存在", status: 404)
-          return
-        end
+      result = PaymentService.get_order_status(out_trade_no, current_user.id)
+      return render_json_error("订单不存在", status: 404) unless result
 
-        render_json_dump({
-          success: true,
-          status: result[:status],
-          paid: result[:paid],
-          coin_amount: result[:coin_amount]
-        })
-      rescue => e
-        Rails.logger.error "[支付] 查询订单状态失败: #{e.message}"
-        render_json_error("查询订单状态失败", status: 500)
+      render_json_dump({
+        success: true,
+        status: result[:status],
+        paid: result[:paid],
+        expired: result[:expired],
+        coin_amount: result[:coin_amount],
+        remaining_seconds: result[:remaining_seconds]
+      })
+    end
+
+    # GET /coin/pay/pending_order - 获取用户最新的待支付订单
+    def pending_order
+      result = PaymentService.get_pending_order(current_user.id)
+      
+      if result
+        render_json_dump({ success: true, has_pending: true, order: result })
+      else
+        render_json_dump({ success: true, has_pending: false })
       end
     end
 
     # GET /coin/pay/orders - 获取用户订单列表
     def orders
-      begin
-        limit = (params[:limit] || 20).to_i
-        orders = PaymentService.get_user_orders(current_user.id, limit: limit)
-
-        render_json_dump({
-          success: true,
-          orders: orders
-        })
-      rescue => e
-        Rails.logger.error "[支付] 获取订单列表失败: #{e.message}"
-        render_json_error("获取订单列表失败", status: 500)
-      end
+      limit = (params[:limit] || 20).to_i
+      orders = PaymentService.get_user_orders(current_user.id, limit: limit)
+      render_json_dump({ success: true, orders: orders })
     end
 
     # POST /coin/pay/create_custom_order - 创建自定义金额订单
     def create_custom_order
-      begin
-        coin_amount = params[:coin_amount].to_i
-        payment_type = params[:payment_type] || 'alipay'
-        mode = params[:mode] || 'page'
+      coin_amount = params[:coin_amount].to_i
+      payment_type = params[:payment_type] || 'alipay'
+      mode = params[:mode] || 'page'
 
-        # 验证金额范围
-        if coin_amount < 1
-          render_json_error("充值数量不能小于1", status: 400)
-          return
-        end
+      return render_json_error("充值数量不能小于1", status: 400) if coin_amount < 1
+      return render_json_error("单次充值不能超过10000", status: 400) if coin_amount > 10000
 
-        if coin_amount > 10000
-          render_json_error("单次充值不能超过10000", status: 400)
-          return
-        end
+      price = coin_amount.to_d
+      order = PaymentService.create_custom_order(current_user, coin_amount, price, payment_type)
+      epay = EpayService.new
 
-        # 自定义充值：1硬币 = 1元
-        price = coin_amount.to_d
+      coin_name = SiteSetting.coin_name || "硬币"
+      pay_params = {
+        type: payment_type,
+        out_trade_no: order.out_trade_no,
+        notify_url: "#{Discourse.base_url}/coin/pay/notify",
+        return_url: "#{Discourse.base_url}/coin/pay/return",
+        name: "充值 #{order.coin_amount} #{coin_name}",
+        money: order.actual_price.to_s
+      }
 
-        # 创建订单
-        order = PaymentService.create_custom_order(current_user, coin_amount, price, payment_type)
-        epay = EpayService.new
-
-        # 构建支付参数
-        coin_name = SiteSetting.coin_name || "硬币"
-        pay_params = {
-          type: payment_type,
-          out_trade_no: order.out_trade_no,
-          notify_url: "#{Discourse.base_url}/coin/pay/notify",
-          return_url: "#{Discourse.base_url}/coin/pay/return",
-          name: "充值 #{order.coin_amount} #{coin_name}",
-          money: order.actual_price.to_s
-        }
-
-        if mode == 'qrcode'
-          result = epay.create_api_pay(pay_params)
-          if result[:success]
-            render_json_dump({
-              success: true,
-              order_id: order.id,
-              out_trade_no: order.out_trade_no,
-              qrcode: result[:qrcode],
-              pay_url: result[:url]
-            })
-          else
-            render_json_error(result[:error] || "创建支付失败", status: 500)
-          end
-        else
-          result = epay.create_page_pay(pay_params)
+      if mode == 'qrcode'
+        result = epay.create_api_pay(pay_params)
+        if result[:success]
           render_json_dump({
             success: true,
             order_id: order.id,
             out_trade_no: order.out_trade_no,
+            qrcode: result[:qrcode],
             pay_url: result[:url]
           })
+        else
+          render_json_error(result[:error] || "创建支付失败", status: 500)
         end
-      rescue => e
-        Rails.logger.error "[支付] 创建自定义订单失败: #{e.message}\n#{e.backtrace.first(5).join("\n")}"
-        render_json_error("创建订单失败: #{e.message}", status: 500)
+      else
+        result = epay.create_page_pay(pay_params)
+        render_json_dump({
+          success: true,
+          order_id: order.id,
+          out_trade_no: order.out_trade_no,
+          pay_url: result[:url]
+        })
       end
     end
 
     # ==================== 管理员套餐管理 ====================
 
-    # GET /coin/pay/admin/packages - 获取所有套餐（管理员）
     def admin_packages
       ensure_admin!
-
-      packages = CoinRechargePackage.ordered.map do |p|
-        {
-          id: p.id,
-          coin_amount: p.coin_amount,
-          price: p.price.to_f,
-          description: p.description,
-          display_order: p.display_order,
-          recommended: p.recommended,
-          active: p.active,
-          created_at: p.created_at.iso8601
-        }
-      end
-
+      packages = CoinRechargePackage.ordered.map { |p| serialize_admin_package(p) }
       render_json_dump({ success: true, packages: packages })
     end
 
-    # POST /coin/pay/admin/packages - 创建套餐
     def create_package
       ensure_admin!
-
       package = CoinRechargePackage.create!(
         coin_amount: params[:coin_amount].to_i,
         price: params[:price].to_d,
@@ -342,27 +225,11 @@ module ::MyPluginModule
         recommended: params[:recommended] == true || params[:recommended] == 'true',
         active: params[:active] != false && params[:active] != 'false'
       )
-
-      render_json_dump({
-        success: true,
-        package: {
-          id: package.id,
-          coin_amount: package.coin_amount,
-          price: package.price.to_f,
-          description: package.description,
-          display_order: package.display_order,
-          recommended: package.recommended,
-          active: package.active
-        }
-      })
-    rescue => e
-      render_json_error("创建套餐失败: #{e.message}", status: 500)
+      render_json_dump({ success: true, package: serialize_admin_package(package) })
     end
 
-    # PUT /coin/pay/admin/packages/:id - 更新套餐
     def update_package
       ensure_admin!
-
       package = CoinRechargePackage.find(params[:id])
       
       update_params = {}
@@ -374,44 +241,17 @@ module ::MyPluginModule
       update_params[:active] = params[:active] == true || params[:active] == 'true' if params.key?(:active)
 
       package.update!(update_params)
-
-      render_json_dump({
-        success: true,
-        package: {
-          id: package.id,
-          coin_amount: package.coin_amount,
-          price: package.price.to_f,
-          description: package.description,
-          display_order: package.display_order,
-          recommended: package.recommended,
-          active: package.active
-        }
-      })
-    rescue ActiveRecord::RecordNotFound
-      render_json_error("套餐不存在", status: 404)
-    rescue => e
-      render_json_error("更新套餐失败: #{e.message}", status: 500)
+      render_json_dump({ success: true, package: serialize_admin_package(package) })
     end
 
-    # DELETE /coin/pay/admin/packages/:id - 删除套餐
     def delete_package
       ensure_admin!
-
-      package = CoinRechargePackage.find(params[:id])
-      package.destroy!
-
+      CoinRechargePackage.find(params[:id]).destroy!
       render_json_dump({ success: true })
-    rescue ActiveRecord::RecordNotFound
-      render_json_error("套餐不存在", status: 404)
-    rescue => e
-      render_json_error("删除套餐失败: #{e.message}", status: 500)
     end
 
-    # POST /coin/pay/admin/seed_packages - 一键添加示例套餐
     def seed_packages
       ensure_admin!
-
-      # 默认套餐数据
       default_packages = [
         { coin_amount: 10, price: 10, description: "入门套餐", display_order: 1, recommended: false },
         { coin_amount: 20, price: 20, description: "基础套餐", display_order: 2, recommended: false },
@@ -421,29 +261,12 @@ module ::MyPluginModule
 
       created = []
       default_packages.each do |pkg_data|
-        # 检查是否已存在相同金额的套餐
-        existing = CoinRechargePackage.find_by(coin_amount: pkg_data[:coin_amount])
-        next if existing
-
+        next if CoinRechargePackage.exists?(coin_amount: pkg_data[:coin_amount])
         package = CoinRechargePackage.create!(pkg_data.merge(active: true))
-        created << {
-          id: package.id,
-          coin_amount: package.coin_amount,
-          price: package.price.to_f,
-          description: package.description,
-          display_order: package.display_order,
-          recommended: package.recommended,
-          active: package.active
-        }
+        created << serialize_admin_package(package)
       end
 
-      render_json_dump({
-        success: true,
-        created_count: created.length,
-        packages: created
-      })
-    rescue => e
-      render_json_error("添加示例套餐失败: #{e.message}", status: 500)
+      render_json_dump({ success: true, created_count: created.length, packages: created })
     end
 
     private
@@ -454,7 +277,6 @@ module ::MyPluginModule
 
     def serialize_package(package, discount_rate)
       actual_price = DiscountService.calculate_discounted_price(package.price, discount_rate)
-      
       {
         id: package.id,
         coin_amount: package.coin_amount,
@@ -463,6 +285,19 @@ module ::MyPluginModule
         description: package.description,
         recommended: package.recommended,
         display_order: package.display_order
+      }
+    end
+
+    def serialize_admin_package(package)
+      {
+        id: package.id,
+        coin_amount: package.coin_amount,
+        price: package.price.to_f,
+        description: package.description,
+        display_order: package.display_order,
+        recommended: package.recommended,
+        active: package.active,
+        created_at: package.created_at.iso8601
       }
     end
   end

@@ -7,7 +7,7 @@ module ::MyPluginModule
       discount_rate = DiscountService.get_user_discount(user.id)
       actual_price = DiscountService.calculate_discounted_price(package.price, discount_rate)
 
-      order = CoinPaymentOrder.create!(
+      CoinPaymentOrder.create!(
         user_id: user.id,
         recharge_package_id: package.id,
         out_trade_no: generate_trade_no,
@@ -18,10 +18,6 @@ module ::MyPluginModule
         payment_type: payment_type,
         status: :pending
       )
-
-      Rails.logger.info "[支付] 创建订单: #{order.out_trade_no}, 用户: #{user.username}, 金额: #{actual_price}"
-
-      order
     end
 
     # 创建自定义金额订单（不使用套餐）
@@ -29,7 +25,7 @@ module ::MyPluginModule
       discount_rate = DiscountService.get_user_discount(user.id)
       actual_price = DiscountService.calculate_discounted_price(price, discount_rate)
 
-      order = CoinPaymentOrder.create!(
+      CoinPaymentOrder.create!(
         user_id: user.id,
         recharge_package_id: nil,
         out_trade_no: generate_trade_no,
@@ -40,74 +36,65 @@ module ::MyPluginModule
         payment_type: payment_type,
         status: :pending
       )
-
-      Rails.logger.info "[支付] 创建自定义订单: #{order.out_trade_no}, 用户: #{user.username}, 金额: #{actual_price}"
-
-      order
     end
 
     # 处理支付成功回调
     def self.process_payment_success(out_trade_no, trade_no, amount)
-      Rails.logger.info "[支付] ========== 开始处理支付成功 =========="
-      Rails.logger.info "[支付] out_trade_no: #{out_trade_no}"
-      Rails.logger.info "[支付] trade_no: #{trade_no}"
-      Rails.logger.info "[支付] amount: #{amount}"
-      
       ActiveRecord::Base.transaction do
         order = CoinPaymentOrder.find_by(out_trade_no: out_trade_no)
-
-        unless order
-          Rails.logger.error "[支付] 订单不存在: #{out_trade_no}"
-          return { success: false, error: 'order_not_found' }
-        end
-        
-        Rails.logger.info "[支付] 找到订单: ID=#{order.id}, 状态=#{order.status}, 用户ID=#{order.user_id}"
+        return { success: false, error: 'order_not_found' } unless order
 
         # 已处理的订单直接返回成功（幂等处理）
-        if order.paid?
-          Rails.logger.info "[支付] 订单已处理: #{out_trade_no}"
-          return { success: true, message: 'already_processed' }
-        end
+        return { success: true, message: 'already_processed' } if order.paid?
 
-        # 检查订单状态
+        # 检查订单状态和是否超时
         unless order.can_process_callback?
-          Rails.logger.warn "[支付] 订单状态异常: #{out_trade_no}, 状态: #{order.status}"
-          return { success: false, error: 'invalid_order_status' }
+          # 如果订单超时，标记为过期
+          order.mark_as_expired! if order.pending? && order.expired_by_time?
+          return { success: false, error: 'order_expired_or_invalid' }
         end
 
         # 验证金额（允许0.01的误差）
         amount_diff = (order.actual_price.to_f - amount.to_f).abs
-        Rails.logger.info "[支付] 金额验证 - 订单金额: #{order.actual_price}, 回调金额: #{amount}, 差值: #{amount_diff}"
-        
-        if amount_diff > 0.01
-          Rails.logger.error "[支付] 金额不匹配: #{out_trade_no}, 订单: #{order.actual_price}, 回调: #{amount}"
-          return { success: false, error: 'amount_mismatch' }
-        end
+        return { success: false, error: 'amount_mismatch' } if amount_diff > 0.01
 
         # 更新订单状态
-        Rails.logger.info "[支付] 更新订单状态为已支付..."
         order.mark_as_paid!(trade_no)
-        Rails.logger.info "[支付] 订单状态更新成功"
 
         # 增加用户余额
         coin_name = SiteSetting.coin_name || "硬币"
-        Rails.logger.info "[支付] 开始增加用户余额: 用户ID=#{order.user_id}, 金额=#{order.coin_amount}"
-        
         CoinService.record_transaction(
           order.user_id,
           order.coin_amount,
           "充值 #{order.coin_amount} #{coin_name}",
           'recharge'
         )
-        
-        Rails.logger.info "[支付] 用户余额增加成功"
-        Rails.logger.info "[支付] 订单处理完成: #{out_trade_no}, 用户ID: #{order.user_id}, 硬币: #{order.coin_amount}"
 
         { success: true, order: order }
       end
     rescue => e
-      Rails.logger.error "[支付] 处理回调异常: #{e.message}\n#{e.backtrace.first(10).join("\n")}"
       { success: false, error: e.message }
+    end
+
+    # 获取用户最新的待支付订单
+    def self.get_pending_order(user_id)
+      order = CoinPaymentOrder.by_user(user_id).pending.recent.first
+      return nil unless order
+
+      # 检查是否超时
+      if order.expired_by_time?
+        order.mark_as_expired!
+        return nil
+      end
+
+      {
+        out_trade_no: order.out_trade_no,
+        coin_amount: order.coin_amount,
+        actual_price: order.actual_price.to_f,
+        payment_type: order.payment_type,
+        remaining_seconds: order.remaining_seconds,
+        created_at: order.created_at.iso8601
+      }
     end
 
     # 标记过期订单
@@ -117,10 +104,8 @@ module ::MyPluginModule
       CoinPaymentOrder.pending_expired.find_each do |order|
         order.mark_as_expired!
         expired_count += 1
-        Rails.logger.info "[支付] 订单已过期: #{order.out_trade_no}"
       end
 
-      Rails.logger.info "[支付] 共标记 #{expired_count} 个过期订单" if expired_count > 0
       expired_count
     end
 
@@ -147,10 +132,17 @@ module ::MyPluginModule
       order = CoinPaymentOrder.find_by(out_trade_no: out_trade_no, user_id: user_id)
       return nil unless order
 
+      # 检查是否超时
+      if order.pending? && order.expired_by_time?
+        order.mark_as_expired!
+      end
+
       {
         status: order.status,
         paid: order.paid?,
-        coin_amount: order.coin_amount
+        expired: order.expired?,
+        coin_amount: order.coin_amount,
+        remaining_seconds: order.remaining_seconds
       }
     end
 

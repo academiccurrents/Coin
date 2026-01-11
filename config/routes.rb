@@ -36,6 +36,7 @@ MyPluginModule::Engine.routes.draw do
   get "/pay/return" => "pay#return_callback"
   
   get "/pay/order_status" => "pay#order_status"
+  get "/pay/pending_order" => "pay#pending_order"
   get "/pay/orders" => "pay#orders"
 
   # 管理员套餐管理
