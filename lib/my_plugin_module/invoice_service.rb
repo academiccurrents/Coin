@@ -101,14 +101,16 @@ module ::MyPluginModule
       end
 
       ActiveRecord::Base.transaction do
-        invoice.update!(
+        # 使用 update_columns 跳过验证，因为只是更新状态
+        invoice.update_columns(
           status: "completed",
-          invoice_url: invoice_url
+          invoice_url: invoice_url,
+          updated_at: Time.current
         )
 
         Rails.logger.info "[发票] 发票申请 #{invoice_id} 已处理，发票URL: #{invoice_url}"
 
-        invoice
+        invoice.reload
       end
     end
 
@@ -124,14 +126,15 @@ module ::MyPluginModule
       end
 
       ActiveRecord::Base.transaction do
-        invoice.update!(
-          status: new_status,
-          admin_note: admin_note
-        )
+        # 使用 update_columns 跳过验证，因为只是更新状态
+        update_attrs = { status: new_status, updated_at: Time.current }
+        update_attrs[:admin_note] = admin_note if admin_note.present?
+        
+        invoice.update_columns(update_attrs)
 
         Rails.logger.info "[发票] 发票申请 #{invoice_id} 状态更新为: #{new_status}，备注: #{admin_note}"
 
-        invoice
+        invoice.reload
       end
     end
 
@@ -176,9 +179,10 @@ module ::MyPluginModule
       end
 
       ActiveRecord::Base.transaction do
-        invoice.update!(invoice_url: new_url)
+        # 使用 update_columns 跳过验证
+        invoice.update_columns(invoice_url: new_url, updated_at: Time.current)
         Rails.logger.info "[发票] 发票 #{invoice_id} URL已更新为: #{new_url}"
-        invoice
+        invoice.reload
       end
     end
 

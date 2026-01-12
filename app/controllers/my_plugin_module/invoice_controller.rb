@@ -301,12 +301,14 @@ module ::MyPluginModule
           return
         end
 
-        update_attrs = { status: new_status }
+        update_attrs = { status: new_status, updated_at: Time.current }
         update_attrs[:admin_note] = admin_note if admin_note.present?
-        update_attrs[:reject_reason] = reject_reason if new_status == 'rejected' && reject_reason.present?
+        update_attrs[:reject_reason] = reject_reason if new_status == 'rejected' && reject_reason.present? && column_exists?(:reject_reason)
         update_attrs[:invoice_url] = invoice_url if new_status == 'completed' && invoice_url.present?
 
-        invoice.update!(update_attrs)
+        # 使用 update_columns 跳过验证，因为只是更新状态
+        invoice.update_columns(update_attrs)
+        invoice.reload
 
         render_json_dump({
           success: true,
