@@ -28,13 +28,23 @@ module ::MyPluginModule
         # 如果标记为充值，则使用 recharge 类型，否则使用 admin_adjust
         transaction_type = mark_as_recharge ? "recharge" : "admin_adjust"
 
-        CoinTransaction.create!(
+        # 创建交易记录
+        transaction_attrs = {
           user_id: target_user.id,
           amount: amount,
           balance_after: new_balance,
           reason: reason,
           transaction_type: transaction_type
-        )
+        }
+
+        # 如果标记为充值，生成一个唯一的 out_trade_no 用于发票关联
+        if mark_as_recharge && CoinTransaction.column_names.include?('out_trade_no')
+          timestamp = Time.current.strftime('%Y%m%d%H%M%S')
+          random = SecureRandom.hex(4).upcase
+          transaction_attrs[:out_trade_no] = "ADMIN#{timestamp}#{random}"
+        end
+
+        CoinTransaction.create!(transaction_attrs)
 
         Rails.logger.info "[积分] 用户 #{target_user.username} 积分调整: #{amount > 0 ? '+' : ''}#{amount}，原因: #{reason}，类型: #{transaction_type}"
 

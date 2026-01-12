@@ -108,8 +108,8 @@
                 <span class="transaction-amount {{if (gt transaction.amount 0) 'positive' 'negative'}}">
                   {{#if (gt transaction.amount 0)}}+{{/if}}{{transaction.amount}}
                 </span>
-                {{!-- 只有充值类型且金额大于0且未开票的才显示开票按钮 --}}
-                {{#if (and this.coinInvoiceEnabled (eq transaction.transaction_type "recharge") (gt transaction.amount 0) (not transaction.invoice_requested))}}
+                {{!-- 只有充值类型且金额大于0且有订单号且未开票的才显示开票按钮 --}}
+                {{#if (and this.coinInvoiceEnabled (eq transaction.transaction_type "recharge") (gt transaction.amount 0) transaction.out_trade_no (not transaction.invoice_requested))}}
                   <button class="transaction-invoice-btn" {{on "click" (fn this.openInvoiceFromTransactionModal transaction)}}>
                     <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64zM256 0V128H384L256 0z"/></svg>
                   </button>

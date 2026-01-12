@@ -46,12 +46,13 @@ export default class CoinController extends Controller {
     return this.siteSettings?.coin_invoice_enabled === true;
   }
 
-  // 获取可开票的充值记录（只有recharge类型且金额>0且未申请过发票的）
+  // 获取可开票的充值记录（只有recharge类型且金额>0且有out_trade_no且未申请过发票的）
   get invoiceableTransactions() {
     const transactions = this.model?.transactions || [];
     return transactions.filter(t => 
       t.transaction_type === "recharge" && 
       t.amount > 0 && 
+      t.out_trade_no &&  // 必须有订单号才能申请发票
       !t.invoice_requested
     );
   }
@@ -190,7 +191,7 @@ export default class CoinController extends Controller {
           invoice_title: this.invoiceTitle.trim(),
           id_number: this.isPersonalInvoice ? this.idNumber.trim() : null,
           tax_number: !this.isPersonalInvoice ? this.taxNumber.trim() : null,
-          out_trade_no: transaction.out_trade_no || `TX_${transaction.id}`  // 使用交易的订单号或生成一个
+          out_trade_no: transaction.out_trade_no  // 使用交易的订单号
         }
       });
 
