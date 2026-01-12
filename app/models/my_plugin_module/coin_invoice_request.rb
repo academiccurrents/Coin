@@ -9,12 +9,23 @@ module ::MyPluginModule
     validates :user_id, presence: true
     validates :amount, presence: true, numericality: { only_integer: true, greater_than: 0 }
     validates :status, presence: true
+    validates :invoice_type, presence: true, inclusion: { in: %w[personal company] }
 
-    STATUSES = %w[pending completed].freeze
+    # 个人发票验证
+    validates :invoice_title, presence: true, if: -> { invoice_type == 'personal' }
+    validates :id_number, presence: true, if: -> { invoice_type == 'personal' }
+
+    # 企业发票验证
+    validates :invoice_title, presence: true, if: -> { invoice_type == 'company' }
+    validates :tax_number, presence: true, if: -> { invoice_type == 'company' }
+
+    STATUSES = %w[pending completed rejected].freeze
+    INVOICE_TYPES = %w[personal company].freeze
 
     scope :recent, -> { order(created_at: :desc) }
     scope :by_user, ->(user_id) { where(user_id: user_id) }
     scope :by_status, ->(status) { where(status: status) }
+    scope :pending_list, -> { where(status: 'pending').order(created_at: :desc) }
 
     def pending?
       status == "pending"
@@ -24,8 +35,25 @@ module ::MyPluginModule
       status == "completed"
     end
 
+    def rejected?
+      status == "rejected"
+    end
+
     def has_invoice_url?
       invoice_url.present?
+    end
+
+    def personal?
+      invoice_type == "personal"
+    end
+
+    def company?
+      invoice_type == "company"
+    end
+
+    # 是否可以编辑（只有待处理状态可以编辑）
+    def editable?
+      pending?
     end
   end
 end

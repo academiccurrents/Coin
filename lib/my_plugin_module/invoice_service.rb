@@ -71,15 +71,56 @@ module ::MyPluginModule
             id: invoice.id,
             user_id: invoice.user_id,
             username: invoice.user.username,
+            avatar_url: invoice.user.avatar_template&.gsub('{size}', '45'),
             amount: invoice.amount,
             status: invoice.status,
+            status_text: status_text(invoice.status),
             reason: invoice.reason,
+            invoice_type: invoice.invoice_type,
+            invoice_type_text: invoice.personal? ? '个人' : '企业',
+            invoice_title: invoice.invoice_title,
+            id_number: invoice.id_number,
+            tax_number: invoice.tax_number,
+            out_trade_no: invoice.out_trade_no,
             admin_note: invoice.admin_note,
+            reject_reason: invoice.reject_reason,
             invoice_url: invoice.invoice_url,
             created_at: invoice.created_at.iso8601,
             updated_at: invoice.updated_at.iso8601
           }
         end.compact
+    end
+
+    def self.get_rejected_invoices(limit: 20, offset: 0)
+      scope = CoinInvoiceRequest.includes(:user).by_status("rejected").recent
+
+      total = scope.count
+      invoices = scope.offset(offset).limit(limit).map do |invoice|
+        next nil unless invoice.user
+        {
+          id: invoice.id,
+          user_id: invoice.user_id,
+          username: invoice.user.username,
+          avatar_url: invoice.user.avatar_template&.gsub('{size}', '45'),
+          amount: invoice.amount,
+          status: invoice.status,
+          status_text: status_text(invoice.status),
+          reason: invoice.reason,
+          invoice_type: invoice.invoice_type,
+          invoice_type_text: invoice.personal? ? '个人' : '企业',
+          invoice_title: invoice.invoice_title,
+          reject_reason: invoice.reject_reason,
+          admin_note: invoice.admin_note,
+          created_at: invoice.created_at.iso8601,
+          updated_at: invoice.updated_at.iso8601
+        }
+      end.compact
+
+      {
+        invoices: invoices,
+        total: total,
+        has_more: (offset + limit) < total
+      }
     end
 
     def self.process_invoice(invoice_id, invoice_url)
@@ -142,9 +183,14 @@ module ::MyPluginModule
           id: invoice.id,
           user_id: invoice.user_id,
           username: invoice.user.username,
+          avatar_url: invoice.user.avatar_template&.gsub('{size}', '45'),
           amount: invoice.amount,
           status: invoice.status,
+          status_text: status_text(invoice.status),
           reason: invoice.reason,
+          invoice_type: invoice.invoice_type,
+          invoice_type_text: invoice.personal? ? '个人' : '企业',
+          invoice_title: invoice.invoice_title,
           admin_note: invoice.admin_note,
           invoice_url: invoice.invoice_url,
           created_at: invoice.created_at.iso8601,
@@ -157,6 +203,15 @@ module ::MyPluginModule
         total: total,
         has_more: (offset + limit) < total
       }
+    end
+
+    def self.status_text(status)
+      case status
+      when 'pending' then '待处理'
+      when 'completed' then '已完成'
+      when 'rejected' then '已拒绝'
+      else status
+      end
     end
 
     def self.update_invoice_url(invoice_id, new_url)

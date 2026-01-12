@@ -3259,3 +3259,483 @@
     }
   }
 }
+
+
+// ==================== 发票相关样式 ====================
+
+// 发票类型徽章
+.invoice-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+
+  &.personal {
+    background: rgba(0, 122, 255, 0.1);
+    color: #007AFF;
+  }
+
+  &.company {
+    background: rgba(255, 149, 0, 0.1);
+    color: #FF9500;
+  }
+}
+
+// 发票卡片扩展
+.invoice-card {
+  .invoice-title-text {
+    font-weight: 500;
+    color: var(--coin-text);
+  }
+
+  .invoice-order-no {
+    font-size: 12px;
+    color: var(--coin-text-secondary);
+  }
+
+  .invoice-reject-reason {
+    font-size: 12px;
+    color: var(--coin-danger);
+    background: rgba(255, 59, 48, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 4px;
+  }
+
+  &.rejected {
+    border-left: 3px solid var(--coin-danger);
+    
+    .invoice-icon {
+      color: var(--coin-danger);
+    }
+  }
+}
+
+// 发票操作按钮组
+.invoice-actions-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.invoice-detail-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--coin-border);
+  background: var(--coin-bg);
+  color: var(--coin-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  .svg-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover {
+    background: var(--coin-bg-secondary);
+    color: var(--coin-primary);
+  }
+}
+
+.invoice-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  .svg-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  &.success {
+    background: var(--coin-success);
+    color: white;
+
+    &:hover {
+      background: #2db84d;
+    }
+  }
+
+  &.danger {
+    background: var(--coin-danger);
+    color: white;
+
+    &:hover {
+      background: #e6342b;
+    }
+  }
+}
+
+// 发票编辑按钮
+.invoice-edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--coin-border);
+  background: var(--coin-bg);
+  color: var(--coin-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  .svg-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  &:hover {
+    background: var(--coin-bg-secondary);
+    color: var(--coin-primary);
+    border-color: var(--coin-primary);
+  }
+}
+
+// 发票详情网格
+.invoice-detail-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--coin-border);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .detail-label {
+    color: var(--coin-text-secondary);
+    font-size: 14px;
+  }
+
+  .detail-value {
+    color: var(--coin-text);
+    font-weight: 500;
+    font-size: 14px;
+    text-align: right;
+  }
+}
+
+// 拒绝理由预设按钮
+.reject-reason-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+
+  .preset-label {
+    font-size: 12px;
+    color: var(--coin-text-secondary);
+  }
+
+  .preset-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--coin-border);
+    background: var(--coin-bg);
+    color: var(--coin-text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: var(--coin-bg-secondary);
+      border-color: var(--coin-primary);
+      color: var(--coin-primary);
+    }
+  }
+}
+
+// 表单文本域
+.form-textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--coin-border);
+  border-radius: var(--coin-radius);
+  font-size: 14px;
+  resize: vertical;
+  min-height: 80px;
+  background: var(--coin-bg);
+  color: var(--coin-text);
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: var(--coin-primary);
+  }
+
+  &::placeholder {
+    color: var(--coin-text-secondary);
+  }
+}
+
+// 危险按钮样式
+.modal-btn.danger {
+  background: var(--coin-danger);
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #e6342b;
+  }
+}
+
+// 发票申请弹窗样式
+.coin-invoice-page {
+  .coin-modal-backdrop {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 1050 !important;
+  }
+
+  .coin-modal {
+    background: var(--coin-bg);
+    border-radius: var(--coin-radius-lg);
+    width: 90%;
+    max-width: 480px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .coin-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--coin-border);
+
+    h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+    }
+  }
+
+  .coin-modal-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: var(--coin-bg-secondary);
+    border-radius: 8px;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--coin-text-secondary);
+
+    &:hover {
+      background: var(--coin-border);
+    }
+  }
+
+  .coin-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .coin-modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--coin-border);
+    justify-content: flex-end;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--coin-text);
+
+      .required {
+        color: var(--coin-danger);
+      }
+    }
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--coin-border);
+    border-radius: 8px;
+    font-size: 14px;
+    background: var(--coin-bg);
+    color: var(--coin-text);
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: var(--coin-primary);
+    }
+  }
+
+  // 订单列表
+  .order-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--coin-border);
+    border-radius: 8px;
+  }
+
+  .order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid var(--coin-border);
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: var(--coin-bg-secondary);
+    }
+
+    &.selected {
+      background: rgba(0, 122, 255, 0.1);
+      border-color: var(--coin-primary);
+    }
+
+    .order-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .order-no {
+      font-size: 13px;
+      color: var(--coin-text);
+      font-family: monospace;
+    }
+
+    .order-amount {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--coin-primary);
+    }
+
+    .order-date {
+      font-size: 12px;
+      color: var(--coin-text-secondary);
+    }
+  }
+
+  .empty-orders {
+    padding: 24px;
+    text-align: center;
+    color: var(--coin-text-secondary);
+  }
+
+  // 发票类型选择器
+  .invoice-type-selector {
+    display: flex;
+    gap: 12px;
+
+    .type-btn {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid var(--coin-border);
+      border-radius: 8px;
+      background: var(--coin-bg);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        border-color: var(--coin-primary);
+      }
+
+      &.active {
+        border-color: var(--coin-primary);
+        background: rgba(0, 122, 255, 0.1);
+        color: var(--coin-primary);
+      }
+    }
+  }
+
+  // 按钮样式
+  .btn-cancel {
+    padding: 10px 20px;
+    border: 1px solid var(--coin-border);
+    border-radius: 8px;
+    background: var(--coin-bg);
+    color: var(--coin-text-secondary);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: var(--coin-bg-secondary);
+    }
+  }
+
+  .btn-submit {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--coin-primary);
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover:not(:disabled) {
+      background: var(--coin-primary-hover);
+    }
+
+    &:disabled,
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// 导航栏主要按钮
+.coin-nav-btn.primary {
+  background: var(--coin-primary);
+  color: white;
+  border: none;
+
+  &:hover {
+    background: var(--coin-primary-hover);
+  }
+}

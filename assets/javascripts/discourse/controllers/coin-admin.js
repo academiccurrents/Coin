@@ -30,6 +30,15 @@ export default class CoinAdminController extends Controller {
   @tracked showEditInvoiceModal = false;
   @tracked editingInvoice = null;
   @tracked editInvoiceUrl = "";
+  
+  // 拒绝发票相关
+  @tracked showRejectInvoiceModal = false;
+  @tracked rejectInvoiceId = null;
+  @tracked rejectReason = "";
+  
+  // 查看发票详情
+  @tracked showInvoiceDetailModal = false;
+  @tracked selectedInvoiceDetail = null;
 
   get pendingInvoices() {
     return this.model?.pendingInvoices || [];
@@ -338,6 +347,68 @@ export default class CoinAdminController extends Controller {
     } catch (error) {
       console.error("更新发票URL失败:", error);
       alert("更新失败: " + (error.jqXHR?.responseJSON?.errors?.[0] || error.message));
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  // 查看发票详情
+  @action
+  viewInvoiceDetail(invoice) {
+    this.selectedInvoiceDetail = invoice;
+    this.showInvoiceDetailModal = true;
+  }
+
+  @action
+  closeInvoiceDetailModal() {
+    this.showInvoiceDetailModal = false;
+    this.selectedInvoiceDetail = null;
+  }
+
+  // 拒绝发票相关方法
+  @action
+  openRejectInvoiceModal(invoice) {
+    this.rejectInvoiceId = invoice.id;
+    this.rejectReason = "";
+    this.showRejectInvoiceModal = true;
+  }
+
+  @action
+  closeRejectInvoiceModal() {
+    this.showRejectInvoiceModal = false;
+    this.rejectInvoiceId = null;
+    this.rejectReason = "";
+  }
+
+  @action
+  updateRejectReason(event) {
+    this.rejectReason = event.target.value;
+  }
+
+  @action
+  async rejectInvoice() {
+    this.isLoading = true;
+
+    try {
+      const result = await ajax("/coin/invoice/update_status.json", {
+        type: "POST",
+        data: {
+          id: this.rejectInvoiceId,
+          status: "rejected",
+          reject_reason: this.rejectReason.trim() || "管理员拒绝"
+        }
+      });
+
+      if (result.success) {
+        this.successMessage = "发票申请已拒绝";
+        this.showSuccessMessage = true;
+        this.closeRejectInvoiceModal();
+        setTimeout(() => { this.showSuccessMessage = false; }, 3000);
+        this.refreshData();
+      }
+    } catch (error) {
+      console.error("拒绝发票失败:", error);
+      alert("操作失败: " + (error.jqXHR?.responseJSON?.errors?.[0] || error.message));
     } finally {
       this.isLoading = false;
     }

@@ -162,14 +162,29 @@
                 </div>
                 <div class="invoice-info">
                   <span class="invoice-user">{{invoice.username}}</span>
-                  <span class="invoice-amount">{{invoice.amount}} {{model.coinName}}</span>
-                  <span class="invoice-reason">{{invoice.reason}}</span>
+                  <span class="invoice-amount">¥{{invoice.amount}}</span>
+                  <span class="invoice-type-badge {{invoice.invoice_type}}">
+                    {{invoice.invoice_type_text}}
+                  </span>
+                  <span class="invoice-title-text">{{invoice.invoice_title}}</span>
+                  {{#if invoice.out_trade_no}}
+                    <span class="invoice-order-no">订单: {{invoice.out_trade_no}}</span>
+                  {{/if}}
                 </div>
               </div>
-              <button class="invoice-action-btn" {{on "click" (fn this.openProcessInvoiceModal invoice)}}>
-                <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
-                <span>处理</span>
-              </button>
+              <div class="invoice-actions-group">
+                <button class="invoice-detail-btn" {{on "click" (fn this.viewInvoiceDetail invoice)}} title="查看详情">
+                  <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32z"/></svg>
+                </button>
+                <button class="invoice-action-btn success" {{on "click" (fn this.openProcessInvoiceModal invoice)}} title="处理">
+                  <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/></svg>
+                  <span>处理</span>
+                </button>
+                <button class="invoice-action-btn danger" {{on "click" (fn this.openRejectInvoiceModal invoice)}} title="拒绝">
+                  <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+                  <span>拒绝</span>
+                </button>
+              </div>
             </div>
           {{/each}}
         {{else}}
@@ -360,6 +375,114 @@
     <div class="coin-toast success">
       <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
       <span>{{this.successMessage}}</span>
+    </div>
+  {{/if}}
+
+  {{!-- 拒绝发票模态框 --}}
+  {{#if this.showRejectInvoiceModal}}
+    <div class="coin-modal-overlay" {{on "click" this.closeRejectInvoiceModal}}>
+      <div class="coin-modal" {{on "click" this.stopPropagation}}>
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/></svg>
+            <h3>拒绝发票申请</h3>
+          </div>
+          <button class="modal-close-btn" {{on "click" this.closeRejectInvoiceModal}}>
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-field">
+            <label class="form-label">拒绝理由 <span class="optional">(可选)</span></label>
+            <textarea class="form-textarea" placeholder="请输入拒绝理由，用户将看到此信息" rows="3" value={{this.rejectReason}} {{on "input" this.updateRejectReason}}></textarea>
+            <div class="reject-reason-presets">
+              <span class="preset-label">快捷选择：</span>
+              <button class="preset-btn" {{on "click" (fn (mut this.rejectReason) "发票信息填写不完整")}}>信息不完整</button>
+              <button class="preset-btn" {{on "click" (fn (mut this.rejectReason) "身份证号码格式错误")}}>身份证错误</button>
+              <button class="preset-btn" {{on "click" (fn (mut this.rejectReason) "纳税人识别号格式错误")}}>税号错误</button>
+              <button class="preset-btn" {{on "click" (fn (mut this.rejectReason) "订单金额不符合开票要求")}}>金额不符</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-btn cancel" {{on "click" this.closeRejectInvoiceModal}}>取消</button>
+          <button class="modal-btn danger" {{on "click" this.rejectInvoice}} disabled={{this.isLoading}}>
+            {{#if this.isLoading}}
+              <span>处理中...</span>
+            {{else}}
+              <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+              <span>确认拒绝</span>
+            {{/if}}
+          </button>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+
+  {{!-- 发票详情模态框 --}}
+  {{#if this.showInvoiceDetailModal}}
+    <div class="coin-modal-overlay" {{on "click" this.closeInvoiceDetailModal}}>
+      <div class="coin-modal" {{on "click" this.stopPropagation}}>
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M64 0C28.7 0 0 28.7 0 64V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V160H256c-17.7 0-32-14.3-32-32V0H64z"/></svg>
+            <h3>发票详情</h3>
+          </div>
+          <button class="modal-close-btn" {{on "click" this.closeInvoiceDetailModal}}>
+            <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{#if this.selectedInvoiceDetail}}
+            <div class="invoice-detail-grid">
+              <div class="detail-row">
+                <span class="detail-label">申请用户</span>
+                <span class="detail-value">{{this.selectedInvoiceDetail.username}}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">发票金额</span>
+                <span class="detail-value">¥{{this.selectedInvoiceDetail.amount}}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">发票类型</span>
+                <span class="detail-value">
+                  <span class="invoice-type-badge {{this.selectedInvoiceDetail.invoice_type}}">
+                    {{this.selectedInvoiceDetail.invoice_type_text}}
+                  </span>
+                </span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">{{if (eq this.selectedInvoiceDetail.invoice_type "personal") "姓名" "公司名称"}}</span>
+                <span class="detail-value">{{this.selectedInvoiceDetail.invoice_title}}</span>
+              </div>
+              {{#if (eq this.selectedInvoiceDetail.invoice_type "personal")}}
+                <div class="detail-row">
+                  <span class="detail-label">身份证号</span>
+                  <span class="detail-value">{{this.selectedInvoiceDetail.id_number}}</span>
+                </div>
+              {{else}}
+                <div class="detail-row">
+                  <span class="detail-label">纳税人识别号</span>
+                  <span class="detail-value">{{this.selectedInvoiceDetail.tax_number}}</span>
+                </div>
+              {{/if}}
+              {{#if this.selectedInvoiceDetail.out_trade_no}}
+                <div class="detail-row">
+                  <span class="detail-label">关联订单</span>
+                  <span class="detail-value">{{this.selectedInvoiceDetail.out_trade_no}}</span>
+                </div>
+              {{/if}}
+              <div class="detail-row">
+                <span class="detail-label">申请时间</span>
+                <span class="detail-value">{{format-date this.selectedInvoiceDetail.created_at format="long"}}</span>
+              </div>
+            </div>
+          {{/if}}
+        </div>
+        <div class="modal-footer">
+          <button class="modal-btn cancel" {{on "click" this.closeInvoiceDetailModal}}>关闭</button>
+        </div>
+      </div>
     </div>
   {{/if}}
 </div>
