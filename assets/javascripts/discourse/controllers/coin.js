@@ -3,6 +3,7 @@ import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
 import { ajax } from "discourse/lib/ajax";
 import { service } from "@ember/service";
+import I18n from "discourse-i18n";
 
 export default class CoinController extends Controller {
   @service router;
@@ -17,6 +18,10 @@ export default class CoinController extends Controller {
   @tracked selectedTransactionId = null;
   @tracked showSuccessMessage = false;
   @tracked successMessage = "";
+
+  get currentLocale() {
+    return I18n.currentLocale();
+  }
 
   get paymentSuccess() {
     return this.model?.paymentStatus === "success";
@@ -126,6 +131,14 @@ export default class CoinController extends Controller {
   @action
   goToPayPage() {
     window.location.href = "/coin/pay";
+  }
+
+  @action
+  toggleLanguage() {
+    const newLocale = this.currentLocale === "zh_CN" ? "en" : "zh_CN";
+    I18n.locale = newLocale;
+    // 刷新页面以应用新语言
+    window.location.reload();
   }
 
   @action

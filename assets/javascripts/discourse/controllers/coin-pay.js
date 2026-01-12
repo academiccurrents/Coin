@@ -3,6 +3,7 @@ import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
 import { ajax } from "discourse/lib/ajax";
 import { service } from "@ember/service";
+import I18n from "discourse-i18n";
 
 export default class CoinPayController extends Controller {
   @service router;
@@ -66,6 +67,10 @@ export default class CoinPayController extends Controller {
   @tracked editDisplayOrder = "";
   @tracked editRecommended = false;
   @tracked editActive = true;
+
+  get currentLocale() {
+    return I18n.currentLocale();
+  }
 
   get isAdmin() {
     return this.currentUser?.admin;
@@ -157,6 +162,14 @@ export default class CoinPayController extends Controller {
   @action
   goBack() {
     this.router.transitionTo("coin");
+  }
+
+  @action
+  toggleLanguage() {
+    const newLocale = this.currentLocale === "zh_CN" ? "en" : "zh_CN";
+    I18n.locale = newLocale;
+    // 刷新页面以应用新语言
+    window.location.reload();
   }
 
   @action

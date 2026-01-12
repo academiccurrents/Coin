@@ -3216,3 +3216,46 @@
     justify-content: space-between;
   }
 }
+
+
+// ==========================================
+// 语言切换按钮样式
+// ==========================================
+
+.coin-lang-btn {
+  background: var(--coin-bg) !important;
+  border: 1px solid var(--coin-border) !important;
+  
+  .svg-icon {
+    width: 14px;
+    height: 14px;
+    color: var(--coin-primary);
+  }
+  
+  span {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--coin-text);
+  }
+  
+  &:hover {
+    background: var(--coin-primary) !important;
+    border-color: var(--coin-primary) !important;
+    
+    .svg-icon,
+    span {
+      color: white;
+    }
+  }
+}
+
+// 响应式 - 移动端语言按钮
+@media (max-width: 600px) {
+  .coin-lang-btn {
+    padding: 0 10px !important;
+    
+    span {
+      font-size: 11px;
+    }
+  }
+}
