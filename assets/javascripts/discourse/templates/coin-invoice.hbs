@@ -7,12 +7,12 @@
           <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>
         </button>
         <span class="coin-nav-icon">📄</span>
-        <span class="coin-nav-title">发票管理</span>
+        <span class="coin-nav-title">{{i18n "js.coin.invoice.management"}}</span>
       </div>
       <div class="coin-nav-right">
         <button class="coin-nav-btn primary" {{on "click" this.openApplyModal}}>
           <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
-          <span>申请发票</span>
+          <span>{{i18n "js.coin.apply_invoice"}}</span>
         </button>
         <button class="coin-nav-btn" {{on "click" this.refreshData}}>
           <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M105.1 202.6c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0L386.3 160H352c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c0 0 0 0 0 0c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V48c0-17.7-14.3-32-32-32s-32 14.3-32 32v35.2L446.4 65.9C349.8-30.7 193.8-30.7 97.2 65.9c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2z"/></svg>
@@ -25,7 +25,7 @@
       <div class="section-header">
         <h2 class="section-title">
           <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256z"/></svg>
-          <span>待开票</span>
+          <span>{{i18n "js.coin.invoice.pending_section"}}</span>
         </h2>
         <span class="section-badge warning">{{this.pendingInvoices.length}}</span>
       </div>
@@ -42,22 +42,22 @@
                   </span>
                   <span class="invoice-title">{{invoice.invoice_title}}</span>
                   {{#if invoice.out_trade_no}}
-                    <span class="invoice-order">订单: {{invoice.out_trade_no}}</span>
+                    <span class="invoice-order">{{i18n "js.coin.invoice.order_no"}}: {{invoice.out_trade_no}}</span>
                   {{/if}}
                   <span class="invoice-date">{{format-date invoice.created_at format="medium"}}</span>
                 </div>
               </div>
               <div class="invoice-right">
                 <button class="invoice-edit-btn" {{on "click" (fn this.openEditModal invoice)}}>
-                  ✏️ 编辑
+                  ✏️ {{i18n "js.coin.invoice.edit"}}
                 </button>
-                <div class="invoice-status pending">待处理</div>
+                <div class="invoice-status pending">{{i18n "js.coin.invoice.pending"}}</div>
               </div>
             </div>
           {{/each}}
         {{else}}
           <div class="empty-state small">
-            <span>暂无待开票记录</span>
+            <span>{{i18n "js.coin.invoice.no_pending"}}</span>
           </div>
         {{/if}}
       </div>
@@ -69,7 +69,7 @@
       <div class="section-header">
         <h2 class="section-title">
           <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/></svg>
-          <span>已拒绝</span>
+          <span>{{i18n "js.coin.invoice.rejected_section"}}</span>
         </h2>
         <span class="section-badge danger">{{this.rejectedInvoices.length}}</span>
       </div>
@@ -85,7 +85,7 @@
                 </span>
                 <span class="invoice-title">{{invoice.invoice_title}}</span>
                 {{#if invoice.reject_reason}}
-                  <span class="invoice-reject-reason">拒绝原因: {{invoice.reject_reason}}</span>
+                  <span class="invoice-reject-reason">{{i18n "js.coin.invoice.reject_reason"}}: {{invoice.reject_reason}}</span>
                 {{/if}}
                 <span class="invoice-date">{{format-date invoice.updated_at format="medium"}}</span>
               </div>
@@ -93,13 +93,13 @@
             <div class="invoice-right">
               {{#if invoice.can_resubmit}}
                 <button class="invoice-resubmit-btn" {{on "click" (fn this.openResubmitModal invoice)}}>
-                  🔄 重新申请
-                  <span class="resubmit-count-hint">(剩余{{invoice.remaining_resubmit_count}}次)</span>
+                  🔄 {{i18n "js.coin.invoice.resubmit"}}
+                  <span class="resubmit-count-hint">({{invoice.remaining_resubmit_count}}{{i18n "js.coin.invoice.remaining_resubmit"}})</span>
                 </button>
               {{else}}
-                <span class="resubmit-exhausted">申请次数已用完</span>
+                <span class="resubmit-exhausted">{{i18n "js.coin.invoice.resubmit_exhausted"}}</span>
               {{/if}}
-              <div class="invoice-status rejected">已拒绝</div>
+              <div class="invoice-status rejected">{{i18n "js.coin.invoice.rejected"}}</div>
             </div>
           </div>
         {{/each}}
@@ -112,7 +112,7 @@
       <div class="section-header">
         <h2 class="section-title">
           <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
-          <span>已开票</span>
+          <span>{{i18n "js.coin.invoice.completed_section"}}</span>
         </h2>
         <span class="section-badge success">{{this.completedInvoices.length}}</span>
       </div>
@@ -134,16 +134,16 @@
               <div class="invoice-right">
                 {{#if invoice.invoice_url}}
                   <a href="{{invoice.invoice_url}}" target="_blank" rel="noopener noreferrer" class="invoice-view-btn">
-                    查看发票
+                    {{i18n "js.coin.invoice.view"}}
                   </a>
                 {{/if}}
-                <div class="invoice-status completed">已完成</div>
+                <div class="invoice-status completed">{{i18n "js.coin.invoice.completed"}}</div>
               </div>
             </div>
           {{/each}}
         {{else}}
           <div class="empty-state small">
-            <span>暂无已开票记录</span>
+            <span>{{i18n "js.coin.invoice.no_completed"}}</span>
           </div>
         {{/if}}
       </div>
@@ -155,13 +155,13 @@
   <div class="coin-modal-backdrop" {{on "click" this.closeApplyModal}}>
     <div class="coin-modal" {{on "click" this.stopPropagation}}>
       <div class="coin-modal-header">
-        <h3>申请发票</h3>
+        <h3>{{i18n "js.coin.invoice.title"}}</h3>
         <button class="coin-modal-close" {{on "click" this.closeApplyModal}}>×</button>
       </div>
       <div class="coin-modal-body">
         {{!-- 选择订单 --}}
         <div class="form-group">
-          <label>选择订单</label>
+          <label>{{i18n "js.coin.invoice.select_record"}}</label>
           {{#if this.eligibleOrders.length}}
             <div class="order-list">
               {{#each this.eligibleOrders as |order|}}
@@ -176,32 +176,32 @@
               {{/each}}
             </div>
           {{else}}
-            <div class="empty-orders">暂无可开票的订单</div>
+            <div class="empty-orders">{{i18n "js.coin.invoice.no_records"}}</div>
           {{/if}}
         </div>
 
         {{#if this.selectedOrder}}
         {{!-- 发票类型 --}}
         <div class="form-group">
-          <label>发票类型</label>
+          <label>{{i18n "js.coin.admin_page.invoice_type"}}</label>
           <div class="invoice-type-selector">
             <button type="button" class="type-btn {{if this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "personal")}}>
-              👤 个人
+              👤 {{i18n "js.coin.invoice.type_personal"}}
             </button>
             <button type="button" class="type-btn {{unless this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "company")}}>
-              🏢 企业
+              🏢 {{i18n "js.coin.invoice.type_company"}}
             </button>
           </div>
         </div>
 
         {{!-- 发票抬头 --}}
         <div class="form-group">
-          <label>{{if this.isPersonal "姓名" "公司名称"}} <span class="required">*</span></label>
+          <label>{{if this.isPersonal (i18n "js.coin.invoice.name") (i18n "js.coin.invoice.company_name")}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="{{if this.isPersonal '请输入您的姓名' '请输入公司全称'}}"
+                 placeholder="{{if this.isPersonal (i18n "js.coin.invoice.name_placeholder") (i18n "js.coin.invoice.company_name_placeholder")}}"
                  value={{this.invoiceTitle}}
                  {{on "input" this.updateInvoiceTitle}} />
         </div>
@@ -209,20 +209,20 @@
         {{!-- 个人：身份证号 --}}
         {{#if this.isPersonal}}
         <div class="form-group">
-          <label>身份证号码 <span class="required">*</span></label>
+          <label>{{i18n "js.coin.invoice.id_number"}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="请输入身份证号码"
+                 placeholder="{{i18n "js.coin.invoice.id_number_placeholder"}}"
                  value={{this.idNumber}}
                  {{on "input" this.updateIdNumber}} />
         </div>
         {{else}}
         {{!-- 企业：纳税人识别号 --}}
         <div class="form-group">
-          <label>纳税人识别号 <span class="required">*</span></label>
+          <label>{{i18n "js.coin.invoice.tax_number"}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="请输入纳税人识别号"
+                 placeholder="{{i18n "js.coin.invoice.tax_number_placeholder"}}"
                  value={{this.taxNumber}}
                  {{on "input" this.updateTaxNumber}} />
         </div>
@@ -230,11 +230,11 @@
         {{/if}}
       </div>
       <div class="coin-modal-footer">
-        <button type="button" class="btn-cancel" {{on "click" this.closeApplyModal}}>取消</button>
+        <button type="button" class="btn-cancel" {{on "click" this.closeApplyModal}}>{{i18n "js.coin.cancel"}}</button>
         <button type="button" class="btn-submit {{unless this.canSubmitApply 'disabled'}}" 
                 disabled={{unless this.canSubmitApply true}}
                 {{on "click" this.submitApply}}>
-          {{if this.isLoading "提交中..." "提交申请"}}
+          {{if this.isLoading (i18n "js.coin.invoice.submitting") (i18n "js.coin.invoice.submit")}}
         </button>
       </div>
     </div>
@@ -246,31 +246,31 @@
   <div class="coin-modal-backdrop" {{on "click" this.closeEditModal}}>
     <div class="coin-modal" {{on "click" this.stopPropagation}}>
       <div class="coin-modal-header">
-        <h3>编辑发票信息</h3>
+        <h3>{{i18n "js.coin.invoice.edit_title"}}</h3>
         <button class="coin-modal-close" {{on "click" this.closeEditModal}}>×</button>
       </div>
       <div class="coin-modal-body">
         {{!-- 发票类型 --}}
         <div class="form-group">
-          <label>发票类型</label>
+          <label>{{i18n "js.coin.admin_page.invoice_type"}}</label>
           <div class="invoice-type-selector">
             <button type="button" class="type-btn {{if this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "personal")}}>
-              👤 个人
+              👤 {{i18n "js.coin.invoice.type_personal"}}
             </button>
             <button type="button" class="type-btn {{unless this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "company")}}>
-              🏢 企业
+              🏢 {{i18n "js.coin.invoice.type_company"}}
             </button>
           </div>
         </div>
 
         {{!-- 发票抬头 --}}
         <div class="form-group">
-          <label>{{if this.isPersonal "姓名" "公司名称"}} <span class="required">*</span></label>
+          <label>{{if this.isPersonal (i18n "js.coin.invoice.name") (i18n "js.coin.invoice.company_name")}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="{{if this.isPersonal '请输入您的姓名' '请输入公司全称'}}"
+                 placeholder="{{if this.isPersonal (i18n "js.coin.invoice.name_placeholder") (i18n "js.coin.invoice.company_name_placeholder")}}"
                  value={{this.invoiceTitle}}
                  {{on "input" this.updateInvoiceTitle}} />
         </div>
@@ -278,31 +278,31 @@
         {{!-- 个人：身份证号 --}}
         {{#if this.isPersonal}}
         <div class="form-group">
-          <label>身份证号码 <span class="required">*</span></label>
+          <label>{{i18n "js.coin.invoice.id_number"}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="请输入身份证号码"
+                 placeholder="{{i18n "js.coin.invoice.id_number_placeholder"}}"
                  value={{this.idNumber}}
                  {{on "input" this.updateIdNumber}} />
         </div>
         {{else}}
         {{!-- 企业：纳税人识别号 --}}
         <div class="form-group">
-          <label>纳税人识别号 <span class="required">*</span></label>
+          <label>{{i18n "js.coin.invoice.tax_number"}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="请输入纳税人识别号"
+                 placeholder="{{i18n "js.coin.invoice.tax_number_placeholder"}}"
                  value={{this.taxNumber}}
                  {{on "input" this.updateTaxNumber}} />
         </div>
         {{/if}}
       </div>
       <div class="coin-modal-footer">
-        <button type="button" class="btn-cancel" {{on "click" this.closeEditModal}}>取消</button>
+        <button type="button" class="btn-cancel" {{on "click" this.closeEditModal}}>{{i18n "js.coin.cancel"}}</button>
         <button type="button" class="btn-submit {{unless this.canSubmitEdit 'disabled'}}" 
                 disabled={{unless this.canSubmitEdit true}}
                 {{on "click" this.submitEdit}}>
-          {{if this.isLoading "保存中..." "保存修改"}}
+          {{if this.isLoading (i18n "js.coin.invoice.saving") (i18n "js.coin.invoice.save_changes")}}
         </button>
       </div>
     </div>
@@ -314,43 +314,43 @@
   <div class="coin-modal-backdrop" {{on "click" this.closeResubmitModal}}>
     <div class="coin-modal" {{on "click" this.stopPropagation}}>
       <div class="coin-modal-header">
-        <h3>重新申请发票</h3>
+        <h3>{{i18n "js.coin.invoice.resubmit_title"}}</h3>
         <button class="coin-modal-close" {{on "click" this.closeResubmitModal}}>×</button>
       </div>
       <div class="coin-modal-body">
         {{!-- 提示信息 --}}
         <div class="resubmit-notice">
           <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
-          <span>您还有 {{this.resubmittingInvoice.remaining_resubmit_count}} 次重新申请机会，请仔细核对信息后提交</span>
+          <span>{{i18n "js.coin.invoice.resubmit_notice" count=this.resubmittingInvoice.remaining_resubmit_count}}</span>
         </div>
 
         {{#if this.resubmittingInvoice.reject_reason}}
         <div class="reject-reason-box">
-          <strong>上次拒绝原因：</strong>{{this.resubmittingInvoice.reject_reason}}
+          <strong>{{i18n "js.coin.invoice.last_reject_reason"}}</strong>{{this.resubmittingInvoice.reject_reason}}
         </div>
         {{/if}}
 
         {{!-- 发票类型 --}}
         <div class="form-group">
-          <label>发票类型</label>
+          <label>{{i18n "js.coin.admin_page.invoice_type"}}</label>
           <div class="invoice-type-selector">
             <button type="button" class="type-btn {{if this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "personal")}}>
-              👤 个人
+              👤 {{i18n "js.coin.invoice.type_personal"}}
             </button>
             <button type="button" class="type-btn {{unless this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "company")}}>
-              🏢 企业
+              🏢 {{i18n "js.coin.invoice.type_company"}}
             </button>
           </div>
         </div>
 
         {{!-- 发票抬头 --}}
         <div class="form-group">
-          <label>{{if this.isPersonal "姓名" "公司名称"}} <span class="required">*</span></label>
+          <label>{{if this.isPersonal (i18n "js.coin.invoice.name") (i18n "js.coin.invoice.company_name")}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="{{if this.isPersonal '请输入您的姓名' '请输入公司全称'}}"
+                 placeholder="{{if this.isPersonal (i18n "js.coin.invoice.name_placeholder") (i18n "js.coin.invoice.company_name_placeholder")}}"
                  value={{this.invoiceTitle}}
                  {{on "input" this.updateInvoiceTitle}} />
         </div>
@@ -358,31 +358,31 @@
         {{!-- 个人：身份证号 --}}
         {{#if this.isPersonal}}
         <div class="form-group">
-          <label>身份证号码 <span class="required">*</span></label>
+          <label>{{i18n "js.coin.invoice.id_number"}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="请输入身份证号码"
+                 placeholder="{{i18n "js.coin.invoice.id_number_placeholder"}}"
                  value={{this.idNumber}}
                  {{on "input" this.updateIdNumber}} />
         </div>
         {{else}}
         {{!-- 企业：纳税人识别号 --}}
         <div class="form-group">
-          <label>纳税人识别号 <span class="required">*</span></label>
+          <label>{{i18n "js.coin.invoice.tax_number"}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="请输入纳税人识别号"
+                 placeholder="{{i18n "js.coin.invoice.tax_number_placeholder"}}"
                  value={{this.taxNumber}}
                  {{on "input" this.updateTaxNumber}} />
         </div>
         {{/if}}
       </div>
       <div class="coin-modal-footer">
-        <button type="button" class="btn-cancel" {{on "click" this.closeResubmitModal}}>取消</button>
+        <button type="button" class="btn-cancel" {{on "click" this.closeResubmitModal}}>{{i18n "js.coin.cancel"}}</button>
         <button type="button" class="btn-submit {{unless this.canSubmitResubmit 'disabled'}}" 
                 disabled={{unless this.canSubmitResubmit true}}
                 {{on "click" this.submitResubmit}}>
-          {{if this.isLoading "提交中..." "重新申请"}}
+          {{if this.isLoading (i18n "js.coin.invoice.submitting") (i18n "js.coin.invoice.resubmit")}}
         </button>
       </div>
     </div>

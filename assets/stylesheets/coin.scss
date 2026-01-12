@@ -3884,3 +3884,149 @@
     padding: 10px 12px;
   }
 }
+
+// ==========================================
+// 发票申请弹窗美化样式 - Invoice Modal Beautification
+// ==========================================
+
+// 发票类型选择器美化
+.invoice-type-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.invoice-type-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 12px;
+  border: 2px solid var(--coin-border);
+  border-radius: var(--coin-radius);
+  background: var(--coin-bg);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  
+  .svg-icon {
+    width: 28px;
+    height: 28px;
+    color: var(--coin-text-secondary);
+    transition: all 0.25s ease;
+  }
+  
+  span {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--coin-text-secondary);
+    transition: all 0.25s ease;
+  }
+  
+  &:hover {
+    border-color: var(--coin-primary);
+    background: rgba(0, 122, 255, 0.03);
+    
+    .svg-icon {
+      color: var(--coin-primary);
+    }
+    
+    span {
+      color: var(--coin-primary);
+    }
+  }
+  
+  &.active {
+    border-color: var(--coin-primary);
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.08) 0%, rgba(0, 122, 255, 0.04) 100%);
+    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.15);
+    
+    .svg-icon {
+      color: var(--coin-primary);
+      transform: scale(1.1);
+    }
+    
+    span {
+      color: var(--coin-primary);
+    }
+  }
+}
+
+// 发票表单美化
+.invoice-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// 已选记录信息卡片
+.invoice-selected-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(52, 199, 89, 0.1) 0%, rgba(52, 199, 89, 0.05) 100%);
+  border: 1px solid rgba(52, 199, 89, 0.2);
+  border-radius: var(--coin-radius);
+  margin-bottom: 20px;
+  
+  .invoice-selected-label {
+    font-size: 13px;
+    color: var(--coin-text-secondary);
+  }
+  
+  .invoice-selected-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--coin-success);
+  }
+}
+
+// 返回按钮样式
+.modal-btn.secondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--coin-bg);
+  color: var(--coin-text-secondary);
+  border: 1px solid var(--coin-border);
+  
+  .svg-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  &:hover {
+    background: var(--coin-bg-secondary);
+    color: var(--coin-text);
+  }
+}
+
+// 必填标记
+.required {
+  color: var(--coin-danger);
+  margin-left: 2px;
+}
+
+// 移动端适配
+@media (max-width: 600px) {
+  .invoice-type-btn {
+    padding: 14px 10px;
+    
+    .svg-icon {
+      width: 24px;
+      height: 24px;
+    }
+    
+    span {
+      font-size: 13px;
+    }
+  }
+  
+  .invoice-selected-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 12px 14px;
+  }
+}
