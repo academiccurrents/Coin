@@ -56,22 +56,30 @@ module ::MyPluginModule
         .recent
         .limit(limit)
 
-      # 获取该用户所有已申请发票的交易ID
-      invoice_transaction_ids = CoinInvoiceRequest
+      # 获取该用户所有已申请发票的订单号（out_trade_no 是唯一的，只查当前用户即可）
+      invoice_out_trade_nos = CoinInvoiceRequest
         .where(user_id: user_id)
-        .pluck(:admin_note)
-        .map { |note| note&.match(/关联交易ID: (\d+)/)&.[](1)&.to_i }
+        .where.not(out_trade_no: [nil, ''])
+        .pluck(:out_trade_no)
         .compact
 
       transactions.map do |t|
+        # 检查是否已申请发票：通过 out_trade_no 匹配
+        invoice_requested = if t.respond_to?(:out_trade_no) && t.out_trade_no.present?
+          invoice_out_trade_nos.include?(t.out_trade_no)
+        else
+          false
+        end
+
         {
           id: t.id,
           amount: t.amount,
           balance_after: t.balance_after,
           reason: t.reason,
           transaction_type: t.transaction_type,
+          out_trade_no: t.respond_to?(:out_trade_no) ? t.out_trade_no : nil,
           created_at: t.created_at.iso8601,
-          invoice_requested: invoice_transaction_ids.include?(t.id)
+          invoice_requested: invoice_requested
         }
       end
     end
@@ -112,7 +120,7 @@ module ::MyPluginModule
       }
     end
 
-    def self.record_transaction(user_id, amount, reason, transaction_type)
+    def self.record_transaction(user_id, amount, reason, transaction_type, out_trade_no: nil)
       ActiveRecord::Base.transaction do
         balance = CoinUserBalance.get_or_create(user_id)
         old_balance = balance.balance
@@ -124,13 +132,21 @@ module ::MyPluginModule
 
         balance.update!(balance: new_balance)
 
-        CoinTransaction.create!(
+        # 创建交易记录
+        transaction_attrs = {
           user_id: user_id,
           amount: amount,
           balance_after: new_balance,
           reason: reason,
           transaction_type: transaction_type
-        )
+        }
+        
+        # 如果 out_trade_no 列存在且有值，添加到记录中
+        if out_trade_no.present? && CoinTransaction.column_names.include?('out_trade_no')
+          transaction_attrs[:out_trade_no] = out_trade_no
+        end
+
+        CoinTransaction.create!(transaction_attrs)
 
         Rails.logger.info "[积分] 用户ID #{user_id} 积分变动: #{amount > 0 ? '+' : ''}#{amount}，类型: #{transaction_type}，原因: #{reason}"
 

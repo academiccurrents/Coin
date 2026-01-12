@@ -189,7 +189,8 @@ export default class CoinController extends Controller {
           invoice_type: this.invoiceType,
           invoice_title: this.invoiceTitle.trim(),
           id_number: this.isPersonalInvoice ? this.idNumber.trim() : null,
-          tax_number: !this.isPersonalInvoice ? this.taxNumber.trim() : null
+          tax_number: !this.isPersonalInvoice ? this.taxNumber.trim() : null,
+          out_trade_no: transaction.out_trade_no || `TX_${transaction.id}`  // 使用交易的订单号或生成一个
         }
       });
 

@@ -67,7 +67,8 @@ module ::MyPluginModule
           order.user_id,
           order.coin_amount,
           "充值 #{order.coin_amount} #{coin_name}",
-          'recharge'
+          'recharge',
+          out_trade_no: order.out_trade_no
         )
 
         { success: true, order: order }
