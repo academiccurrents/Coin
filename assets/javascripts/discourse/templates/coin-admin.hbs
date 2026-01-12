@@ -474,7 +474,13 @@
               {{/if}}
               <div class="detail-row">
                 <span class="detail-label">申请时间</span>
-                <span class="detail-value">{{format-date this.selectedInvoiceDetail.created_at format="long"}}</span>
+                <span class="detail-value">
+                  {{#if this.selectedInvoiceDetail.created_at}}
+                    {{format-date this.selectedInvoiceDetail.created_at format="long"}}
+                  {{else}}
+                    {{i18n "js.coin.unknown"}}
+                  {{/if}}
+                </span>
               </div>
             </div>
           {{/if}}

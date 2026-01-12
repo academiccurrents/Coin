@@ -4,3 +4,207 @@ zh_CN:
       site_settings:
         categories:
           discourse_coin: "积分管理"
+
+  js:
+    coin:
+      # 通用
+      center: "积分中心"
+      balance: "余额"
+      available_balance: "可用余额"
+      cancel: "取消"
+      confirm: "确认"
+      submitting: "提交中..."
+      processing: "处理中..."
+      loading: "加载中..."
+      unknown: "未知"
+      save: "保存"
+      close: "关闭"
+      
+      # 导航
+      admin: "管理"
+      back: "返回"
+      
+      # 操作
+      recharge: "充值"
+      apply_invoice: "申请发票"
+      invoice_records: "发票记录"
+      
+      # 余额卡片
+      balance_label: "可用余额"
+      
+      # 交易记录
+      transactions:
+        title: "交易记录"
+        recharge: "充值"
+        consume: "消费"
+        admin_adjust: "系统调整"
+        empty: "暂无交易记录"
+        empty_desc: "您的交易记录将在这里显示"
+      
+      # 发票
+      invoice:
+        title: "申请发票"
+        select_record: "请选择要申请发票的充值记录（仅充值记录可申请发票）"
+        select_record_error: "请选择要申请发票的充值记录"
+        no_records: "暂无可开票的充值记录"
+        selected_record: "已选记录"
+        type_personal: "个人"
+        type_company: "企业"
+        name: "姓名"
+        name_placeholder: "请输入您的姓名"
+        id_number: "身份证号码"
+        id_number_placeholder: "请输入身份证号码"
+        company_name: "公司名称"
+        company_name_placeholder: "请输入公司名称"
+        tax_number: "纳税人识别号"
+        tax_number_placeholder: "请输入纳税人识别号"
+        back: "上一步"
+        next: "下一步"
+        submit: "提交申请"
+        success: "发票申请提交成功！"
+        submit_failed: "提交失败"
+        recharge_invoice: "充值发票申请"
+        records: "发票记录"
+        pending: "待开票"
+        completed: "已开票"
+        rejected: "已拒绝"
+        view: "查看"
+        edit: "编辑"
+        resubmit: "重新申请"
+        amount: "金额"
+        status: "状态"
+        apply_time: "申请时间"
+        reject_reason: "拒绝理由"
+        remaining_resubmit: "剩余重新申请次数"
+      
+      # 支付页面
+      pay:
+        title: "充值中心"
+        current_balance: "当前余额"
+        discount: "折扣"
+        payment_success: "支付成功！"
+        payment_failed: "支付失败或已取消，请重试"
+        pending_order: "您有一笔待支付订单"
+        continue_pay: "继续支付"
+        
+        # 套餐选择
+        select_package: "选择充值套餐"
+        recommended: "推荐"
+        custom: "自定义"
+        custom_input_hint: "支持1-10000，1积分=1元"
+        custom_input_placeholder: "输入充值数量"
+        
+        # 支付方式
+        select_payment: "选择支付方式"
+        no_payment_channels: "管理员未开启支付"
+        
+        # 支付汇总
+        total_amount: "应付金额"
+        get_coins: "获得"
+        pay_now: "立即支付"
+        
+        # 二维码弹窗
+        scan_to_pay: "扫码支付"
+        scan_hint: "请使用"
+        payment_processing: "支付完成后将自动跳转..."
+        
+        # 管理员
+        discount_management: "折扣管理"
+        channel_management: "渠道管理"
+        package_management: "管理套餐"
+        add_package: "添加套餐"
+        add_example: "一键添加示例"
+        edit_package: "编辑套餐"
+        coin_amount: "积分数量"
+        price: "价格"
+        description: "描述"
+        active: "已上架"
+        inactive: "已下架"
+        no_packages: "暂无套餐，点击上方按钮添加"
+        
+      # 折扣管理
+      discount:
+        title: "折扣管理"
+        hint: "创建折扣组并添加用户，用户充值时将自动享受折扣。折扣后金额低于0.01元时不打折。"
+        add_group: "添加折扣组"
+        edit_group: "编辑折扣组"
+        group_name: "折扣组名称"
+        discount_rate: "折扣率（%）"
+        discount_rate_hint: "输入1-100的整数，如90表示9折，50表示5折"
+        no_groups: "暂无折扣组，点击上方按钮添加"
+        manage_users: "管理用户"
+        current_members: "当前成员"
+        search_user: "输入用户名搜索..."
+        no_members: "暂无成员，搜索用户名添加"
+        reset_channels: "重置默认渠道"
+        no_channels: "暂无渠道，点击上方按钮添加默认渠道"
+        
+      # 管理员页面
+      admin_page:
+        title: "管理员面板"
+        total_users: "总用户数"
+        total_balance: "总积分"
+        total_recharge: "充值积分"
+        pending_invoices: "待处理发票"
+        
+        # 用户查询
+        query_user: "查询用户"
+        query_placeholder: "输入用户名查询..."
+        query: "查询"
+        recent_transactions: "最近交易记录"
+        
+        # 调整积分
+        adjust_points: "调整积分"
+        username: "用户名"
+        adjust_amount: "调整数量"
+        adjust_amount_hint: "正数增加，负数扣除"
+        adjust_reason: "调整原因"
+        adjust_reason_optional: "(可选)"
+        mark_as_recharge: "标记为充值（用户可申请发票）"
+        mark_as_recharge_hint: "调试功能：勾选后此次加分将被标记为充值类型"
+        confirm_adjust: "确认调整"
+        
+        # 发票管理
+        pending_invoices_title: "待处理发票"
+        completed_invoices: "已处理发票"
+        process: "处理"
+        reject: "拒绝"
+        view_detail: "查看详情"
+        invoice_url: "发票URL"
+        invoice_url_hint: "请上传发票图片到图床，然后粘贴URL"
+        confirm_process: "确认处理"
+        reject_invoice: "拒绝发票申请"
+        reject_reason: "拒绝理由"
+        reject_reason_optional: "(可选)"
+        reject_reason_placeholder: "请输入拒绝理由，用户将看到此信息"
+        quick_select: "快捷选择"
+        incomplete_info: "信息不完整"
+        invalid_id: "身份证错误"
+        invalid_tax: "税号错误"
+        amount_mismatch: "金额不符"
+        confirm_reject: "确认拒绝"
+        edit_invoice_url: "编辑发票URL"
+        new_invoice_url_hint: "修改后用户将看到新的发票链接"
+        
+        # 最近充值
+        recent_recharge: "最近充值"
+        no_recharge: "暂无充值记录"
+        
+        # 发票详情
+        invoice_detail: "发票详情"
+        applicant: "申请用户"
+        invoice_amount: "发票金额"
+        invoice_type: "发票类型"
+        personal: "个人"
+        company: "企业"
+        order_no: "关联订单"
+        
+        # 加载更多
+        load_more: "加载更多"
+        no_pending_invoices: "暂无待处理发票"
+        no_completed_invoices: "暂无已处理发票"
+
+      # 提示
+      alerts:
+        recharge_success: "充值成功！"
+        coins_credited: "已到账"

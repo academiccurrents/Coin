@@ -19,6 +19,13 @@ export default class CoinController extends Controller {
   @tracked showSuccessMessage = false;
   @tracked successMessage = "";
 
+  // 发票申请表单状态
+  @tracked invoiceStep = 1;  // 1: 选择交易, 2: 填写信息
+  @tracked invoiceType = "personal";  // "personal" | "company"
+  @tracked invoiceTitle = "";  // 姓名或公司名称
+  @tracked idNumber = "";  // 身份证号码
+  @tracked taxNumber = "";  // 纳税人识别号
+
   get currentLocale() {
     return I18n.currentLocale();
   }
@@ -53,6 +60,24 @@ export default class CoinController extends Controller {
     return this.isLoading || !this.selectedTransactionId;
   }
 
+  get isPersonalInvoice() {
+    return this.invoiceType === "personal";
+  }
+
+  get canSubmitInvoice() {
+    if (!this.selectedTransactionId) return false;
+    if (this.invoiceStep === 1) return true;  // Step 1 只需选择交易
+    if (!this.invoiceTitle.trim()) return false;
+    if (this.isPersonalInvoice && !this.idNumber.trim()) return false;
+    if (!this.isPersonalInvoice && !this.taxNumber.trim()) return false;
+    return true;
+  }
+
+  get selectedTransaction() {
+    if (!this.selectedTransactionId) return null;
+    return this.invoiceableTransactions.find(t => t.id === this.selectedTransactionId);
+  }
+
   @action
   stopPropagation(event) {
     event.stopPropagation();
@@ -62,12 +87,22 @@ export default class CoinController extends Controller {
   openInvoiceModal() {
     this.showInvoiceModal = true;
     this.selectedTransactionId = null;
+    this.invoiceStep = 1;
+    this.invoiceType = "personal";
+    this.invoiceTitle = "";
+    this.idNumber = "";
+    this.taxNumber = "";
   }
 
   @action
   closeInvoiceModal() {
     this.showInvoiceModal = false;
     this.selectedTransactionId = null;
+    this.invoiceStep = 1;
+    this.invoiceType = "personal";
+    this.invoiceTitle = "";
+    this.idNumber = "";
+    this.taxNumber = "";
   }
 
   @action
@@ -78,28 +113,87 @@ export default class CoinController extends Controller {
   @action
   openInvoiceFromTransactionModal(transaction) {
     this.selectedTransactionId = transaction.id;
+    this.invoiceStep = 1;
+    this.invoiceType = "personal";
+    this.invoiceTitle = "";
+    this.idNumber = "";
+    this.taxNumber = "";
     this.showInvoiceModal = true;
   }
 
   @action
+  goToInvoiceStep2() {
+    if (this.selectedTransactionId) {
+      this.invoiceStep = 2;
+    }
+  }
+
+  @action
+  goToInvoiceStep1() {
+    this.invoiceStep = 1;
+  }
+
+  @action
+  setInvoiceType(type) {
+    this.invoiceType = type;
+    if (type === "personal") {
+      this.taxNumber = "";
+    } else {
+      this.idNumber = "";
+    }
+  }
+
+  @action
+  updateInvoiceTitle(event) {
+    this.invoiceTitle = event.target.value;
+  }
+
+  @action
+  updateIdNumber(event) {
+    this.idNumber = event.target.value;
+  }
+
+  @action
+  updateTaxNumber(event) {
+    this.taxNumber = event.target.value;
+  }
+
+  @action
   async submitInvoiceRequest() {
-    if (!this.selectedTransactionId) {
-      alert("请选择要申请发票的充值记录");
+    if (!this.canSubmitInvoice) {
+      return;
+    }
+
+    // Step 1: 选择交易后进入 Step 2
+    if (this.invoiceStep === 1) {
+      this.goToInvoiceStep2();
+      return;
+    }
+
+    // Step 2: 提交发票申请
+    const transaction = this.selectedTransaction;
+    if (!transaction) {
+      alert(I18n.t("js.coin.invoice.select_record_error"));
       return;
     }
 
     this.isLoading = true;
 
     try {
-      const result = await ajax("/coin/invoice/create_from_transaction.json", {
+      const result = await ajax("/coin/invoice/create.json", {
         type: "POST",
         data: {
-          transaction_id: this.selectedTransactionId
+          amount: transaction.amount,
+          reason: `${I18n.t("js.coin.invoice.recharge_invoice")} - #${transaction.id}`,
+          invoice_type: this.invoiceType,
+          invoice_title: this.invoiceTitle.trim(),
+          id_number: this.isPersonalInvoice ? this.idNumber.trim() : null,
+          tax_number: !this.isPersonalInvoice ? this.taxNumber.trim() : null
         }
       });
 
       if (result.success) {
-        this.successMessage = "发票申请提交成功！";
+        this.successMessage = I18n.t("js.coin.invoice.success");
         this.showSuccessMessage = true;
         this.closeInvoiceModal();
         setTimeout(() => { this.showSuccessMessage = false; }, 3000);
@@ -107,7 +201,7 @@ export default class CoinController extends Controller {
       }
     } catch (error) {
       console.error("提交发票申请失败:", error);
-      alert("提交失败: " + (error.jqXHR?.responseJSON?.errors?.[0] || error.message));
+      alert(I18n.t("js.coin.invoice.submit_failed") + ": " + (error.jqXHR?.responseJSON?.errors?.[0] || error.message));
     } finally {
       this.isLoading = false;
     }

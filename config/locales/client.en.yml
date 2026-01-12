@@ -4,3 +4,207 @@ en:
       site_settings:
         categories:
           discourse_coin: "Coin Management"
+
+  js:
+    coin:
+      # Common
+      center: "Coin Center"
+      balance: "Balance"
+      available_balance: "Available Balance"
+      cancel: "Cancel"
+      confirm: "Confirm"
+      submitting: "Submitting..."
+      processing: "Processing..."
+      loading: "Loading..."
+      unknown: "Unknown"
+      save: "Save"
+      close: "Close"
+      
+      # Navigation
+      admin: "Admin"
+      back: "Back"
+      
+      # Actions
+      recharge: "Recharge"
+      apply_invoice: "Apply Invoice"
+      invoice_records: "Invoice Records"
+      
+      # Balance Card
+      balance_label: "Available Balance"
+      
+      # Transactions
+      transactions:
+        title: "Transaction History"
+        recharge: "Recharge"
+        consume: "Consume"
+        admin_adjust: "System Adjustment"
+        empty: "No transactions yet"
+        empty_desc: "Your transaction history will appear here"
+      
+      # Invoice
+      invoice:
+        title: "Apply Invoice"
+        select_record: "Please select a recharge record for invoice (only recharge records are eligible)"
+        select_record_error: "Please select a recharge record"
+        no_records: "No eligible recharge records"
+        selected_record: "Selected Record"
+        type_personal: "Personal"
+        type_company: "Company"
+        name: "Name"
+        name_placeholder: "Enter your name"
+        id_number: "ID Number"
+        id_number_placeholder: "Enter your ID number"
+        company_name: "Company Name"
+        company_name_placeholder: "Enter company name"
+        tax_number: "Tax Number"
+        tax_number_placeholder: "Enter tax identification number"
+        back: "Back"
+        next: "Next"
+        submit: "Submit"
+        success: "Invoice application submitted successfully!"
+        submit_failed: "Submit failed"
+        recharge_invoice: "Recharge Invoice"
+        records: "Invoice Records"
+        pending: "Pending"
+        completed: "Completed"
+        rejected: "Rejected"
+        view: "View"
+        edit: "Edit"
+        resubmit: "Resubmit"
+        amount: "Amount"
+        status: "Status"
+        apply_time: "Apply Time"
+        reject_reason: "Reject Reason"
+        remaining_resubmit: "Remaining resubmit attempts"
+      
+      # Payment Page
+      pay:
+        title: "Recharge Center"
+        current_balance: "Current Balance"
+        discount: "Discount"
+        payment_success: "Payment successful!"
+        payment_failed: "Payment failed or cancelled, please try again"
+        pending_order: "You have a pending order"
+        continue_pay: "Continue Payment"
+        
+        # Package Selection
+        select_package: "Select Package"
+        recommended: "Recommended"
+        custom: "Custom"
+        custom_input_hint: "Enter amount (1-10000), 1 coin = ¥1"
+        custom_input_placeholder: "Enter amount"
+        
+        # Payment Methods
+        select_payment: "Select Payment Method"
+        no_payment_channels: "No payment channels available"
+        
+        # Payment Summary
+        total_amount: "Total Amount"
+        get_coins: "Get"
+        pay_now: "Pay Now"
+        
+        # QR Code Modal
+        scan_to_pay: "Scan to Pay"
+        scan_hint: "Please scan with"
+        payment_processing: "Payment processing..."
+        
+        # Admin
+        discount_management: "Discount Management"
+        channel_management: "Channel Management"
+        package_management: "Package Management"
+        add_package: "Add Package"
+        add_example: "Add Examples"
+        edit_package: "Edit Package"
+        coin_amount: "Coin Amount"
+        price: "Price"
+        description: "Description"
+        active: "Active"
+        inactive: "Inactive"
+        no_packages: "No packages, click above to add"
+        
+      # Discount Management
+      discount:
+        title: "Discount Management"
+        hint: "Create discount groups and add users. Users will automatically enjoy discounts when recharging. No discount when amount is less than 0.01."
+        add_group: "Add Discount Group"
+        edit_group: "Edit Discount Group"
+        group_name: "Group Name"
+        discount_rate: "Discount Rate (%)"
+        discount_rate_hint: "Enter 1-100, e.g. 90 means 10% off, 50 means 50% off"
+        no_groups: "No discount groups, click above to add"
+        manage_users: "Manage Users"
+        current_members: "Current Members"
+        search_user: "Search username..."
+        no_members: "No members, search username to add"
+        reset_channels: "Reset Default Channels"
+        no_channels: "No channels, click above to add default channels"
+        
+      # Admin Page
+      admin_page:
+        title: "Admin Panel"
+        total_users: "Total Users"
+        total_balance: "Total Balance"
+        total_recharge: "Total Recharge"
+        pending_invoices: "Pending Invoices"
+        
+        # User Query
+        query_user: "Query User"
+        query_placeholder: "Enter username..."
+        query: "Query"
+        recent_transactions: "Recent Transactions"
+        
+        # Adjust Points
+        adjust_points: "Adjust Points"
+        username: "Username"
+        adjust_amount: "Amount"
+        adjust_amount_hint: "Positive to add, negative to deduct"
+        adjust_reason: "Reason"
+        adjust_reason_optional: "(Optional)"
+        mark_as_recharge: "Mark as recharge (user can apply invoice)"
+        mark_as_recharge_hint: "Debug feature: check to mark this adjustment as recharge type"
+        confirm_adjust: "Confirm Adjustment"
+        
+        # Invoice Management
+        pending_invoices_title: "Pending Invoices"
+        completed_invoices: "Completed Invoices"
+        process: "Process"
+        reject: "Reject"
+        view_detail: "View Detail"
+        invoice_url: "Invoice URL"
+        invoice_url_hint: "Please upload invoice image to image host and paste URL"
+        confirm_process: "Confirm Process"
+        reject_invoice: "Reject Invoice"
+        reject_reason: "Reject Reason"
+        reject_reason_optional: "(Optional)"
+        reject_reason_placeholder: "Enter reject reason, user will see this"
+        quick_select: "Quick Select"
+        incomplete_info: "Incomplete Info"
+        invalid_id: "Invalid ID"
+        invalid_tax: "Invalid Tax Number"
+        amount_mismatch: "Amount Mismatch"
+        confirm_reject: "Confirm Reject"
+        edit_invoice_url: "Edit Invoice URL"
+        new_invoice_url_hint: "User will see the new invoice link after modification"
+        
+        # Recent Recharge
+        recent_recharge: "Recent Recharge"
+        no_recharge: "No recharge records"
+        
+        # Invoice Detail
+        invoice_detail: "Invoice Detail"
+        applicant: "Applicant"
+        invoice_amount: "Invoice Amount"
+        invoice_type: "Invoice Type"
+        personal: "Personal"
+        company: "Company"
+        order_no: "Order No"
+        
+        # Load More
+        load_more: "Load More"
+        no_pending_invoices: "No pending invoices"
+        no_completed_invoices: "No completed invoices"
+
+      # Alerts
+      alerts:
+        recharge_success: "Recharge successful!"
+        coins_credited: "has been credited"
