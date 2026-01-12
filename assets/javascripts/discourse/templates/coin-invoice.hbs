@@ -153,7 +153,7 @@
   {{!-- 申请发票弹窗 --}}
   {{#if this.showApplyModal}}
   <div class="coin-modal-backdrop" {{on "click" this.closeApplyModal}}>
-    <div class="coin-modal" {{on "click" (fn (mut this._noop) true)}}>
+    <div class="coin-modal" {{on "click" this.stopPropagation}}>
       <div class="coin-modal-header">
         <h3>申请发票</h3>
         <button class="coin-modal-close" {{on "click" this.closeApplyModal}}>×</button>
@@ -185,11 +185,11 @@
         <div class="form-group">
           <label>发票类型</label>
           <div class="invoice-type-selector">
-            <button class="type-btn {{if this.isPersonal 'active'}}" 
+            <button type="button" class="type-btn {{if this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "personal")}}>
               👤 个人
             </button>
-            <button class="type-btn {{unless this.isPersonal 'active'}}" 
+            <button type="button" class="type-btn {{unless this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "company")}}>
               🏢 企业
             </button>
@@ -230,8 +230,8 @@
         {{/if}}
       </div>
       <div class="coin-modal-footer">
-        <button class="btn-cancel" {{on "click" this.closeApplyModal}}>取消</button>
-        <button class="btn-submit {{unless this.canSubmitApply 'disabled'}}" 
+        <button type="button" class="btn-cancel" {{on "click" this.closeApplyModal}}>取消</button>
+        <button type="button" class="btn-submit {{unless this.canSubmitApply 'disabled'}}" 
                 disabled={{unless this.canSubmitApply true}}
                 {{on "click" this.submitApply}}>
           {{if this.isLoading "提交中..." "提交申请"}}
@@ -244,7 +244,7 @@
   {{!-- 编辑发票弹窗 --}}
   {{#if this.showEditModal}}
   <div class="coin-modal-backdrop" {{on "click" this.closeEditModal}}>
-    <div class="coin-modal" {{on "click" (fn (mut this._noop) true)}}>
+    <div class="coin-modal" {{on "click" this.stopPropagation}}>
       <div class="coin-modal-header">
         <h3>编辑发票信息</h3>
         <button class="coin-modal-close" {{on "click" this.closeEditModal}}>×</button>
@@ -254,11 +254,11 @@
         <div class="form-group">
           <label>发票类型</label>
           <div class="invoice-type-selector">
-            <button class="type-btn {{if this.isPersonal 'active'}}" 
+            <button type="button" class="type-btn {{if this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "personal")}}>
               👤 个人
             </button>
-            <button class="type-btn {{unless this.isPersonal 'active'}}" 
+            <button type="button" class="type-btn {{unless this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "company")}}>
               🏢 企业
             </button>
@@ -298,8 +298,8 @@
         {{/if}}
       </div>
       <div class="coin-modal-footer">
-        <button class="btn-cancel" {{on "click" this.closeEditModal}}>取消</button>
-        <button class="btn-submit {{unless this.canSubmitEdit 'disabled'}}" 
+        <button type="button" class="btn-cancel" {{on "click" this.closeEditModal}}>取消</button>
+        <button type="button" class="btn-submit {{unless this.canSubmitEdit 'disabled'}}" 
                 disabled={{unless this.canSubmitEdit true}}
                 {{on "click" this.submitEdit}}>
           {{if this.isLoading "保存中..." "保存修改"}}
@@ -312,7 +312,7 @@
   {{!-- 重新申请弹窗 --}}
   {{#if this.showResubmitModal}}
   <div class="coin-modal-backdrop" {{on "click" this.closeResubmitModal}}>
-    <div class="coin-modal" {{on "click" (fn (mut this._noop) true)}}>
+    <div class="coin-modal" {{on "click" this.stopPropagation}}>
       <div class="coin-modal-header">
         <h3>重新申请发票</h3>
         <button class="coin-modal-close" {{on "click" this.closeResubmitModal}}>×</button>
@@ -334,11 +334,11 @@
         <div class="form-group">
           <label>发票类型</label>
           <div class="invoice-type-selector">
-            <button class="type-btn {{if this.isPersonal 'active'}}" 
+            <button type="button" class="type-btn {{if this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "personal")}}>
               👤 个人
             </button>
-            <button class="type-btn {{unless this.isPersonal 'active'}}" 
+            <button type="button" class="type-btn {{unless this.isPersonal 'active'}}" 
                     {{on "click" (fn this.setInvoiceType "company")}}>
               🏢 企业
             </button>
@@ -378,8 +378,8 @@
         {{/if}}
       </div>
       <div class="coin-modal-footer">
-        <button class="btn-cancel" {{on "click" this.closeResubmitModal}}>取消</button>
-        <button class="btn-submit {{unless this.canSubmitResubmit 'disabled'}}" 
+        <button type="button" class="btn-cancel" {{on "click" this.closeResubmitModal}}>取消</button>
+        <button type="button" class="btn-submit {{unless this.canSubmitResubmit 'disabled'}}" 
                 disabled={{unless this.canSubmitResubmit true}}
                 {{on "click" this.submitResubmit}}>
           {{if this.isLoading "提交中..." "重新申请"}}

@@ -89,6 +89,54 @@ module ::MyPluginModule
       end
     end
 
+    # POST /coin/invoice/create_from_transaction - 从交易记录创建发票申请（旧版兼容）
+    def create_from_transaction
+      ensure_logged_in
+
+      begin
+        transaction_id = params[:transaction_id].to_i
+
+        unless transaction_id > 0
+          render_json_error("交易ID无效", status: 400)
+          return
+        end
+
+        # 查找交易记录
+        transaction = CoinTransaction.find_by(id: transaction_id, user_id: current_user.id)
+        unless transaction
+          render_json_error("交易记录不存在", status: 404)
+          return
+        end
+
+        # 检查是否已申请过发票
+        existing = CoinInvoiceRequest.find_by(admin_note: "关联交易ID: #{transaction_id}")
+        if existing
+          render_json_error("该交易已申请过发票", status: 400)
+          return
+        end
+
+        # 创建发票申请
+        invoice = CoinInvoiceRequest.create!(
+          user_id: current_user.id,
+          amount: transaction.amount,
+          status: 'pending',
+          reason: "充值发票申请",
+          admin_note: "关联交易ID: #{transaction_id}"
+        )
+
+        Rails.logger.info "[发票] 用户 #{current_user.id} 从交易 #{transaction_id} 创建发票申请"
+
+        render_json_dump({
+          success: true,
+          message: "发票申请提交成功",
+          invoice: serialize_invoice(invoice)
+        })
+      rescue => e
+        Rails.logger.error "[发票] 从交易创建申请失败: #{e.message}"
+        render_json_error(e.message, status: 500)
+      end
+    end
+
     # PUT /coin/invoice/update/:id - 用户更新待处理的发票信息
     def update
       ensure_logged_in

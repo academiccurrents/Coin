@@ -8,6 +8,7 @@ MyPluginModule::Engine.routes.draw do
   
   get "/invoice" => "invoice#index"
   post "/invoice/create" => "invoice#create"
+  post "/invoice/create_from_transaction" => "invoice#create_from_transaction"
   put "/invoice/update/:id" => "invoice#update"
   post "/invoice/resubmit/:id" => "invoice#resubmit"
   get "/invoice/list" => "invoice#list"

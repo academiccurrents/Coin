@@ -30,6 +30,12 @@ export default class CoinInvoiceController extends Controller {
   @tracked showResubmitModal = false;
   @tracked resubmittingInvoice = null;
 
+  // 阻止事件冒泡
+  @action
+  stopPropagation(event) {
+    event.stopPropagation();
+  }
+
   get pendingInvoices() {
     return (this.model?.invoices || []).filter(inv => inv.status === "pending");
   }
