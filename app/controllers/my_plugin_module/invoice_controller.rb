@@ -18,55 +18,65 @@ module ::MyPluginModule
       begin
         amount = params[:amount].to_i
         reason = params[:reason] || "发票申请"
-        invoice_type = params[:invoice_type] || 'personal'
-        invoice_title = params[:invoice_title]
-        id_number = params[:id_number]
-        tax_number = params[:tax_number]
-        out_trade_no = params[:out_trade_no]
 
         unless amount > 0
           render_json_error("申请金额必须大于0", status: 400)
           return
         end
 
-        unless %w[personal company].include?(invoice_type)
-          render_json_error("发票类型无效", status: 400)
-          return
-        end
-
-        # 验证必填字段
-        if invoice_type == 'personal'
-          unless invoice_title.present? && id_number.present?
-            render_json_error("个人发票需要填写姓名和身份证号码", status: 400)
-            return
-          end
-        else
-          unless invoice_title.present? && tax_number.present?
-            render_json_error("企业发票需要填写公司名称和纳税人识别号", status: 400)
-            return
-          end
-        end
-
-        # 检查订单号是否已申请过发票
-        if out_trade_no.present?
-          existing = CoinInvoiceRequest.find_by(out_trade_no: out_trade_no)
-          if existing
-            render_json_error("该订单已申请过发票", status: 400)
-            return
-          end
-        end
-
-        invoice = CoinInvoiceRequest.create!(
+        # 基础创建参数
+        create_params = {
           user_id: current_user.id,
           amount: amount,
           reason: reason,
-          status: 'pending',
-          invoice_type: invoice_type,
-          invoice_title: invoice_title,
-          id_number: invoice_type == 'personal' ? id_number : nil,
-          tax_number: invoice_type == 'company' ? tax_number : nil,
-          out_trade_no: out_trade_no
-        )
+          status: 'pending'
+        }
+
+        # 如果新列存在，添加额外字段
+        if column_exists?(:invoice_type)
+          invoice_type = params[:invoice_type] || 'personal'
+          invoice_title = params[:invoice_title]
+          id_number = params[:id_number]
+          tax_number = params[:tax_number]
+
+          unless %w[personal company].include?(invoice_type)
+            render_json_error("发票类型无效", status: 400)
+            return
+          end
+
+          # 验证必填字段
+          if invoice_type == 'personal'
+            unless invoice_title.present? && id_number.present?
+              render_json_error("个人发票需要填写姓名和身份证号码", status: 400)
+              return
+            end
+          else
+            unless invoice_title.present? && tax_number.present?
+              render_json_error("企业发票需要填写公司名称和纳税人识别号", status: 400)
+              return
+            end
+          end
+
+          create_params[:invoice_type] = invoice_type
+          create_params[:invoice_title] = invoice_title
+          create_params[:id_number] = invoice_type == 'personal' ? id_number : nil
+          create_params[:tax_number] = invoice_type == 'company' ? tax_number : nil
+        end
+
+        if column_exists?(:out_trade_no)
+          out_trade_no = params[:out_trade_no]
+          # 检查订单号是否已申请过发票
+          if out_trade_no.present?
+            existing = CoinInvoiceRequest.find_by(out_trade_no: out_trade_no)
+            if existing
+              render_json_error("该订单已申请过发票", status: 400)
+              return
+            end
+            create_params[:out_trade_no] = out_trade_no
+          end
+        end
+
+        invoice = CoinInvoiceRequest.create!(create_params)
 
         render_json_dump({
           success: true,
@@ -97,7 +107,13 @@ module ::MyPluginModule
           return
         end
 
-        invoice_type = params[:invoice_type] || invoice.invoice_type
+        # 如果新列不存在，返回错误
+        unless column_exists?(:invoice_type)
+          render_json_error("请先运行数据库迁移", status: 500)
+          return
+        end
+
+        invoice_type = params[:invoice_type] || safe_get(invoice, :invoice_type) || 'personal'
         invoice_title = params[:invoice_title]
         id_number = params[:id_number]
         tax_number = params[:tax_number]
@@ -151,6 +167,12 @@ module ::MyPluginModule
           return
         end
 
+        # 如果新列不存在，返回错误
+        unless column_exists?(:resubmit_count)
+          render_json_error("请先运行数据库迁移", status: 500)
+          return
+        end
+
         unless invoice.can_resubmit?
           if invoice.rejected?
             render_json_error("重新申请次数已用完，无法再次申请", status: 400)
@@ -160,7 +182,7 @@ module ::MyPluginModule
           return
         end
 
-        invoice_type = params[:invoice_type] || invoice.invoice_type
+        invoice_type = params[:invoice_type] || safe_get(invoice, :invoice_type) || 'personal'
         invoice_title = params[:invoice_title]
         id_number = params[:id_number]
         tax_number = params[:tax_number]
@@ -231,11 +253,15 @@ module ::MyPluginModule
       ensure_logged_in
 
       begin
-        # 获取已支付的订单，排除已申请发票的
-        orders = CoinPaymentOrder.where(user_id: current_user.id, status: 'paid')
-                                 .where.not(out_trade_no: CoinInvoiceRequest.where(user_id: current_user.id).select(:out_trade_no))
-                                 .order(created_at: :desc)
-                                 .limit(50)
+        # 获取已支付的订单
+        orders_scope = CoinPaymentOrder.where(user_id: current_user.id, status: 'paid')
+        
+        # 如果 out_trade_no 列存在，排除已申请发票的订单
+        if column_exists?(:out_trade_no)
+          orders_scope = orders_scope.where.not(out_trade_no: CoinInvoiceRequest.where(user_id: current_user.id).select(:out_trade_no))
+        end
+        
+        orders = orders_scope.order(created_at: :desc).limit(50)
 
         render_json_dump({
           success: true,
@@ -299,33 +325,66 @@ module ::MyPluginModule
       raise Discourse::InvalidAccess unless current_user&.admin?
     end
 
+    # 检查列是否存在
+    def column_exists?(column_name)
+      CoinInvoiceRequest.column_names.include?(column_name.to_s)
+    rescue
+      false
+    end
+
+    # 安全获取属性值
+    def safe_get(invoice, attr)
+      invoice.respond_to?(attr) ? invoice.send(attr) : nil
+    rescue
+      nil
+    end
+
     def serialize_invoice(invoice)
-      {
+      result = {
         id: invoice.id,
         amount: invoice.amount,
         status: invoice.status,
         status_text: status_text(invoice.status),
         reason: invoice.reason,
-        invoice_type: invoice.invoice_type,
-        invoice_type_text: invoice.personal? ? '个人' : '企业',
-        invoice_title: invoice.invoice_title,
-        id_number: invoice.personal? ? mask_id_number(invoice.id_number) : nil,
-        tax_number: invoice.company? ? invoice.tax_number : nil,
-        out_trade_no: invoice.out_trade_no,
-        invoice_url: invoice.invoice_url,
-        reject_reason: invoice.reject_reason,
+        invoice_url: safe_get(invoice, :invoice_url),
         editable: invoice.editable?,
-        can_resubmit: invoice.can_resubmit?,
-        resubmit_count: invoice.resubmit_count || 0,
-        remaining_resubmit_count: invoice.remaining_resubmit_count,
         created_at: invoice.created_at.iso8601,
         updated_at: invoice.updated_at.iso8601
       }
+
+      # 安全添加新字段
+      if column_exists?(:invoice_type)
+        result[:invoice_type] = safe_get(invoice, :invoice_type) || 'personal'
+        result[:invoice_type_text] = invoice.personal? ? '个人' : '企业'
+        result[:invoice_title] = safe_get(invoice, :invoice_title)
+        result[:id_number] = invoice.personal? ? mask_id_number(safe_get(invoice, :id_number)) : nil
+        result[:tax_number] = invoice.company? ? safe_get(invoice, :tax_number) : nil
+      end
+
+      if column_exists?(:out_trade_no)
+        result[:out_trade_no] = safe_get(invoice, :out_trade_no)
+      end
+
+      if column_exists?(:reject_reason)
+        result[:reject_reason] = safe_get(invoice, :reject_reason)
+      end
+
+      if column_exists?(:resubmit_count)
+        result[:resubmit_count] = safe_get(invoice, :resubmit_count) || 0
+        result[:can_resubmit] = invoice.can_resubmit?
+        result[:remaining_resubmit_count] = invoice.remaining_resubmit_count
+      else
+        result[:resubmit_count] = 0
+        result[:can_resubmit] = false
+        result[:remaining_resubmit_count] = 0
+      end
+
+      result
     end
 
     def serialize_invoice_for_admin(invoice)
       user = User.find_by(id: invoice.user_id)
-      {
+      result = {
         id: invoice.id,
         user_id: invoice.user_id,
         username: user&.username,
@@ -334,18 +393,30 @@ module ::MyPluginModule
         status: invoice.status,
         status_text: status_text(invoice.status),
         reason: invoice.reason,
-        invoice_type: invoice.invoice_type,
-        invoice_type_text: invoice.personal? ? '个人' : '企业',
-        invoice_title: invoice.invoice_title,
-        id_number: invoice.id_number,  # 管理员可以看到完整信息
-        tax_number: invoice.tax_number,
-        out_trade_no: invoice.out_trade_no,
-        invoice_url: invoice.invoice_url,
-        admin_note: invoice.admin_note,
-        reject_reason: invoice.reject_reason,
+        admin_note: safe_get(invoice, :admin_note),
+        invoice_url: safe_get(invoice, :invoice_url),
         created_at: invoice.created_at.iso8601,
         updated_at: invoice.updated_at.iso8601
       }
+
+      # 安全添加新字段
+      if column_exists?(:invoice_type)
+        result[:invoice_type] = safe_get(invoice, :invoice_type) || 'personal'
+        result[:invoice_type_text] = invoice.personal? ? '个人' : '企业'
+        result[:invoice_title] = safe_get(invoice, :invoice_title)
+        result[:id_number] = safe_get(invoice, :id_number)  # 管理员可以看到完整信息
+        result[:tax_number] = safe_get(invoice, :tax_number)
+      end
+
+      if column_exists?(:out_trade_no)
+        result[:out_trade_no] = safe_get(invoice, :out_trade_no)
+      end
+
+      if column_exists?(:reject_reason)
+        result[:reject_reason] = safe_get(invoice, :reject_reason)
+      end
+
+      result
     end
 
     def serialize_order_for_invoice(order)

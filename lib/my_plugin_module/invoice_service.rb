@@ -2,6 +2,13 @@
 
 module ::MyPluginModule
   class InvoiceService
+    # 检查列是否存在的辅助方法
+    def self.column_exists?(column_name)
+      CoinInvoiceRequest.column_names.include?(column_name.to_s)
+    rescue
+      false
+    end
+
     def self.create_invoice_request(user_id, amount, reason)
       ActiveRecord::Base.transaction do
         balance = CoinService.get_user_balance(user_id)
@@ -45,16 +52,7 @@ module ::MyPluginModule
         .recent
         .limit(limit)
         .map do |invoice|
-          {
-            id: invoice.id,
-            amount: invoice.amount,
-            status: invoice.status,
-            reason: invoice.reason,
-            admin_note: invoice.admin_note,
-            invoice_url: invoice.invoice_url,
-            created_at: invoice.created_at.iso8601,
-            updated_at: invoice.updated_at.iso8601
-          }
+          serialize_invoice_basic(invoice)
         end
     end
 
@@ -67,30 +65,7 @@ module ::MyPluginModule
         .limit(limit)
         .map do |invoice|
           next nil unless invoice.user
-          {
-            id: invoice.id,
-            user_id: invoice.user_id,
-            username: invoice.user.username,
-            avatar_url: invoice.user.avatar_template&.gsub('{size}', '45'),
-            amount: invoice.amount,
-            status: invoice.status,
-            status_text: status_text(invoice.status),
-            reason: invoice.reason,
-            invoice_type: invoice.invoice_type,
-            invoice_type_text: invoice.personal? ? '个人' : '企业',
-            invoice_title: invoice.invoice_title,
-            id_number: invoice.id_number,
-            tax_number: invoice.tax_number,
-            out_trade_no: invoice.out_trade_no,
-            admin_note: invoice.admin_note,
-            reject_reason: invoice.reject_reason,
-            invoice_url: invoice.invoice_url,
-            resubmit_count: invoice.resubmit_count || 0,
-            can_resubmit: invoice.can_resubmit?,
-            remaining_resubmit_count: invoice.remaining_resubmit_count,
-            created_at: invoice.created_at.iso8601,
-            updated_at: invoice.updated_at.iso8601
-          }
+          serialize_invoice_for_admin(invoice)
         end.compact
     end
 
@@ -100,26 +75,7 @@ module ::MyPluginModule
       total = scope.count
       invoices = scope.offset(offset).limit(limit).map do |invoice|
         next nil unless invoice.user
-        {
-          id: invoice.id,
-          user_id: invoice.user_id,
-          username: invoice.user.username,
-          avatar_url: invoice.user.avatar_template&.gsub('{size}', '45'),
-          amount: invoice.amount,
-          status: invoice.status,
-          status_text: status_text(invoice.status),
-          reason: invoice.reason,
-          invoice_type: invoice.invoice_type,
-          invoice_type_text: invoice.personal? ? '个人' : '企业',
-          invoice_title: invoice.invoice_title,
-          reject_reason: invoice.reject_reason,
-          admin_note: invoice.admin_note,
-          resubmit_count: invoice.resubmit_count || 0,
-          can_resubmit: invoice.can_resubmit?,
-          remaining_resubmit_count: invoice.remaining_resubmit_count,
-          created_at: invoice.created_at.iso8601,
-          updated_at: invoice.updated_at.iso8601
-        }
+        serialize_invoice_for_admin(invoice)
       end.compact
 
       {
@@ -185,23 +141,7 @@ module ::MyPluginModule
       total = scope.count
       invoices = scope.offset(offset).limit(limit).map do |invoice|
         next nil unless invoice.user
-        {
-          id: invoice.id,
-          user_id: invoice.user_id,
-          username: invoice.user.username,
-          avatar_url: invoice.user.avatar_template&.gsub('{size}', '45'),
-          amount: invoice.amount,
-          status: invoice.status,
-          status_text: status_text(invoice.status),
-          reason: invoice.reason,
-          invoice_type: invoice.invoice_type,
-          invoice_type_text: invoice.personal? ? '个人' : '企业',
-          invoice_title: invoice.invoice_title,
-          admin_note: invoice.admin_note,
-          invoice_url: invoice.invoice_url,
-          created_at: invoice.created_at.iso8601,
-          updated_at: invoice.updated_at.iso8601
-        }
+        serialize_invoice_for_admin(invoice)
       end.compact
 
       {
@@ -240,6 +180,115 @@ module ::MyPluginModule
         Rails.logger.info "[发票] 发票 #{invoice_id} URL已更新为: #{new_url}"
         invoice
       end
+    end
+
+    private
+
+    # 基础序列化（用户端）
+    def self.serialize_invoice_basic(invoice)
+      result = {
+        id: invoice.id,
+        amount: invoice.amount,
+        status: invoice.status,
+        status_text: status_text(invoice.status),
+        reason: invoice.reason,
+        admin_note: safe_get(invoice, :admin_note),
+        invoice_url: safe_get(invoice, :invoice_url),
+        created_at: invoice.created_at.iso8601,
+        updated_at: invoice.updated_at.iso8601
+      }
+
+      # 安全添加新字段
+      if column_exists?(:invoice_type)
+        result[:invoice_type] = safe_get(invoice, :invoice_type) || 'personal'
+        result[:invoice_type_text] = invoice.personal? ? '个人' : '企业'
+        result[:invoice_title] = safe_get(invoice, :invoice_title)
+        result[:id_number] = invoice.personal? ? mask_id_number(safe_get(invoice, :id_number)) : nil
+        result[:tax_number] = invoice.company? ? safe_get(invoice, :tax_number) : nil
+      end
+
+      if column_exists?(:out_trade_no)
+        result[:out_trade_no] = safe_get(invoice, :out_trade_no)
+      end
+
+      if column_exists?(:reject_reason)
+        result[:reject_reason] = safe_get(invoice, :reject_reason)
+      end
+
+      if column_exists?(:resubmit_count)
+        result[:resubmit_count] = safe_get(invoice, :resubmit_count) || 0
+        result[:can_resubmit] = invoice.can_resubmit?
+        result[:remaining_resubmit_count] = invoice.remaining_resubmit_count
+      else
+        result[:resubmit_count] = 0
+        result[:can_resubmit] = false
+        result[:remaining_resubmit_count] = 0
+      end
+
+      result[:editable] = invoice.editable?
+
+      result
+    end
+
+    # 管理员序列化
+    def self.serialize_invoice_for_admin(invoice)
+      result = {
+        id: invoice.id,
+        user_id: invoice.user_id,
+        username: invoice.user&.username,
+        avatar_url: invoice.user&.avatar_template&.gsub('{size}', '45'),
+        amount: invoice.amount,
+        status: invoice.status,
+        status_text: status_text(invoice.status),
+        reason: invoice.reason,
+        admin_note: safe_get(invoice, :admin_note),
+        invoice_url: safe_get(invoice, :invoice_url),
+        created_at: invoice.created_at.iso8601,
+        updated_at: invoice.updated_at.iso8601
+      }
+
+      # 安全添加新字段
+      if column_exists?(:invoice_type)
+        result[:invoice_type] = safe_get(invoice, :invoice_type) || 'personal'
+        result[:invoice_type_text] = invoice.personal? ? '个人' : '企业'
+        result[:invoice_title] = safe_get(invoice, :invoice_title)
+        result[:id_number] = safe_get(invoice, :id_number)  # 管理员可以看到完整信息
+        result[:tax_number] = safe_get(invoice, :tax_number)
+      end
+
+      if column_exists?(:out_trade_no)
+        result[:out_trade_no] = safe_get(invoice, :out_trade_no)
+      end
+
+      if column_exists?(:reject_reason)
+        result[:reject_reason] = safe_get(invoice, :reject_reason)
+      end
+
+      if column_exists?(:resubmit_count)
+        result[:resubmit_count] = safe_get(invoice, :resubmit_count) || 0
+        result[:can_resubmit] = invoice.can_resubmit?
+        result[:remaining_resubmit_count] = invoice.remaining_resubmit_count
+      else
+        result[:resubmit_count] = 0
+        result[:can_resubmit] = false
+        result[:remaining_resubmit_count] = 0
+      end
+
+      result
+    end
+
+    # 安全获取属性值
+    def self.safe_get(invoice, attr)
+      invoice.respond_to?(attr) ? invoice.send(attr) : nil
+    rescue
+      nil
+    end
+
+    # 脱敏身份证号码
+    def self.mask_id_number(id_number)
+      return nil unless id_number.present?
+      return id_number if id_number.length <= 7
+      "#{id_number[0..2]}#{'*' * (id_number.length - 7)}#{id_number[-4..-1]}"
     end
   end
 end
