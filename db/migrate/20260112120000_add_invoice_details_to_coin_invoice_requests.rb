@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddInvoiceDetailsToCoinInvoiceRequests < ActiveRecord::Migration[6.0]
+class AddInvoiceDetailsToCoinInvoiceRequests < ActiveRecord::Migration[7.0]
   def up
     # 发票类型：personal（个人）/ company（企业）
     unless column_exists?(:coin_invoice_requests, :invoice_type)
