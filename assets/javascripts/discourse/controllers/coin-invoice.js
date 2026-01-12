@@ -63,7 +63,8 @@ export default class CoinInvoiceController extends Controller {
   get canSubmitApply() {
     if (!this.selectedOrder) return false;
     if (!this.invoiceTitle.trim()) return false;
-    if (this.isPersonal && !this.idNumber.trim()) return false;
+    // 个人发票：姓名必填，身份证号可选
+    // 企业发票：公司名称和税号都必填
     if (!this.isPersonal && !this.taxNumber.trim()) return false;
     return true;
   }
@@ -71,7 +72,8 @@ export default class CoinInvoiceController extends Controller {
   get canSubmitEdit() {
     if (!this.editingInvoice) return false;
     if (!this.invoiceTitle.trim()) return false;
-    if (this.isPersonal && !this.idNumber.trim()) return false;
+    // 个人发票：姓名必填，身份证号可选
+    // 企业发票：公司名称和税号都必填
     if (!this.isPersonal && !this.taxNumber.trim()) return false;
     return true;
   }
@@ -79,7 +81,8 @@ export default class CoinInvoiceController extends Controller {
   get canSubmitResubmit() {
     if (!this.resubmittingInvoice) return false;
     if (!this.invoiceTitle.trim()) return false;
-    if (this.isPersonal && !this.idNumber.trim()) return false;
+    // 个人发票：姓名必填，身份证号可选
+    // 企业发票：公司名称和税号都必填
     if (!this.isPersonal && !this.taxNumber.trim()) return false;
     return true;
   }

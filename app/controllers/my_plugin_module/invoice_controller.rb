@@ -46,8 +46,9 @@ module ::MyPluginModule
 
           # 验证必填字段
           if invoice_type == 'personal'
-            unless invoice_title.present? && id_number.present?
-              render_json_error("个人发票需要填写姓名和身份证号码", status: 400)
+            # 个人发票：姓名必填，身份证号可选
+            unless invoice_title.present?
+              render_json_error("个人发票需要填写姓名", status: 400)
               return
             end
           else
@@ -173,8 +174,9 @@ module ::MyPluginModule
 
         # 验证必填字段
         if invoice_type == 'personal'
-          unless invoice_title.present? && id_number.present?
-            render_json_error("个人发票需要填写姓名和身份证号码", status: 400)
+          # 个人发票：姓名必填，身份证号可选
+          unless invoice_title.present?
+            render_json_error("个人发票需要填写姓名", status: 400)
             return
           end
         else
@@ -242,8 +244,9 @@ module ::MyPluginModule
 
         # 验证必填字段
         if invoice_type == 'personal'
-          unless invoice_title.present? && id_number.present?
-            render_json_error("个人发票需要填写姓名和身份证号码", status: 400)
+          # 个人发票：姓名必填，身份证号可选
+          unless invoice_title.present?
+            render_json_error("个人发票需要填写姓名", status: 400)
             return
           end
         else

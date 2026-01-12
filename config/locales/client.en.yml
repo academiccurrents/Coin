@@ -53,7 +53,7 @@ en:
         type_company: "Company"
         name: "Name"
         name_placeholder: "Enter your name"
-        id_number: "ID Number"
+        id_number: "ID Number[Optional]"
         id_number_placeholder: "Enter your ID number"
         company_name: "Company Name"
         company_name_placeholder: "Enter company name"
@@ -136,6 +136,11 @@ en:
         active: "Active"
         inactive: "Inactive"
         no_packages: "No packages, click above to add"
+        sort_order: "Sort Order"
+        toggle_active: "Toggle Active"
+        edit: "Edit"
+        delete: "Delete"
+        remove: "Remove"
         
       # Discount Management
       discount:

@@ -68,7 +68,8 @@ export default class CoinController extends Controller {
     if (!this.selectedTransactionId) return false;
     if (this.invoiceStep === 1) return true;  // Step 1 只需选择交易
     if (!this.invoiceTitle.trim()) return false;
-    if (this.isPersonalInvoice && !this.idNumber.trim()) return false;
+    // 个人发票：姓名必填，身份证号可选
+    // 企业发票：公司名称和税号都必填
     if (!this.isPersonalInvoice && !this.taxNumber.trim()) return false;
     return true;
   }
