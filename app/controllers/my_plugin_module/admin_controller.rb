@@ -270,5 +270,11 @@ module ::MyPluginModule
         render_json_error(e.message, status: 500)
       end
     end
+
+    private
+
+    def ensure_admin
+      raise Discourse::InvalidAccess unless current_user&.admin?
+    end
   end
 end
