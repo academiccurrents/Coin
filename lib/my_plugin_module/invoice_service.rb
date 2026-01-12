@@ -85,6 +85,9 @@ module ::MyPluginModule
             admin_note: invoice.admin_note,
             reject_reason: invoice.reject_reason,
             invoice_url: invoice.invoice_url,
+            resubmit_count: invoice.resubmit_count || 0,
+            can_resubmit: invoice.can_resubmit?,
+            remaining_resubmit_count: invoice.remaining_resubmit_count,
             created_at: invoice.created_at.iso8601,
             updated_at: invoice.updated_at.iso8601
           }
@@ -111,6 +114,9 @@ module ::MyPluginModule
           invoice_title: invoice.invoice_title,
           reject_reason: invoice.reject_reason,
           admin_note: invoice.admin_note,
+          resubmit_count: invoice.resubmit_count || 0,
+          can_resubmit: invoice.can_resubmit?,
+          remaining_resubmit_count: invoice.remaining_resubmit_count,
           created_at: invoice.created_at.iso8601,
           updated_at: invoice.updated_at.iso8601
         }

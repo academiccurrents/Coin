@@ -90,7 +90,17 @@
                 <span class="invoice-date">{{format-date invoice.updated_at format="medium"}}</span>
               </div>
             </div>
-            <div class="invoice-status rejected">已拒绝</div>
+            <div class="invoice-right">
+              {{#if invoice.can_resubmit}}
+                <button class="invoice-resubmit-btn" {{on "click" (fn this.openResubmitModal invoice)}}>
+                  🔄 重新申请
+                  <span class="resubmit-count-hint">(剩余{{invoice.remaining_resubmit_count}}次)</span>
+                </button>
+              {{else}}
+                <span class="resubmit-exhausted">申请次数已用完</span>
+              {{/if}}
+              <div class="invoice-status rejected">已拒绝</div>
+            </div>
           </div>
         {{/each}}
       </div>
@@ -293,6 +303,86 @@
                 disabled={{unless this.canSubmitEdit true}}
                 {{on "click" this.submitEdit}}>
           {{if this.isLoading "保存中..." "保存修改"}}
+        </button>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
+  {{!-- 重新申请弹窗 --}}
+  {{#if this.showResubmitModal}}
+  <div class="coin-modal-backdrop" {{on "click" this.closeResubmitModal}}>
+    <div class="coin-modal" {{on "click" (fn (mut this._noop) true)}}>
+      <div class="coin-modal-header">
+        <h3>重新申请发票</h3>
+        <button class="coin-modal-close" {{on "click" this.closeResubmitModal}}>×</button>
+      </div>
+      <div class="coin-modal-body">
+        {{!-- 提示信息 --}}
+        <div class="resubmit-notice">
+          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
+          <span>您还有 {{this.resubmittingInvoice.remaining_resubmit_count}} 次重新申请机会，请仔细核对信息后提交</span>
+        </div>
+
+        {{#if this.resubmittingInvoice.reject_reason}}
+        <div class="reject-reason-box">
+          <strong>上次拒绝原因：</strong>{{this.resubmittingInvoice.reject_reason}}
+        </div>
+        {{/if}}
+
+        {{!-- 发票类型 --}}
+        <div class="form-group">
+          <label>发票类型</label>
+          <div class="invoice-type-selector">
+            <button class="type-btn {{if this.isPersonal 'active'}}" 
+                    {{on "click" (fn this.setInvoiceType "personal")}}>
+              👤 个人
+            </button>
+            <button class="type-btn {{unless this.isPersonal 'active'}}" 
+                    {{on "click" (fn this.setInvoiceType "company")}}>
+              🏢 企业
+            </button>
+          </div>
+        </div>
+
+        {{!-- 发票抬头 --}}
+        <div class="form-group">
+          <label>{{if this.isPersonal "姓名" "公司名称"}} <span class="required">*</span></label>
+          <input type="text" 
+                 class="form-input" 
+                 placeholder="{{if this.isPersonal '请输入您的姓名' '请输入公司全称'}}"
+                 value={{this.invoiceTitle}}
+                 {{on "input" this.updateInvoiceTitle}} />
+        </div>
+
+        {{!-- 个人：身份证号 --}}
+        {{#if this.isPersonal}}
+        <div class="form-group">
+          <label>身份证号码 <span class="required">*</span></label>
+          <input type="text" 
+                 class="form-input" 
+                 placeholder="请输入身份证号码"
+                 value={{this.idNumber}}
+                 {{on "input" this.updateIdNumber}} />
+        </div>
+        {{else}}
+        {{!-- 企业：纳税人识别号 --}}
+        <div class="form-group">
+          <label>纳税人识别号 <span class="required">*</span></label>
+          <input type="text" 
+                 class="form-input" 
+                 placeholder="请输入纳税人识别号"
+                 value={{this.taxNumber}}
+                 {{on "input" this.updateTaxNumber}} />
+        </div>
+        {{/if}}
+      </div>
+      <div class="coin-modal-footer">
+        <button class="btn-cancel" {{on "click" this.closeResubmitModal}}>取消</button>
+        <button class="btn-submit {{unless this.canSubmitResubmit 'disabled'}}" 
+                disabled={{unless this.canSubmitResubmit true}}
+                {{on "click" this.submitResubmit}}>
+          {{if this.isLoading "提交中..." "重新申请"}}
         </button>
       </div>
     </div>

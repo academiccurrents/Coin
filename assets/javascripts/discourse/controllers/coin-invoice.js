@@ -25,6 +25,10 @@ export default class CoinInvoiceController extends Controller {
   // 编辑发票弹窗
   @tracked showEditModal = false;
   @tracked editingInvoice = null;
+  
+  // 重新申请弹窗
+  @tracked showResubmitModal = false;
+  @tracked resubmittingInvoice = null;
 
   get pendingInvoices() {
     return (this.model?.invoices || []).filter(inv => inv.status === "pending");
@@ -60,6 +64,14 @@ export default class CoinInvoiceController extends Controller {
 
   get canSubmitEdit() {
     if (!this.editingInvoice) return false;
+    if (!this.invoiceTitle.trim()) return false;
+    if (this.isPersonal && !this.idNumber.trim()) return false;
+    if (!this.isPersonal && !this.taxNumber.trim()) return false;
+    return true;
+  }
+
+  get canSubmitResubmit() {
+    if (!this.resubmittingInvoice) return false;
     if (!this.invoiceTitle.trim()) return false;
     if (this.isPersonal && !this.idNumber.trim()) return false;
     if (!this.isPersonal && !this.taxNumber.trim()) return false;
@@ -206,6 +218,52 @@ export default class CoinInvoiceController extends Controller {
 
       this.showEditModal = false;
       this.successMessage = "发票信息更新成功！";
+      this.showSuccessMessage = true;
+      setTimeout(() => this.hideSuccessMessage(), 3000);
+      this.refreshData();
+    } catch (error) {
+      popupAjaxError(error);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  // 打开重新申请弹窗
+  @action
+  openResubmitModal(invoice) {
+    this.resubmittingInvoice = invoice;
+    this.invoiceType = invoice.invoice_type || "personal";
+    this.invoiceTitle = invoice.invoice_title || "";
+    this.idNumber = invoice.id_number || "";
+    this.taxNumber = invoice.tax_number || "";
+    this.showResubmitModal = true;
+  }
+
+  @action
+  closeResubmitModal() {
+    this.showResubmitModal = false;
+    this.resubmittingInvoice = null;
+  }
+
+  // 提交重新申请
+  @action
+  async submitResubmit() {
+    if (!this.canSubmitResubmit || this.isLoading) return;
+
+    this.isLoading = true;
+    try {
+      await ajax(`/coin/invoice/resubmit/${this.resubmittingInvoice.id}.json`, {
+        type: "POST",
+        data: {
+          invoice_type: this.invoiceType,
+          invoice_title: this.invoiceTitle.trim(),
+          id_number: this.isPersonal ? this.idNumber.trim() : null,
+          tax_number: !this.isPersonal ? this.taxNumber.trim() : null
+        }
+      });
+
+      this.showResubmitModal = false;
+      this.successMessage = "重新申请成功，请等待审核！";
       this.showSuccessMessage = true;
       setTimeout(() => this.hideSuccessMessage(), 3000);
       this.refreshData();

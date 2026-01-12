@@ -3739,3 +3739,148 @@
     background: var(--coin-primary-hover);
   }
 }
+
+// ==========================================
+// 重新申请发票样式 - Resubmit Invoice Styles
+// ==========================================
+
+// 重新申请按钮
+.invoice-resubmit-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: var(--coin-warning);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #e68600;
+    transform: translateY(-1px);
+  }
+
+  .resubmit-count-hint {
+    font-size: 11px;
+    opacity: 0.9;
+    font-weight: 400;
+  }
+}
+
+// 申请次数已用完提示
+.resubmit-exhausted {
+  font-size: 12px;
+  color: var(--coin-text-secondary);
+  padding: 6px 12px;
+  background: var(--coin-bg-secondary);
+  border-radius: 6px;
+}
+
+// 重新申请弹窗提示
+.resubmit-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: rgba(255, 149, 0, 0.1);
+  border: 1px solid rgba(255, 149, 0, 0.2);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  color: var(--coin-warning);
+  font-size: 13px;
+
+  .svg-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+}
+
+// 拒绝原因展示框
+.reject-reason-box {
+  padding: 12px 14px;
+  background: rgba(255, 59, 48, 0.08);
+  border: 1px solid rgba(255, 59, 48, 0.15);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--coin-danger);
+  line-height: 1.5;
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+// 发票右侧操作区域
+.invoice-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+// 发票类型标签
+.invoice-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &.personal {
+    background: rgba(0, 122, 255, 0.1);
+    color: #007AFF;
+  }
+
+  &.company {
+    background: rgba(255, 149, 0, 0.1);
+    color: #FF9500;
+  }
+}
+
+// 发票抬头
+.invoice-title {
+  font-size: 13px;
+  color: var(--coin-text);
+  font-weight: 500;
+}
+
+// 发票订单号
+.invoice-order {
+  font-size: 12px;
+  color: var(--coin-text-secondary);
+  font-family: monospace;
+}
+
+// 已拒绝状态
+.invoice-status.rejected {
+  background: rgba(255, 59, 48, 0.1);
+  color: var(--coin-danger);
+}
+
+// 移动端适配
+@media (max-width: 600px) {
+  .invoice-resubmit-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+
+    .resubmit-count-hint {
+      font-size: 10px;
+    }
+  }
+
+  .resubmit-notice {
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+
+  .reject-reason-box {
+    font-size: 12px;
+    padding: 10px 12px;
+  }
+}

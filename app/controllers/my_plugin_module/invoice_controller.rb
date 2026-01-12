@@ -138,6 +138,75 @@ module ::MyPluginModule
       end
     end
 
+    # POST /coin/invoice/resubmit/:id - 用户重新申请被拒绝的发票
+    def resubmit
+      ensure_logged_in
+
+      begin
+        invoice_id = params[:id].to_i
+        invoice = CoinInvoiceRequest.find_by(id: invoice_id, user_id: current_user.id)
+
+        unless invoice
+          render_json_error("发票申请不存在", status: 404)
+          return
+        end
+
+        unless invoice.can_resubmit?
+          if invoice.rejected?
+            render_json_error("重新申请次数已用完，无法再次申请", status: 400)
+          else
+            render_json_error("只有被拒绝的发票才能重新申请", status: 400)
+          end
+          return
+        end
+
+        invoice_type = params[:invoice_type] || invoice.invoice_type
+        invoice_title = params[:invoice_title]
+        id_number = params[:id_number]
+        tax_number = params[:tax_number]
+
+        unless %w[personal company].include?(invoice_type)
+          render_json_error("发票类型无效", status: 400)
+          return
+        end
+
+        # 验证必填字段
+        if invoice_type == 'personal'
+          unless invoice_title.present? && id_number.present?
+            render_json_error("个人发票需要填写姓名和身份证号码", status: 400)
+            return
+          end
+        else
+          unless invoice_title.present? && tax_number.present?
+            render_json_error("企业发票需要填写公司名称和纳税人识别号", status: 400)
+            return
+          end
+        end
+
+        # 更新发票信息并重置状态为待处理
+        invoice.update!(
+          status: 'pending',
+          invoice_type: invoice_type,
+          invoice_title: invoice_title,
+          id_number: invoice_type == 'personal' ? id_number : nil,
+          tax_number: invoice_type == 'company' ? tax_number : nil,
+          resubmit_count: (invoice.resubmit_count || 0) + 1,
+          reject_reason: nil  # 清除之前的拒绝理由
+        )
+
+        Rails.logger.info "[发票] 用户 #{current_user.id} 重新申请发票 #{invoice_id}，第 #{invoice.resubmit_count} 次"
+
+        render_json_dump({
+          success: true,
+          message: "重新申请成功，请等待审核",
+          invoice: serialize_invoice(invoice)
+        })
+      rescue => e
+        Rails.logger.error "[发票] 重新申请失败: #{e.message}"
+        render_json_error(e.message, status: 500)
+      end
+    end
+
     # GET /coin/invoice/list - 获取用户发票列表
     def list
       ensure_logged_in
@@ -246,6 +315,9 @@ module ::MyPluginModule
         invoice_url: invoice.invoice_url,
         reject_reason: invoice.reject_reason,
         editable: invoice.editable?,
+        can_resubmit: invoice.can_resubmit?,
+        resubmit_count: invoice.resubmit_count || 0,
+        remaining_resubmit_count: invoice.remaining_resubmit_count,
         created_at: invoice.created_at.iso8601,
         updated_at: invoice.updated_at.iso8601
       }

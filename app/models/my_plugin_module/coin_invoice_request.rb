@@ -21,6 +21,7 @@ module ::MyPluginModule
 
     STATUSES = %w[pending completed rejected].freeze
     INVOICE_TYPES = %w[personal company].freeze
+    MAX_RESUBMIT_COUNT = 2  # 最多重新申请2次
 
     scope :recent, -> { order(created_at: :desc) }
     scope :by_user, ->(user_id) { where(user_id: user_id) }
@@ -51,9 +52,19 @@ module ::MyPluginModule
       invoice_type == "company"
     end
 
-    # 是否可以编辑（只有待处理状态可以编辑）
+    # 是否可以编辑（待处理状态可以编辑）
     def editable?
       pending?
+    end
+
+    # 是否可以重新申请（被拒绝且重新申请次数未超限）
+    def can_resubmit?
+      rejected? && (resubmit_count || 0) < MAX_RESUBMIT_COUNT
+    end
+
+    # 剩余重新申请次数
+    def remaining_resubmit_count
+      MAX_RESUBMIT_COUNT - (resubmit_count || 0)
     end
   end
 end

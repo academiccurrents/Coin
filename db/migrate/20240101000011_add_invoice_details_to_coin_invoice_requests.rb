@@ -32,6 +32,11 @@ class AddInvoiceDetailsToCoinInvoiceRequests < ActiveRecord::Migration[6.0]
       add_column :coin_invoice_requests, :out_trade_no, :string, default: nil, null: true
     end
 
+    # 重新申请次数（被拒绝后可重新申请，最多2次）
+    unless column_exists?(:coin_invoice_requests, :resubmit_count)
+      add_column :coin_invoice_requests, :resubmit_count, :integer, default: 0, null: false
+    end
+
     # 添加索引
     unless index_exists?(:coin_invoice_requests, :invoice_type, name: "idx_coin_invoice_type")
       add_index :coin_invoice_requests, :invoice_type, name: "idx_coin_invoice_type"
@@ -52,5 +57,6 @@ class AddInvoiceDetailsToCoinInvoiceRequests < ActiveRecord::Migration[6.0]
     remove_column :coin_invoice_requests, :tax_number if column_exists?(:coin_invoice_requests, :tax_number)
     remove_column :coin_invoice_requests, :reject_reason if column_exists?(:coin_invoice_requests, :reject_reason)
     remove_column :coin_invoice_requests, :out_trade_no if column_exists?(:coin_invoice_requests, :out_trade_no)
+    remove_column :coin_invoice_requests, :resubmit_count if column_exists?(:coin_invoice_requests, :resubmit_count)
   end
 end
