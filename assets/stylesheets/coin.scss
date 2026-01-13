@@ -3568,6 +3568,12 @@
     padding: 16px 20px;
     border-top: 1px solid var(--coin-border);
     justify-content: flex-end;
+    flex-wrap: wrap;
+
+    .btn-cancel,
+    .btn-submit {
+      flex-shrink: 0;
+    }
   }
 
   .form-group {
@@ -3701,6 +3707,8 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
 
     &:hover {
       background: var(--coin-bg-secondary);
@@ -3717,6 +3725,8 @@
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
 
     &:hover:not(:disabled) {
       background: var(--coin-primary-hover);
