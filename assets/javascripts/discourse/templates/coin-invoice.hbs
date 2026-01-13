@@ -38,7 +38,11 @@
                 <div class="invoice-info">
                   <span class="invoice-amount">¥{{invoice.amount}}</span>
                   <span class="invoice-type-badge {{invoice.invoice_type}}">
-                    {{invoice.invoice_type_text}}
+                    {{#if (eq invoice.invoice_type "personal")}}
+                      {{i18n "js.coin.invoice.type_personal"}}
+                    {{else}}
+                      {{i18n "js.coin.invoice.type_company"}}
+                    {{/if}}
                   </span>
                   <span class="invoice-title">{{invoice.invoice_title}}</span>
                   {{#if invoice.out_trade_no}}
@@ -81,7 +85,11 @@
               <div class="invoice-info">
                 <span class="invoice-amount">¥{{invoice.amount}}</span>
                 <span class="invoice-type-badge {{invoice.invoice_type}}">
-                  {{invoice.invoice_type_text}}
+                  {{#if (eq invoice.invoice_type "personal")}}
+                    {{i18n "js.coin.invoice.type_personal"}}
+                  {{else}}
+                    {{i18n "js.coin.invoice.type_company"}}
+                  {{/if}}
                 </span>
                 <span class="invoice-title">{{invoice.invoice_title}}</span>
                 {{#if invoice.reject_reason}}
@@ -125,7 +133,11 @@
                 <div class="invoice-info">
                   <span class="invoice-amount">¥{{invoice.amount}}</span>
                   <span class="invoice-type-badge {{invoice.invoice_type}}">
-                    {{invoice.invoice_type_text}}
+                    {{#if (eq invoice.invoice_type "personal")}}
+                      {{i18n "js.coin.invoice.type_personal"}}
+                    {{else}}
+                      {{i18n "js.coin.invoice.type_company"}}
+                    {{/if}}
                   </span>
                   <span class="invoice-title">{{invoice.invoice_title}}</span>
                   <span class="invoice-date">{{format-date invoice.updated_at format="medium"}}</span>

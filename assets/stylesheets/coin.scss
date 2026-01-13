@@ -3667,8 +3667,7 @@
     gap: 12px;
 
     .type-btn {
-      flex: 1;
-      padding: 12px;
+      padding: 12px 20px;
       border: 2px solid var(--coin-border);
       border-radius: 8px;
       background: var(--coin-bg);
@@ -3676,6 +3675,7 @@
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
+      white-space: nowrap;
 
       &:hover {
         border-color: var(--coin-primary);

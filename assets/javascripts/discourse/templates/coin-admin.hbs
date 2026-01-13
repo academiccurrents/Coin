@@ -164,11 +164,15 @@
                   <span class="invoice-user">{{invoice.username}}</span>
                   <span class="invoice-amount">¥{{invoice.amount}}</span>
                   <span class="invoice-type-badge {{invoice.invoice_type}}">
-                    {{invoice.invoice_type_text}}
+                    {{#if (eq invoice.invoice_type "personal")}}
+                      {{i18n "js.coin.invoice.type_personal"}}
+                    {{else}}
+                      {{i18n "js.coin.invoice.type_company"}}
+                    {{/if}}
                   </span>
                   <span class="invoice-title-text">{{invoice.invoice_title}}</span>
                   {{#if invoice.out_trade_no}}
-                    <span class="invoice-order-no">订单: {{invoice.out_trade_no}}</span>
+                    <span class="invoice-order-no">{{i18n "js.coin.invoice.order_no"}}: {{invoice.out_trade_no}}</span>
                   {{/if}}
                 </div>
               </div>
@@ -436,23 +440,27 @@
           {{#if this.selectedInvoiceDetail}}
             <div class="invoice-detail-grid">
               <div class="detail-row">
-                <span class="detail-label">申请用户</span>
+                <span class="detail-label">{{i18n "js.coin.admin_page.applicant"}}</span>
                 <span class="detail-value">{{this.selectedInvoiceDetail.username}}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">发票金额</span>
+                <span class="detail-label">{{i18n "js.coin.admin_page.invoice_amount"}}</span>
                 <span class="detail-value">¥{{this.selectedInvoiceDetail.amount}}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">发票类型</span>
+                <span class="detail-label">{{i18n "js.coin.admin_page.invoice_type"}}</span>
                 <span class="detail-value">
                   <span class="invoice-type-badge {{this.selectedInvoiceDetail.invoice_type}}">
-                    {{this.selectedInvoiceDetail.invoice_type_text}}
+                    {{#if (eq this.selectedInvoiceDetail.invoice_type "personal")}}
+                      {{i18n "js.coin.invoice.type_personal"}}
+                    {{else}}
+                      {{i18n "js.coin.invoice.type_company"}}
+                    {{/if}}
                   </span>
                 </span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">{{if (eq this.selectedInvoiceDetail.invoice_type "personal") "姓名" "公司名称"}}</span>
+                <span class="detail-label">{{if (eq this.selectedInvoiceDetail.invoice_type "personal") (i18n "js.coin.invoice.name") (i18n "js.coin.invoice.company_name")}}</span>
                 <span class="detail-value">{{this.selectedInvoiceDetail.invoice_title}}</span>
               </div>
               {{#if (eq this.selectedInvoiceDetail.invoice_type "personal")}}

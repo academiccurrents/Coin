@@ -141,6 +141,8 @@ en:
         edit: "Edit"
         delete: "Delete"
         remove: "Remove"
+        edit_channel: "Edit Channel"
+        channel_name: "Channel Name"
         
       # Discount Management
       discount:

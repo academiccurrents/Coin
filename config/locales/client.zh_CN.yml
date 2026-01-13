@@ -141,6 +141,8 @@ zh_CN:
         edit: "编辑"
         delete: "删除"
         remove: "移除"
+        edit_channel: "编辑渠道"
+        channel_name: "渠道名称"
         
       # 折扣管理
       discount:

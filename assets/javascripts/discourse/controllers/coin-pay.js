@@ -41,6 +41,9 @@ export default class CoinPayController extends Controller {
   @tracked showChannelModal = false;
   @tracked adminChannels = [];
   @tracked isChannelLoading = false;
+  @tracked showChannelEditModal = false;
+  @tracked editingChannel = null;
+  @tracked editChannelName = "";
 
   // 管理员折扣管理
   @tracked showDiscountModal = false;
@@ -562,6 +565,49 @@ export default class CoinPayController extends Controller {
     } catch (error) {
       console.error("添加渠道失败:", error);
       alert("添加渠道失败");
+    } finally {
+      this.isChannelLoading = false;
+    }
+  }
+
+  @action
+  openChannelEditModal(channel) {
+    this.editingChannel = channel;
+    this.editChannelName = channel.name;
+    this.showChannelEditModal = true;
+  }
+
+  @action
+  closeChannelEditModal() {
+    this.showChannelEditModal = false;
+    this.editingChannel = null;
+    this.editChannelName = "";
+  }
+
+  @action
+  updateChannelName(event) {
+    this.editChannelName = event.target.value;
+  }
+
+  @action
+  async saveChannelName() {
+    if (!this.editChannelName.trim()) {
+      alert("渠道名称不能为空");
+      return;
+    }
+
+    this.isChannelLoading = true;
+    try {
+      await ajax(`/coin/pay/admin/channels/${this.editingChannel.id}.json`, {
+        type: "PUT",
+        data: { name: this.editChannelName.trim() }
+      });
+      this.closeChannelEditModal();
+      await this.loadAdminChannels();
+      this.send('refreshModel');
+    } catch (error) {
+      console.error("更新渠道名称失败:", error);
+      alert("更新失败: " + (error.jqXHR?.responseJSON?.errors?.[0] || error.message));
     } finally {
       this.isChannelLoading = false;
     }

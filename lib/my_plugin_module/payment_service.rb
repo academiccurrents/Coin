@@ -62,11 +62,11 @@ module ::MyPluginModule
         order.mark_as_paid!(trade_no)
 
         # 增加用户余额
-        coin_name = SiteSetting.coin_name || "硬币"
+        coin_name = SiteSetting.coin_name || "Coin"
         CoinService.record_transaction(
           order.user_id,
           order.coin_amount,
-          "充值 #{order.coin_amount} #{coin_name}",
+          "Recharge #{order.coin_amount} #{coin_name}",
           'recharge',
           out_trade_no: order.out_trade_no
         )

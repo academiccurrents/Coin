@@ -13,7 +13,7 @@ module ::MyPluginModule
       get_user_balance(user.id)
     end
 
-    def self.adjust_points!(acting_user, target_user, amount, reason: "管理员调整", mark_as_recharge: false)
+    def self.adjust_points!(acting_user, target_user, amount, reason: "Admin Adjustment", mark_as_recharge: false)
       ActiveRecord::Base.transaction do
         balance = CoinUserBalance.get_or_create(target_user.id)
         old_balance = balance.balance
