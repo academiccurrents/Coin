@@ -13,10 +13,9 @@ export default class CoinInvoiceController extends Controller {
   @tracked showSuccessMessage = false;
   @tracked successMessage = "";
   
-  // 申请发票弹窗
-  @tracked showApplyModal = false;
-  @tracked eligibleOrders = [];
-  @tracked selectedOrder = null;
+  // 编辑发票弹窗
+  @tracked showEditModal = false;
+  @tracked editingInvoice = null;
   @tracked invoiceType = "personal";
   @tracked invoiceTitle = "";
   @tracked email = "";
@@ -24,10 +23,6 @@ export default class CoinInvoiceController extends Controller {
   @tracked billingAddress = "";
   @tracked taxNumber = "";
   @tracked contactName = "";
-  
-  // 编辑发票弹窗
-  @tracked showEditModal = false;
-  @tracked editingInvoice = null;
   
   // 重新申请弹窗
   @tracked showResubmitModal = false;
@@ -61,17 +56,6 @@ export default class CoinInvoiceController extends Controller {
 
   get isPersonal() {
     return this.invoiceType === "personal";
-  }
-
-  get canSubmitApply() {
-    if (!this.selectedOrder) return false;
-    if (!this.invoiceTitle.trim()) return false;
-    if (!this.email.trim()) return false;
-    if (!this.phone.trim()) return false;
-    if (!this.billingAddress.trim()) return false;
-    // 企业发票：联系人必填
-    if (!this.isPersonal && !this.contactName.trim()) return false;
-    return true;
   }
 
   get canSubmitEdit() {
@@ -111,40 +95,6 @@ export default class CoinInvoiceController extends Controller {
     this.router.refresh();
   }
 
-  // 打开申请发票弹窗
-  @action
-  async openApplyModal() {
-    this.isLoading = true;
-    try {
-      const result = await ajax("/coin/invoice/eligible_orders.json");
-      this.eligibleOrders = result.orders || [];
-      this.selectedOrder = null;
-      this.invoiceType = "personal";
-      this.invoiceTitle = "";
-      this.email = "";
-      this.phone = "";
-      this.billingAddress = "";
-      this.taxNumber = "";
-      this.contactName = "";
-      this.showApplyModal = true;
-    } catch (error) {
-      popupAjaxError(error);
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  @action
-  closeApplyModal() {
-    this.showApplyModal = false;
-    this.selectedOrder = null;
-  }
-
-  @action
-  selectOrder(order) {
-    this.selectedOrder = order;
-  }
-
   @action
   setInvoiceType(type) {
     this.invoiceType = type;
@@ -182,41 +132,6 @@ export default class CoinInvoiceController extends Controller {
   @action
   updateContactName(event) {
     this.contactName = event.target.value;
-  }
-
-  // 提交发票申请
-  @action
-  async submitApply() {
-    if (!this.canSubmitApply || this.isLoading) return;
-
-    this.isLoading = true;
-    try {
-      await ajax("/coin/invoice/create.json", {
-        type: "POST",
-        data: {
-          amount: Math.round(this.selectedOrder.actual_price),
-          reason: `订单 ${this.selectedOrder.out_trade_no} 发票申请`,
-          out_trade_no: this.selectedOrder.out_trade_no,
-          invoice_type: this.invoiceType,
-          invoice_title: this.invoiceTitle.trim(),
-          email: this.email.trim(),
-          phone: this.phone.trim(),
-          billing_address: this.billingAddress.trim(),
-          tax_number: this.taxNumber.trim() || null,
-          contact_name: !this.isPersonal ? this.contactName.trim() : null
-        }
-      });
-
-      this.showApplyModal = false;
-      this.successMessage = "发票申请提交成功！";
-      this.showSuccessMessage = true;
-      setTimeout(() => this.hideSuccessMessage(), 3000);
-      this.refreshData();
-    } catch (error) {
-      popupAjaxError(error);
-    } finally {
-      this.isLoading = false;
-    }
   }
 
   // 打开编辑发票弹窗

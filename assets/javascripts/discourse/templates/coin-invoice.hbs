@@ -10,10 +10,6 @@
         <span class="coin-nav-title">{{i18n "js.coin.invoice.management"}}</span>
       </div>
       <div class="coin-nav-right">
-        <button class="coin-nav-btn primary" {{on "click" this.openApplyModal}}>
-          <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
-          <span>{{i18n "js.coin.apply_invoice"}}</span>
-        </button>
         <button class="coin-nav-btn" {{on "click" this.refreshData}}>
           <svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M105.1 202.6c7.7-21.8 20.2-42.3 37.8-59.8c62.5-62.5 163.8-62.5 226.3 0L386.3 160H352c-17.7 0-32 14.3-32 32s14.3 32 32 32h143.5c0 0 0 0 0 0c.1 0 .1 0 .2 0c17.6-.1 31.8-14.4 31.8-32V48c0-17.7-14.3-32-32-32s-32 14.3-32 32v35.2L446.4 65.9C349.8-30.7 193.8-30.7 97.2 65.9c-28.7 28.7-49.5 63.6-60.8 101.4c-4.5 15.1 4.1 31 19.2 35.5s31-4.1 35.5-19.2z"/></svg>
         </button>
@@ -161,127 +157,6 @@
       </div>
     </div>
   </div>
-
-  {{!-- 申请发票弹窗 --}}
-  {{#if this.showApplyModal}}
-  <div class="coin-modal-backdrop" {{on "click" this.closeApplyModal}}>
-    <div class="coin-modal" {{on "click" this.stopPropagation}}>
-      <div class="coin-modal-header">
-        <h3>{{i18n "js.coin.invoice.title"}}</h3>
-        <button class="coin-modal-close" {{on "click" this.closeApplyModal}}>×</button>
-      </div>
-      <div class="coin-modal-body">
-        {{!-- 选择订单 --}}
-        <div class="form-group">
-          <label>{{i18n "js.coin.invoice.select_record"}}</label>
-          {{#if this.eligibleOrders.length}}
-            <div class="order-list">
-              {{#each this.eligibleOrders as |order|}}
-                <div class="order-item {{if (eq this.selectedOrder order) 'selected'}}" 
-                     {{on "click" (fn this.selectOrder order)}}>
-                  <div class="order-info">
-                    <span class="order-no">{{order.out_trade_no}}</span>
-                    <span class="order-amount">¥{{order.actual_price}}</span>
-                  </div>
-                  <span class="order-date">{{format-date order.created_at format="medium"}}</span>
-                </div>
-              {{/each}}
-            </div>
-          {{else}}
-            <div class="empty-orders">{{i18n "js.coin.invoice.no_records"}}</div>
-          {{/if}}
-        </div>
-
-        {{#if this.selectedOrder}}
-        {{!-- 发票类型 --}}
-        <div class="form-group">
-          <label>{{i18n "js.coin.admin_page.invoice_type"}}</label>
-          <div class="invoice-type-selector">
-            <button type="button" class="type-btn {{if this.isPersonal 'active'}}" 
-                    {{on "click" (fn this.setInvoiceType "personal")}}>
-              👤 {{i18n "js.coin.invoice.type_personal"}}
-            </button>
-            <button type="button" class="type-btn {{unless this.isPersonal 'active'}}" 
-                    {{on "click" (fn this.setInvoiceType "company")}}>
-              🏢 {{i18n "js.coin.invoice.type_company"}}
-            </button>
-          </div>
-        </div>
-
-        {{!-- 发票抬头 --}}
-        <div class="form-group">
-          <label>{{if this.isPersonal (i18n "js.coin.invoice.name") (i18n "js.coin.invoice.company_name")}} <span class="required">*</span></label>
-          <input type="text" 
-                 class="form-input" 
-                 placeholder="{{if this.isPersonal (i18n "js.coin.invoice.name_placeholder") (i18n "js.coin.invoice.company_name_placeholder")}}"
-                 value={{this.invoiceTitle}}
-                 {{on "input" this.updateInvoiceTitle}} />
-        </div>
-
-        {{!-- 企业：联系人 --}}
-        {{#unless this.isPersonal}}
-        <div class="form-group">
-          <label>{{i18n "js.coin.invoice.contact_name"}} <span class="required">*</span></label>
-          <input type="text" 
-                 class="form-input" 
-                 placeholder="{{i18n "js.coin.invoice.contact_name_placeholder"}}"
-                 value={{this.contactName}}
-                 {{on "input" this.updateContactName}} />
-        </div>
-        {{/unless}}
-
-        {{!-- 电子邮箱 --}}
-        <div class="form-group">
-          <label>{{if this.isPersonal (i18n "js.coin.invoice.email") (i18n "js.coin.invoice.contact_email")}} <span class="required">*</span></label>
-          <input type="email" 
-                 class="form-input" 
-                 placeholder="{{i18n "js.coin.invoice.email_placeholder"}}"
-                 value={{this.email}}
-                 {{on "input" this.updateEmail}} />
-        </div>
-
-        {{!-- 电话 --}}
-        <div class="form-group">
-          <label>{{if this.isPersonal (i18n "js.coin.invoice.phone") (i18n "js.coin.invoice.contact_phone")}} <span class="required">*</span></label>
-          <input type="tel" 
-                 class="form-input" 
-                 placeholder="{{i18n "js.coin.invoice.phone_placeholder"}}"
-                 value={{this.phone}}
-                 {{on "input" this.updatePhone}} />
-        </div>
-
-        {{!-- 账单地址 --}}
-        <div class="form-group">
-          <label>{{i18n "js.coin.invoice.billing_address"}} <span class="required">*</span></label>
-          <input type="text" 
-                 class="form-input" 
-                 placeholder="{{i18n "js.coin.invoice.billing_address_placeholder"}}"
-                 value={{this.billingAddress}}
-                 {{on "input" this.updateBillingAddress}} />
-        </div>
-
-        {{!-- 税号（可选） --}}
-        <div class="form-group">
-          <label>{{i18n "js.coin.invoice.tax_number_optional"}}</label>
-          <input type="text" 
-                 class="form-input" 
-                 placeholder="{{i18n "js.coin.invoice.tax_number_placeholder"}}"
-                 value={{this.taxNumber}}
-                 {{on "input" this.updateTaxNumber}} />
-        </div>
-        {{/if}}
-      </div>
-      <div class="coin-modal-footer">
-        <button type="button" class="btn-cancel" {{on "click" this.closeApplyModal}}>{{i18n "js.coin.cancel"}}</button>
-        <button type="button" class="btn-submit {{unless this.canSubmitApply 'disabled'}}" 
-                disabled={{unless this.canSubmitApply true}}
-                {{on "click" this.submitApply}}>
-          {{if this.isLoading (i18n "js.coin.invoice.submitting") (i18n "js.coin.invoice.submit")}}
-        </button>
-      </div>
-    </div>
-  </div>
-  {{/if}}
 
   {{!-- 编辑发票弹窗 --}}
   {{#if this.showEditModal}}
