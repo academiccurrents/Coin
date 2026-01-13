@@ -19,8 +19,11 @@ export default class CoinInvoiceController extends Controller {
   @tracked selectedOrder = null;
   @tracked invoiceType = "personal";
   @tracked invoiceTitle = "";
-  @tracked idNumber = "";
+  @tracked email = "";
+  @tracked phone = "";
+  @tracked billingAddress = "";
   @tracked taxNumber = "";
+  @tracked contactName = "";
   
   // 编辑发票弹窗
   @tracked showEditModal = false;
@@ -63,27 +66,33 @@ export default class CoinInvoiceController extends Controller {
   get canSubmitApply() {
     if (!this.selectedOrder) return false;
     if (!this.invoiceTitle.trim()) return false;
-    // 个人发票：姓名必填，身份证号可选
-    // 企业发票：公司名称和税号都必填
-    if (!this.isPersonal && !this.taxNumber.trim()) return false;
+    if (!this.email.trim()) return false;
+    if (!this.phone.trim()) return false;
+    if (!this.billingAddress.trim()) return false;
+    // 企业发票：联系人必填
+    if (!this.isPersonal && !this.contactName.trim()) return false;
     return true;
   }
 
   get canSubmitEdit() {
     if (!this.editingInvoice) return false;
     if (!this.invoiceTitle.trim()) return false;
-    // 个人发票：姓名必填，身份证号可选
-    // 企业发票：公司名称和税号都必填
-    if (!this.isPersonal && !this.taxNumber.trim()) return false;
+    if (!this.email.trim()) return false;
+    if (!this.phone.trim()) return false;
+    if (!this.billingAddress.trim()) return false;
+    // 企业发票：联系人必填
+    if (!this.isPersonal && !this.contactName.trim()) return false;
     return true;
   }
 
   get canSubmitResubmit() {
     if (!this.resubmittingInvoice) return false;
     if (!this.invoiceTitle.trim()) return false;
-    // 个人发票：姓名必填，身份证号可选
-    // 企业发票：公司名称和税号都必填
-    if (!this.isPersonal && !this.taxNumber.trim()) return false;
+    if (!this.email.trim()) return false;
+    if (!this.phone.trim()) return false;
+    if (!this.billingAddress.trim()) return false;
+    // 企业发票：联系人必填
+    if (!this.isPersonal && !this.contactName.trim()) return false;
     return true;
   }
 
@@ -112,8 +121,11 @@ export default class CoinInvoiceController extends Controller {
       this.selectedOrder = null;
       this.invoiceType = "personal";
       this.invoiceTitle = "";
-      this.idNumber = "";
+      this.email = "";
+      this.phone = "";
+      this.billingAddress = "";
       this.taxNumber = "";
+      this.contactName = "";
       this.showApplyModal = true;
     } catch (error) {
       popupAjaxError(error);
@@ -136,11 +148,9 @@ export default class CoinInvoiceController extends Controller {
   @action
   setInvoiceType(type) {
     this.invoiceType = type;
-    // 切换类型时清空对应字段
+    // 切换类型时清空联系人字段
     if (type === "personal") {
-      this.taxNumber = "";
-    } else {
-      this.idNumber = "";
+      this.contactName = "";
     }
   }
 
@@ -150,13 +160,28 @@ export default class CoinInvoiceController extends Controller {
   }
 
   @action
-  updateIdNumber(event) {
-    this.idNumber = event.target.value;
+  updateEmail(event) {
+    this.email = event.target.value;
+  }
+
+  @action
+  updatePhone(event) {
+    this.phone = event.target.value;
+  }
+
+  @action
+  updateBillingAddress(event) {
+    this.billingAddress = event.target.value;
   }
 
   @action
   updateTaxNumber(event) {
     this.taxNumber = event.target.value;
+  }
+
+  @action
+  updateContactName(event) {
+    this.contactName = event.target.value;
   }
 
   // 提交发票申请
@@ -174,8 +199,11 @@ export default class CoinInvoiceController extends Controller {
           out_trade_no: this.selectedOrder.out_trade_no,
           invoice_type: this.invoiceType,
           invoice_title: this.invoiceTitle.trim(),
-          id_number: this.isPersonal ? this.idNumber.trim() : null,
-          tax_number: !this.isPersonal ? this.taxNumber.trim() : null
+          email: this.email.trim(),
+          phone: this.phone.trim(),
+          billing_address: this.billingAddress.trim(),
+          tax_number: this.taxNumber.trim() || null,
+          contact_name: !this.isPersonal ? this.contactName.trim() : null
         }
       });
 
@@ -197,8 +225,11 @@ export default class CoinInvoiceController extends Controller {
     this.editingInvoice = invoice;
     this.invoiceType = invoice.invoice_type || "personal";
     this.invoiceTitle = invoice.invoice_title || "";
-    this.idNumber = invoice.id_number || "";
+    this.email = invoice.email || "";
+    this.phone = invoice.phone || "";
+    this.billingAddress = invoice.billing_address || "";
     this.taxNumber = invoice.tax_number || "";
+    this.contactName = invoice.contact_name || "";
     this.showEditModal = true;
   }
 
@@ -220,8 +251,11 @@ export default class CoinInvoiceController extends Controller {
         data: {
           invoice_type: this.invoiceType,
           invoice_title: this.invoiceTitle.trim(),
-          id_number: this.isPersonal ? this.idNumber.trim() : null,
-          tax_number: !this.isPersonal ? this.taxNumber.trim() : null
+          email: this.email.trim(),
+          phone: this.phone.trim(),
+          billing_address: this.billingAddress.trim(),
+          tax_number: this.taxNumber.trim() || null,
+          contact_name: !this.isPersonal ? this.contactName.trim() : null
         }
       });
 
@@ -243,8 +277,11 @@ export default class CoinInvoiceController extends Controller {
     this.resubmittingInvoice = invoice;
     this.invoiceType = invoice.invoice_type || "personal";
     this.invoiceTitle = invoice.invoice_title || "";
-    this.idNumber = invoice.id_number || "";
+    this.email = invoice.email || "";
+    this.phone = invoice.phone || "";
+    this.billingAddress = invoice.billing_address || "";
     this.taxNumber = invoice.tax_number || "";
+    this.contactName = invoice.contact_name || "";
     this.showResubmitModal = true;
   }
 
@@ -266,8 +303,11 @@ export default class CoinInvoiceController extends Controller {
         data: {
           invoice_type: this.invoiceType,
           invoice_title: this.invoiceTitle.trim(),
-          id_number: this.isPersonal ? this.idNumber.trim() : null,
-          tax_number: !this.isPersonal ? this.taxNumber.trim() : null
+          email: this.email.trim(),
+          phone: this.phone.trim(),
+          billing_address: this.billingAddress.trim(),
+          tax_number: this.taxNumber.trim() || null,
+          contact_name: !this.isPersonal ? this.contactName.trim() : null
         }
       });
 

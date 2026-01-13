@@ -36,8 +36,11 @@ module ::MyPluginModule
         if column_exists?(:invoice_type)
           invoice_type = params[:invoice_type] || 'personal'
           invoice_title = params[:invoice_title]
-          id_number = params[:id_number]
+          email = params[:email]
+          phone = params[:phone]
+          billing_address = params[:billing_address]
           tax_number = params[:tax_number]
+          contact_name = params[:contact_name]
 
           unless %w[personal company].include?(invoice_type)
             render_json_error("发票类型无效", status: 400)
@@ -46,22 +49,26 @@ module ::MyPluginModule
 
           # 验证必填字段
           if invoice_type == 'personal'
-            # 个人发票：姓名必填，身份证号可选
-            unless invoice_title.present?
-              render_json_error("个人发票需要填写姓名", status: 400)
+            # 个人发票：姓名、邮箱、电话、地址必填，税号可选
+            unless invoice_title.present? && email.present? && phone.present? && billing_address.present?
+              render_json_error("个人发票需要填写姓名、电子邮箱、电话和账单地址", status: 400)
               return
             end
           else
-            unless invoice_title.present? && tax_number.present?
-              render_json_error("企业发票需要填写公司名称和纳税人识别号", status: 400)
+            # 企业发票：企业名称、联系人、邮箱、电话、地址必填，税号可选
+            unless invoice_title.present? && contact_name.present? && email.present? && phone.present? && billing_address.present?
+              render_json_error("企业发票需要填写企业名称、联系人、电子邮箱、电话和账单地址", status: 400)
               return
             end
           end
 
           create_params[:invoice_type] = invoice_type
           create_params[:invoice_title] = invoice_title
-          create_params[:id_number] = invoice_type == 'personal' ? id_number : nil
-          create_params[:tax_number] = invoice_type == 'company' ? tax_number : nil
+          create_params[:email] = email
+          create_params[:phone] = phone
+          create_params[:billing_address] = billing_address
+          create_params[:tax_number] = tax_number  # 可选
+          create_params[:contact_name] = invoice_type == 'company' ? contact_name : nil
         end
 
         if column_exists?(:out_trade_no)
@@ -164,8 +171,11 @@ module ::MyPluginModule
 
         invoice_type = params[:invoice_type] || safe_get(invoice, :invoice_type) || 'personal'
         invoice_title = params[:invoice_title]
-        id_number = params[:id_number]
+        email = params[:email]
+        phone = params[:phone]
+        billing_address = params[:billing_address]
         tax_number = params[:tax_number]
+        contact_name = params[:contact_name]
 
         unless %w[personal company].include?(invoice_type)
           render_json_error("发票类型无效", status: 400)
@@ -174,14 +184,15 @@ module ::MyPluginModule
 
         # 验证必填字段
         if invoice_type == 'personal'
-          # 个人发票：姓名必填，身份证号可选
-          unless invoice_title.present?
-            render_json_error("个人发票需要填写姓名", status: 400)
+          # 个人发票：姓名、邮箱、电话、地址必填，税号可选
+          unless invoice_title.present? && email.present? && phone.present? && billing_address.present?
+            render_json_error("个人发票需要填写姓名、电子邮箱、电话和账单地址", status: 400)
             return
           end
         else
-          unless invoice_title.present? && tax_number.present?
-            render_json_error("企业发票需要填写公司名称和纳税人识别号", status: 400)
+          # 企业发票：企业名称、联系人、邮箱、电话、地址必填，税号可选
+          unless invoice_title.present? && contact_name.present? && email.present? && phone.present? && billing_address.present?
+            render_json_error("企业发票需要填写企业名称、联系人、电子邮箱、电话和账单地址", status: 400)
             return
           end
         end
@@ -189,8 +200,11 @@ module ::MyPluginModule
         invoice.update!(
           invoice_type: invoice_type,
           invoice_title: invoice_title,
-          id_number: invoice_type == 'personal' ? id_number : nil,
-          tax_number: invoice_type == 'company' ? tax_number : nil
+          email: email,
+          phone: phone,
+          billing_address: billing_address,
+          tax_number: tax_number,
+          contact_name: invoice_type == 'company' ? contact_name : nil
         )
 
         render_json_dump({
@@ -234,8 +248,11 @@ module ::MyPluginModule
 
         invoice_type = params[:invoice_type] || safe_get(invoice, :invoice_type) || 'personal'
         invoice_title = params[:invoice_title]
-        id_number = params[:id_number]
+        email = params[:email]
+        phone = params[:phone]
+        billing_address = params[:billing_address]
         tax_number = params[:tax_number]
+        contact_name = params[:contact_name]
 
         unless %w[personal company].include?(invoice_type)
           render_json_error("发票类型无效", status: 400)
@@ -244,14 +261,15 @@ module ::MyPluginModule
 
         # 验证必填字段
         if invoice_type == 'personal'
-          # 个人发票：姓名必填，身份证号可选
-          unless invoice_title.present?
-            render_json_error("个人发票需要填写姓名", status: 400)
+          # 个人发票：姓名、邮箱、电话、地址必填，税号可选
+          unless invoice_title.present? && email.present? && phone.present? && billing_address.present?
+            render_json_error("个人发票需要填写姓名、电子邮箱、电话和账单地址", status: 400)
             return
           end
         else
-          unless invoice_title.present? && tax_number.present?
-            render_json_error("企业发票需要填写公司名称和纳税人识别号", status: 400)
+          # 企业发票：企业名称、联系人、邮箱、电话、地址必填，税号可选
+          unless invoice_title.present? && contact_name.present? && email.present? && phone.present? && billing_address.present?
+            render_json_error("企业发票需要填写企业名称、联系人、电子邮箱、电话和账单地址", status: 400)
             return
           end
         end
@@ -261,8 +279,11 @@ module ::MyPluginModule
           status: 'pending',
           invoice_type: invoice_type,
           invoice_title: invoice_title,
-          id_number: invoice_type == 'personal' ? id_number : nil,
-          tax_number: invoice_type == 'company' ? tax_number : nil,
+          email: email,
+          phone: phone,
+          billing_address: billing_address,
+          tax_number: tax_number,
+          contact_name: invoice_type == 'company' ? contact_name : nil,
           resubmit_count: (invoice.resubmit_count || 0) + 1,
           reject_reason: nil  # 清除之前的拒绝理由
         )
@@ -410,8 +431,11 @@ module ::MyPluginModule
         result[:invoice_type] = safe_get(invoice, :invoice_type) || 'personal'
         result[:invoice_type_text] = invoice.personal? ? '个人' : '企业'
         result[:invoice_title] = safe_get(invoice, :invoice_title)
-        result[:id_number] = invoice.personal? ? mask_id_number(safe_get(invoice, :id_number)) : nil
-        result[:tax_number] = invoice.company? ? safe_get(invoice, :tax_number) : nil
+        result[:email] = safe_get(invoice, :email)
+        result[:phone] = safe_get(invoice, :phone)
+        result[:billing_address] = safe_get(invoice, :billing_address)
+        result[:tax_number] = safe_get(invoice, :tax_number)
+        result[:contact_name] = invoice.company? ? safe_get(invoice, :contact_name) : nil
       end
 
       if column_exists?(:out_trade_no)
@@ -457,8 +481,11 @@ module ::MyPluginModule
         result[:invoice_type] = safe_get(invoice, :invoice_type) || 'personal'
         result[:invoice_type_text] = invoice.personal? ? '个人' : '企业'
         result[:invoice_title] = safe_get(invoice, :invoice_title)
-        result[:id_number] = safe_get(invoice, :id_number)  # 管理员可以看到完整信息
+        result[:email] = safe_get(invoice, :email)
+        result[:phone] = safe_get(invoice, :phone)
+        result[:billing_address] = safe_get(invoice, :billing_address)
         result[:tax_number] = safe_get(invoice, :tax_number)
+        result[:contact_name] = safe_get(invoice, :contact_name)  # 管理员可以看到完整信息
       end
 
       if column_exists?(:out_trade_no)
@@ -490,13 +517,6 @@ module ::MyPluginModule
       when 'rejected' then '已拒绝'
       else status
       end
-    end
-
-    # 脱敏身份证号码，只显示前3位和后4位
-    def mask_id_number(id_number)
-      return nil unless id_number.present?
-      return id_number if id_number.length <= 7
-      "#{id_number[0..2]}#{'*' * (id_number.length - 7)}#{id_number[-4..-1]}"
     end
   end
 end

@@ -203,8 +203,20 @@
                   <input type="text" class="form-input" placeholder="{{i18n "js.coin.invoice.name_placeholder"}}" value={{this.invoiceTitle}} {{on "input" this.updateInvoiceTitle}} />
                 </div>
                 <div class="form-field">
-                  <label class="form-label">{{i18n "js.coin.invoice.id_number"}}</label>
-                  <input type="text" class="form-input" placeholder="{{i18n "js.coin.invoice.id_number_placeholder"}}" value={{this.idNumber}} {{on "input" this.updateIdNumber}} />
+                  <label class="form-label">{{i18n "js.coin.invoice.email"}} <span class="required">*</span></label>
+                  <input type="email" class="form-input" placeholder="{{i18n "js.coin.invoice.email_placeholder"}}" value={{this.email}} {{on "input" this.updateEmail}} />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">{{i18n "js.coin.invoice.phone"}} <span class="required">*</span></label>
+                  <input type="tel" class="form-input" placeholder="{{i18n "js.coin.invoice.phone_placeholder"}}" value={{this.phone}} {{on "input" this.updatePhone}} />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">{{i18n "js.coin.invoice.billing_address"}} <span class="required">*</span></label>
+                  <input type="text" class="form-input" placeholder="{{i18n "js.coin.invoice.billing_address_placeholder"}}" value={{this.billingAddress}} {{on "input" this.updateBillingAddress}} />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">{{i18n "js.coin.invoice.tax_number_optional"}}</label>
+                  <input type="text" class="form-input" placeholder="{{i18n "js.coin.invoice.tax_number_placeholder"}}" value={{this.taxNumber}} {{on "input" this.updateTaxNumber}} />
                 </div>
               {{else}}
                 <div class="form-field">
@@ -212,7 +224,23 @@
                   <input type="text" class="form-input" placeholder="{{i18n "js.coin.invoice.company_name_placeholder"}}" value={{this.invoiceTitle}} {{on "input" this.updateInvoiceTitle}} />
                 </div>
                 <div class="form-field">
-                  <label class="form-label">{{i18n "js.coin.invoice.tax_number"}} <span class="required">*</span></label>
+                  <label class="form-label">{{i18n "js.coin.invoice.contact_name"}} <span class="required">*</span></label>
+                  <input type="text" class="form-input" placeholder="{{i18n "js.coin.invoice.contact_name_placeholder"}}" value={{this.contactName}} {{on "input" this.updateContactName}} />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">{{i18n "js.coin.invoice.contact_email"}} <span class="required">*</span></label>
+                  <input type="email" class="form-input" placeholder="{{i18n "js.coin.invoice.email_placeholder"}}" value={{this.email}} {{on "input" this.updateEmail}} />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">{{i18n "js.coin.invoice.contact_phone"}} <span class="required">*</span></label>
+                  <input type="tel" class="form-input" placeholder="{{i18n "js.coin.invoice.phone_placeholder"}}" value={{this.phone}} {{on "input" this.updatePhone}} />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">{{i18n "js.coin.invoice.billing_address"}} <span class="required">*</span></label>
+                  <input type="text" class="form-input" placeholder="{{i18n "js.coin.invoice.billing_address_placeholder"}}" value={{this.billingAddress}} {{on "input" this.updateBillingAddress}} />
+                </div>
+                <div class="form-field">
+                  <label class="form-label">{{i18n "js.coin.invoice.tax_number_optional"}}</label>
                   <input type="text" class="form-input" placeholder="{{i18n "js.coin.invoice.tax_number_placeholder"}}" value={{this.taxNumber}} {{on "input" this.updateTaxNumber}} />
                 </div>
               {{/if}}

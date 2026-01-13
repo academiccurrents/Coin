@@ -218,27 +218,57 @@
                  {{on "input" this.updateInvoiceTitle}} />
         </div>
 
-        {{!-- 个人：身份证号 --}}
-        {{#if this.isPersonal}}
+        {{!-- 企业：联系人 --}}
+        {{#unless this.isPersonal}}
         <div class="form-group">
-          <label>{{i18n "js.coin.invoice.id_number"}}</label>
+          <label>{{i18n "js.coin.invoice.contact_name"}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="{{i18n "js.coin.invoice.id_number_placeholder"}}"
-                 value={{this.idNumber}}
-                 {{on "input" this.updateIdNumber}} />
+                 placeholder="{{i18n "js.coin.invoice.contact_name_placeholder"}}"
+                 value={{this.contactName}}
+                 {{on "input" this.updateContactName}} />
         </div>
-        {{else}}
-        {{!-- 企业：纳税税号 --}}
+        {{/unless}}
+
+        {{!-- 电子邮箱 --}}
         <div class="form-group">
-          <label>{{i18n "js.coin.invoice.tax_number"}} <span class="required">*</span></label>
+          <label>{{if this.isPersonal (i18n "js.coin.invoice.email") (i18n "js.coin.invoice.contact_email")}} <span class="required">*</span></label>
+          <input type="email" 
+                 class="form-input" 
+                 placeholder="{{i18n "js.coin.invoice.email_placeholder"}}"
+                 value={{this.email}}
+                 {{on "input" this.updateEmail}} />
+        </div>
+
+        {{!-- 电话 --}}
+        <div class="form-group">
+          <label>{{if this.isPersonal (i18n "js.coin.invoice.phone") (i18n "js.coin.invoice.contact_phone")}} <span class="required">*</span></label>
+          <input type="tel" 
+                 class="form-input" 
+                 placeholder="{{i18n "js.coin.invoice.phone_placeholder"}}"
+                 value={{this.phone}}
+                 {{on "input" this.updatePhone}} />
+        </div>
+
+        {{!-- 账单地址 --}}
+        <div class="form-group">
+          <label>{{i18n "js.coin.invoice.billing_address"}} <span class="required">*</span></label>
+          <input type="text" 
+                 class="form-input" 
+                 placeholder="{{i18n "js.coin.invoice.billing_address_placeholder"}}"
+                 value={{this.billingAddress}}
+                 {{on "input" this.updateBillingAddress}} />
+        </div>
+
+        {{!-- 税号（可选） --}}
+        <div class="form-group">
+          <label>{{i18n "js.coin.invoice.tax_number_optional"}}</label>
           <input type="text" 
                  class="form-input" 
                  placeholder="{{i18n "js.coin.invoice.tax_number_placeholder"}}"
                  value={{this.taxNumber}}
                  {{on "input" this.updateTaxNumber}} />
         </div>
-        {{/if}}
         {{/if}}
       </div>
       <div class="coin-modal-footer">
@@ -287,27 +317,57 @@
                  {{on "input" this.updateInvoiceTitle}} />
         </div>
 
-        {{!-- 个人：身份证号 --}}
-        {{#if this.isPersonal}}
+        {{!-- 企业：联系人 --}}
+        {{#unless this.isPersonal}}
         <div class="form-group">
-          <label>{{i18n "js.coin.invoice.id_number"}}</label>
+          <label>{{i18n "js.coin.invoice.contact_name"}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="{{i18n "js.coin.invoice.id_number_placeholder"}}"
-                 value={{this.idNumber}}
-                 {{on "input" this.updateIdNumber}} />
+                 placeholder="{{i18n "js.coin.invoice.contact_name_placeholder"}}"
+                 value={{this.contactName}}
+                 {{on "input" this.updateContactName}} />
         </div>
-        {{else}}
-        {{!-- 企业：纳税税号 --}}
+        {{/unless}}
+
+        {{!-- 电子邮箱 --}}
         <div class="form-group">
-          <label>{{i18n "js.coin.invoice.tax_number"}} <span class="required">*</span></label>
+          <label>{{if this.isPersonal (i18n "js.coin.invoice.email") (i18n "js.coin.invoice.contact_email")}} <span class="required">*</span></label>
+          <input type="email" 
+                 class="form-input" 
+                 placeholder="{{i18n "js.coin.invoice.email_placeholder"}}"
+                 value={{this.email}}
+                 {{on "input" this.updateEmail}} />
+        </div>
+
+        {{!-- 电话 --}}
+        <div class="form-group">
+          <label>{{if this.isPersonal (i18n "js.coin.invoice.phone") (i18n "js.coin.invoice.contact_phone")}} <span class="required">*</span></label>
+          <input type="tel" 
+                 class="form-input" 
+                 placeholder="{{i18n "js.coin.invoice.phone_placeholder"}}"
+                 value={{this.phone}}
+                 {{on "input" this.updatePhone}} />
+        </div>
+
+        {{!-- 账单地址 --}}
+        <div class="form-group">
+          <label>{{i18n "js.coin.invoice.billing_address"}} <span class="required">*</span></label>
+          <input type="text" 
+                 class="form-input" 
+                 placeholder="{{i18n "js.coin.invoice.billing_address_placeholder"}}"
+                 value={{this.billingAddress}}
+                 {{on "input" this.updateBillingAddress}} />
+        </div>
+
+        {{!-- 税号（可选） --}}
+        <div class="form-group">
+          <label>{{i18n "js.coin.invoice.tax_number_optional"}}</label>
           <input type="text" 
                  class="form-input" 
                  placeholder="{{i18n "js.coin.invoice.tax_number_placeholder"}}"
                  value={{this.taxNumber}}
                  {{on "input" this.updateTaxNumber}} />
         </div>
-        {{/if}}
       </div>
       <div class="coin-modal-footer">
         <button type="button" class="btn-cancel" {{on "click" this.closeEditModal}}>{{i18n "js.coin.cancel"}}</button>
@@ -367,27 +427,57 @@
                  {{on "input" this.updateInvoiceTitle}} />
         </div>
 
-        {{!-- 个人：身份证号 --}}
-        {{#if this.isPersonal}}
+        {{!-- 企业：联系人 --}}
+        {{#unless this.isPersonal}}
         <div class="form-group">
-          <label>{{i18n "js.coin.invoice.id_number"}}</label>
+          <label>{{i18n "js.coin.invoice.contact_name"}} <span class="required">*</span></label>
           <input type="text" 
                  class="form-input" 
-                 placeholder="{{i18n "js.coin.invoice.id_number_placeholder"}}"
-                 value={{this.idNumber}}
-                 {{on "input" this.updateIdNumber}} />
+                 placeholder="{{i18n "js.coin.invoice.contact_name_placeholder"}}"
+                 value={{this.contactName}}
+                 {{on "input" this.updateContactName}} />
         </div>
-        {{else}}
-        {{!-- 企业：纳税税号 --}}
+        {{/unless}}
+
+        {{!-- 电子邮箱 --}}
         <div class="form-group">
-          <label>{{i18n "js.coin.invoice.tax_number"}} <span class="required">*</span></label>
+          <label>{{if this.isPersonal (i18n "js.coin.invoice.email") (i18n "js.coin.invoice.contact_email")}} <span class="required">*</span></label>
+          <input type="email" 
+                 class="form-input" 
+                 placeholder="{{i18n "js.coin.invoice.email_placeholder"}}"
+                 value={{this.email}}
+                 {{on "input" this.updateEmail}} />
+        </div>
+
+        {{!-- 电话 --}}
+        <div class="form-group">
+          <label>{{if this.isPersonal (i18n "js.coin.invoice.phone") (i18n "js.coin.invoice.contact_phone")}} <span class="required">*</span></label>
+          <input type="tel" 
+                 class="form-input" 
+                 placeholder="{{i18n "js.coin.invoice.phone_placeholder"}}"
+                 value={{this.phone}}
+                 {{on "input" this.updatePhone}} />
+        </div>
+
+        {{!-- 账单地址 --}}
+        <div class="form-group">
+          <label>{{i18n "js.coin.invoice.billing_address"}} <span class="required">*</span></label>
+          <input type="text" 
+                 class="form-input" 
+                 placeholder="{{i18n "js.coin.invoice.billing_address_placeholder"}}"
+                 value={{this.billingAddress}}
+                 {{on "input" this.updateBillingAddress}} />
+        </div>
+
+        {{!-- 税号（可选） --}}
+        <div class="form-group">
+          <label>{{i18n "js.coin.invoice.tax_number_optional"}}</label>
           <input type="text" 
                  class="form-input" 
                  placeholder="{{i18n "js.coin.invoice.tax_number_placeholder"}}"
                  value={{this.taxNumber}}
                  {{on "input" this.updateTaxNumber}} />
         </div>
-        {{/if}}
       </div>
       <div class="coin-modal-footer">
         <button type="button" class="btn-cancel" {{on "click" this.closeResubmitModal}}>{{i18n "js.coin.cancel"}}</button>

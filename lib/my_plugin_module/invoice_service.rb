@@ -207,8 +207,11 @@ module ::MyPluginModule
         result[:invoice_type] = safe_get(invoice, :invoice_type) || 'personal'
         result[:invoice_type_text] = invoice.personal? ? '个人' : '企业'
         result[:invoice_title] = safe_get(invoice, :invoice_title)
-        result[:id_number] = invoice.personal? ? mask_id_number(safe_get(invoice, :id_number)) : nil
-        result[:tax_number] = invoice.company? ? safe_get(invoice, :tax_number) : nil
+        result[:email] = safe_get(invoice, :email)
+        result[:phone] = safe_get(invoice, :phone)
+        result[:billing_address] = safe_get(invoice, :billing_address)
+        result[:tax_number] = safe_get(invoice, :tax_number)
+        result[:contact_name] = invoice.company? ? safe_get(invoice, :contact_name) : nil
       end
 
       if column_exists?(:out_trade_no)
@@ -256,8 +259,11 @@ module ::MyPluginModule
         result[:invoice_type] = safe_get(invoice, :invoice_type) || 'personal'
         result[:invoice_type_text] = invoice.personal? ? '个人' : '企业'
         result[:invoice_title] = safe_get(invoice, :invoice_title)
-        result[:id_number] = safe_get(invoice, :id_number)  # 管理员可以看到完整信息
+        result[:email] = safe_get(invoice, :email)
+        result[:phone] = safe_get(invoice, :phone)
+        result[:billing_address] = safe_get(invoice, :billing_address)
         result[:tax_number] = safe_get(invoice, :tax_number)
+        result[:contact_name] = safe_get(invoice, :contact_name)  # 管理员可以看到完整信息
       end
 
       if column_exists?(:out_trade_no)
@@ -286,13 +292,6 @@ module ::MyPluginModule
       invoice.respond_to?(attr) ? invoice.send(attr) : nil
     rescue
       nil
-    end
-
-    # 脱敏身份证号码
-    def self.mask_id_number(id_number)
-      return nil unless id_number.present?
-      return id_number if id_number.length <= 7
-      "#{id_number[0..2]}#{'*' * (id_number.length - 7)}#{id_number[-4..-1]}"
     end
   end
 end
