@@ -663,6 +663,8 @@
   overflow: hidden;
   box-shadow: var(--coin-shadow-lg);
   animation: modalIn 0.25s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes modalIn {
@@ -682,6 +684,7 @@
   justify-content: space-between;
   padding: 20px;
   border-bottom: 1px solid var(--coin-border);
+  flex-shrink: 0;
 }
 
 .modal-title-wrap {
@@ -725,7 +728,8 @@
 .modal-body {
   padding: 20px;
   overflow-y: auto;
-  max-height: calc(90vh - 160px);
+  flex: 1;
+  min-height: 0;
 }
 
 .modal-footer {
@@ -734,6 +738,7 @@
   padding: 16px 20px;
   border-top: 1px solid var(--coin-border);
   background: var(--coin-bg-secondary);
+  flex-shrink: 0;
 }
 
 .modal-btn {
